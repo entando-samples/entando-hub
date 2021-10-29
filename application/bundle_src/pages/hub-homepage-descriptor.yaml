@@ -1,0 +1,54 @@
+code: hub-homepage
+parentCode: homepage
+titles:
+  en: Entando hub
+  it: Entando hub
+pageModel: hub-template
+ownerGroup: free
+joinGroups: []
+displayedInMenu: true
+seo: false
+charset: utf8
+status: published
+widgets:
+  - code: logo_esercito
+    config:
+      modelId: '501'
+      contentDescription: piccolo logo esercito musthead
+      chosenContentType: (code=LOG;name=Sme Loghi  (LOG);status=0;attributes=(0=(code=title;type=Text;name=Nome compagnia;names=(en=Division name;it=Nome compagnia);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);1=(code=subtitle;type=Text;name=Motto Compagnia;names=(en=Division motto;it=Motto Compagnia);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);2=(code=img;type=Image;name=Immagine;names=(en=Image;it=Immagine);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);3=(code=link;type=Link;name=Link;names=(en=Link;it=Link);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null));defaultContentModel=null;defaultContentModelList=null;viewPage=null)
+      ownerGroup: free
+      contentId: LOG23
+    pos: 0
+  - code: sme_login
+    config: null
+    pos: 1
+  - code: sme_logo_nome
+    config:
+      modelId: '511'
+      contentDescription: Logo Celio
+      chosenContentType: (code=LOG;name=Sme Loghi  (LOG);status=0;attributes=(0=(code=title;type=Text;name=Nome compagnia;names=(en=Division name;it=Nome compagnia);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);1=(code=subtitle;type=Text;name=Motto Compagnia;names=(en=Division motto;it=Motto Compagnia);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);2=(code=img;type=Image;name=Immagine;names=(en=Image;it=Immagine);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null);3=(code=link;type=Link;name=Link;names=(en=Link;it=Link);roles=;disablingCodes=;mandatory=false;listFilter=false;indexable=false;enumeratorStaticItems=null;enumeratorStaticItemsSeparator=null;enumeratorExtractorBean=null;validationRules=(minLength=null;maxLength=null;regex=null;rangeStartString=null;rangeEndString=null;rangeStartStringAttribute=null;rangeEndStringAttribute=null;equalString=null;equalStringAttribute=null;rangeStartDate=null;rangeEndDate=null;rangeStartDateAttribute=null;rangeEndDateAttribute=null;equalDate=null;equalDateAttribute=null;rangeStartNumber=null;rangeStartNumberAttribute=null;rangeEndNumber=null;rangeEndNumberAttribute=null;equalNumber=null;equalNumberAttribute=null;ognlValidation=null);nestedAttribute=null;compositeAttributes=null));defaultContentModel=null;defaultContentModelList=null;viewPage=null)
+      ownerGroup: free
+      contentId: LOG12
+    pos: 2
+  - code: sme_search
+    config: null
+    pos: 3
+  - code: sme_celio_menu
+    config:
+      navSpec: code(homepage) + code(la_direzione).subtree(1) + code(organizzazione).subtree(1) + code(documenti) + code(servizi) + code(contatti)
+    pos: 4
+  - code: content_viewer_list_slider
+    config:
+      modelId: '512'
+      maxElemForItem: '8'
+      filters:
+        - attributeFilter: true
+          value: true
+          key: Evidenza
+          order: DESC
+      linkDescr_it: Archivio Notizie
+      linkDescr_en: Archivio Notizie
+      maxElements: '8'
+      contentType: CRD
+      pageLink: sme_notizie
+    pos: 5

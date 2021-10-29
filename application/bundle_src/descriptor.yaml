@@ -6,3 +6,14 @@ components:
   widgets:
     - ui/widgets/eh-widgets-dir/eh-widgets/eh-app-widget-descriptor.yaml
     - ui/widgets/eh-widgets-dir/eh-widgets/eh-login-widget-descriptor.yaml
+  pageModels:
+    - pageModels/hub-template.yaml
+  fragments:
+    - fragments/eh_keycloak_auth.yaml
+    - fragments/header_inclusion.yaml
+  pages:
+    - pages/hub-homepage-descriptor.yaml
+  contentTypes:
+    - contentTypes/xxxxxxxxxx.yaml
+  contentModels:
+    - contentModels/xxxxxxxxxx.yaml
