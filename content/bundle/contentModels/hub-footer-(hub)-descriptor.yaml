@@ -1,0 +1,10 @@
+id: 517
+contentType: HUB
+description: Hub footer (HUB)
+contentShape: |-
+  <!--Hub footer (HUB)-->
+  <section class="CatalogPageFooter">
+      <div class="CatalogPageFooter-copyright">
+          $content.title.text
+      </div>
+  </section>

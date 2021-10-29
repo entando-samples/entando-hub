@@ -1,0 +1,84 @@
+id: HUB213
+typeCode: HUB
+description: Entando logo
+mainGroup: free
+status: PUBLIC
+attributes:
+  - code: img
+    value: null
+    values:
+      en:
+        correlationCode: '212'
+        name: Logo entando.png
+        metadata:
+          sRGB Rendering Intent: Perceptual
+          Filter Method: Adaptive
+          Detected File Type Long Name: Portable Network Graphics
+          File Modified Date: 'Tue Sep 21 14:26:00 +00:00 2021'
+          Compression Type: Deflate
+          Pixels Per Unit X: '2835'
+          Detected MIME Type: image/png
+          Expected File Name Extension: png
+          Pixels Per Unit Y: '2835'
+          Image Gamma: '0.455'
+          Image Height: '50'
+          Image Width: '171'
+          Unit Specifier: Metres
+          File Size: 1756 bytes
+          Interlace Method: No Interlace
+          Detected File Type Name: PNG
+          File Name: Logo_entando_d0.png
+          Color Type: True Color with Alpha
+          Bits Per Sample: '8'
+      it:
+        correlationCode: '212'
+        name: Logo entando.png
+        metadata:
+          sRGB Rendering Intent: Perceptual
+          Filter Method: Adaptive
+          Detected File Type Long Name: Portable Network Graphics
+          File Modified Date: 'Tue Sep 21 14:26:00 +00:00 2021'
+          Compression Type: Deflate
+          Pixels Per Unit X: '2835'
+          Detected MIME Type: image/png
+          Expected File Name Extension: png
+          Pixels Per Unit Y: '2835'
+          Image Gamma: '0.455'
+          Image Height: '50'
+          Image Width: '171'
+          Unit Specifier: Metres
+          File Size: 1756 bytes
+          Interlace Method: No Interlace
+          Detected File Type Name: PNG
+          File Name: Logo_entando_d0.png
+          Color Type: True Color with Alpha
+          Bits Per Sample: '8'
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: abstract
+    value: null
+    values: {}
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: link
+    value:
+      symbolicDestination: '#!P;homepage!#'
+      destType: 2
+      urlDest: null
+      pageDest: homepage
+      contentDest: null
+      resourceDest: null
+    values:
+      en: test hub page
+      it: test hub page
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: title
+    value: null
+    values: {}
+    elements: []
+    compositeelements: []
+    listelements: {}

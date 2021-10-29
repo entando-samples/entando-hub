@@ -1,0 +1,8 @@
+id: 515
+contentType: HUB
+description: Hub Logo musthead (HUB)
+contentShape: |-
+  <!--Hub Logo musthead (HUB) -->
+  <a href="$content.link.destination" class="CatalogPageHeader-logo">
+      <img src="$content.img.getImagePath('0')" alt="$content.img.text" title="$content.img.text">
+  </a>

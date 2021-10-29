@@ -1,9 +1,30 @@
 code: entando-hub-content-bundle
 description: This is the Entando HUB content bundle
 components:
+  widgets:
+    - widgets/eh-app-descriptor.yaml
+    - widgets/eh-login-descriptor.yaml
+    - widgets/hub_content-descriptor.yaml
+    - widgets/hub_footer-descriptor.yaml
+    - widgets/hub_logo-descriptor.yaml
   pageModels:
+    - pageModels/hub-template-descriptor.yaml
     - pageModels/eh-silent-check-sso-page-descriptor.yaml
   fragments:
     - fragments/eh-keycloak-auth.yaml
+    - fragments/header_inclusion-descriptor.yaml
   pages:
     - pages/eh-keycloak-silent-check-sso-descriptor.yaml
+    - pages/hub-page-descriptor.yaml
+  contentTypes:
+    - contentTypes/hub-descriptor.yaml
+  contentModels:
+    - contentModels/hub-logo-musthead-(hub)-descriptor.yaml
+    - contentModels/hub-page-title-+-content-(hub)-descriptor.yaml
+    - contentModels/hub-footer-(hub)-descriptor.yaml
+  assets:
+    - assets/212/212-descriptor.yaml
+  contents:
+    - contents/hub213-descriptor.yaml
+    - contents/hub214-descriptor.yaml
+    - contents/hub220-descriptor.yaml

@@ -1,0 +1,44 @@
+id: HUB220
+typeCode: HUB
+description: Welcome to Entando Hub
+mainGroup: free
+status: PUBLIC
+attributes:
+  - code: img
+    value: null
+    values: {}
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: abstract
+    value: null
+    values:
+      en: |
+        Entando exists to help you build better apps faster by providing an Application Composition Platform for building enterprise apps on Kubernetes. We also have a growing hub of ready-to-use solutions to accelerate your development process further. 
+        You can take these solutions to use as-is, utilize them as a reference, or fork them to use as a base for your own custom solution.
+      it: |
+        Entando exists to help you build better apps faster by providing an Application Composition Platform for building enterprise apps on Kubernetes. We also have a growing hub of ready-to-use solutions to accelerate your development process further. 
+        You can take these solutions to use as-is, utilize them as a reference, or fork them to use as a base for your own custom solution.
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: link
+    value:
+      symbolicDestination: '#!!#'
+      destType: 0
+      urlDest: null
+      pageDest: null
+      contentDest: null
+      resourceDest: null
+    values: {}
+    elements: []
+    compositeelements: []
+    listelements: {}
+  - code: title
+    value: null
+    values:
+      en: Welcome to Entando Hub
+      it: Welcome to Entando Hub
+    elements: []
+    compositeelements: []
+    listelements: {}
