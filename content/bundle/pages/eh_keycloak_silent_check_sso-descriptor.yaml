@@ -5,9 +5,9 @@ titles:
   it: HUB Keycloak Silent Check SSO
 pageModel: eh-silent-check-sso
 ownerGroup: free
-joinGroups: [ ]
+joinGroups: []
 displayedInMenu: true
 seo: false
 charset: utf-8
 status: published
-widgets: [ ]
+widgets: []

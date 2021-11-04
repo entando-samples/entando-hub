@@ -1,0 +1,11 @@
+id: 516
+contentType: HUB
+description: Hub page title content  (HUB)
+contentShape: |-
+  <!--Hub page title + content  (HUB) -->
+  <div class="CatalogPageHeader-header-bottom">
+      <div class="CatalogPageHeader-header-content">
+          <h2>$content.title.text</h2>
+          $content.abstract.text
+      </div>
+  </div>
