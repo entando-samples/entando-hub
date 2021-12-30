@@ -13,17 +13,17 @@ public class CorsConfig {
     @Value("${HUB_GROUP_DETAIL_BASE_URL}")
     private String allowedOrigin;
 
-    @Bean
-    public WebMvcConfigurer getCorsConfigurer(){
-        return new WebMvcConfigurer() {
-            @Override
-            public void addCorsMappings(CorsRegistry registry) {
-                registry.addMapping("/**")
-                        .allowedOrigins(allowedOrigin)
-                        .allowedMethods("*")
-                        .allowedHeaders("*");
-            }
-        };
-    }
+//    @Bean
+//    public WebMvcConfigurer getCorsConfigurer(){
+//        return new WebMvcConfigurer() {
+//            @Override
+//            public void addCorsMappings(CorsRegistry registry) {
+//                registry.addMapping("/**")
+//                        .allowedOrigins(allowedOrigin)
+//                        .allowedMethods("*")
+//                        .allowedHeaders("*");
+//            }
+//        };
+//    }
 }
 
