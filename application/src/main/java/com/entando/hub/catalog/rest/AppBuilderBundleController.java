@@ -35,7 +35,7 @@ public class AppBuilderBundleController {
     //@PreAuthorize("hasAuthority('ROLE_mf-widget-admin')")
 
     @Operation(summary = "Get all the bundles in the hub", description = "Public api, no authentication required. You can provide a bundleGroupId to get all the bundles in that")
-    @CrossOrigin
+    //@CrossOrigin
     @GetMapping("/")
     public PagedContent<BundleController.Bundle, Bundle> getBundles(@RequestParam Integer page, @RequestParam Integer pageSize, @RequestParam(required = false) String bundleGroupId) {
         Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
