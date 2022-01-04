@@ -1,6 +1,9 @@
 logging:
   level:
     ROOT: INFO
+    file:
+      path: /
+      name: application.log
     com:
       entando: DEBUG
     org:
