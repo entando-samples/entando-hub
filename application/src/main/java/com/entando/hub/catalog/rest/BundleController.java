@@ -34,7 +34,7 @@ public class BundleController {
 
 
     @Operation(summary = "Get all the bundles", description = "Public api, no authentication required. You can provide a bundleGroupId to get all the bundles in that")
-    //@CrossOrigin
+    
     @GetMapping("/")
     public List<Bundle> getBundles(@RequestParam(required = false) String bundleGroupId) {
         logger.debug("REST request to get Bundles by group: {}", bundleGroupId);
@@ -42,7 +42,7 @@ public class BundleController {
     }
 
     @Operation(summary = "Get the bundle details", description = "Public api, no authentication required. You have to provide the bundleId")
-    //@CrossOrigin
+    
     @GetMapping("/{bundleId}")
     public ResponseEntity<Bundle> getBundle(@PathVariable() String bundleId) {
         logger.debug("REST request to get Bundle by id: {}", bundleId);
@@ -57,7 +57,7 @@ public class BundleController {
 
     @Operation(summary = "Create a new bundle", description = "Protected api, only eh-admin, eh-author or eh-manager can access it.")
     @RolesAllowed({ADMIN, AUTHOR, MANAGER})
-    //@CrossOrigin
+    
     @PostMapping("/")
     public ResponseEntity<Bundle> createBundle(@RequestBody BundleNoId bundle) {
         logger.debug("REST request to create new Bundle: {}", bundle);
@@ -67,7 +67,7 @@ public class BundleController {
 
     @Operation(summary = "Update a bundle", description = "Protected api, only eh-admin, eh-author or eh-manager can access it. You have to provide the bundleId identifying the bundle")
     @RolesAllowed({ADMIN, AUTHOR, MANAGER})
-    //@CrossOrigin
+    
     @PostMapping("/{bundleId}")
     public ResponseEntity<Bundle> updateBundle(@PathVariable String bundleId, @RequestBody BundleNoId bundle) {
         logger.debug("REST request to updare Bundle with id {}: {}", bundleId, bundle);
