@@ -7,8 +7,9 @@ import {
     bundleOfBundleGroupSchema,
 } from "../../../../../helpers/validation/bundleGroupSchema";
 import { fillErrors } from "../../../../../helpers/validation/fillErrors";
-import { BUNDLE_STATUS, GIT_REPO, BUNDLE_URL_REGEX } from "../../../../../helpers/constants";
+import { BUNDLE_STATUS, GIT_REPO, BUNDLE_URL_REGEX, OPERATION } from "../../../../../helpers/constants";
 import i18n from "../../../../../i18n";
+import { clickableSSHGitURL } from "../../../../../helpers/helpers";
 /*
 BUNDLE:
 {
@@ -34,19 +35,19 @@ const parseGitRepoAddr = (gitRepoAddress) => {
 const BundleList = ({children = [], onDeleteBundle, disabled}) => {
     const elemList = children.map(bundle => bundle.gitRepoAddress).map(
         parseGitRepoAddr).map((childrenInfo, index) =>
-        <li key={index.toString()}>
-            <Tag disabled={disabled}>
-                {disabled && childrenInfo.name}
-                {!disabled && <a href={childrenInfo.gitRepoAddress}
-                   target={"_new"}>{childrenInfo.name}</a>}
-                {!disabled && <span
-                    className="button-delete"
-                    onClick={() => onDeleteBundle(childrenInfo.gitRepoAddress)}>
-                +
-              </span>}
-            </Tag>
-        </li>
-    )
+            <li key={index.toString()}>
+                <Tag disabled={disabled}>
+                    {disabled && childrenInfo.name}
+                    {!disabled && <a href={clickableSSHGitURL(childrenInfo.gitRepoAddress)}
+                        target={"_new"}>{childrenInfo.name}</a>}
+                    {!disabled && <span
+                        className="button-delete"
+                        onClick={() => onDeleteBundle(childrenInfo.gitRepoAddress)}>
+                        +
+                    </span>}
+                </Tag>
+            </li>
+        )
 
     return (
         <div className="BundlesOfBundleGroup-Bundle-list">
@@ -64,7 +65,9 @@ const BundlesOfBundleGroup = ({
     disabled = false,
     minOneBundleError,
     bundleStatus,
-    mode
+    mode,
+    operation,
+    bundleGroupIsEditable
 }) => {
 
     useEffect(() => {
@@ -74,8 +77,9 @@ const BundlesOfBundleGroup = ({
     const [bundleList, setBundleList] = useState([])
     const [gitRepo, setGitRepo] = useState("")
     const [validationResult, setValidationResult] = useState({})
-    const [isUrlReqValid, setIsUrlReqValid] = useState(false);
-    const [isUrlBundleRexValid, setIsUrlBundleRexValid] = useState(false);
+    const [isUrlReqValid, setIsUrlReqValid] = useState(false)
+    const [isUrlBundleRexValid, setIsUrlBundleRexValid] = useState(false)
+    disabled = bundleGroupIsEditable && operation !== OPERATION.ADD_NEW_VERSION ? false : operation === OPERATION.ADD_NEW_VERSION ? false : disabled
 
     useEffect(() => {
         !bundleList.length && setIsUrlReqValid(false);
