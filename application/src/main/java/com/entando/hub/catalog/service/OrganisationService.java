@@ -24,7 +24,7 @@ public class OrganisationService {
     final private OrganisationRepository organisationRepository;
     final private BundleGroupRepository bundleGroupRepository;
     
-    private final Logger logger = LoggerFactory.getLogger(KeycloakService.class);
+    private final Logger logger = LoggerFactory.getLogger(OrganisationService.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
     public OrganisationService(OrganisationRepository organisationRepository, BundleGroupRepository bundleGroupRepository) {

@@ -28,7 +28,7 @@ public class AppBuilderBundleController {
 	private final BundleService bundleService;
 	private final BundleGroupVersionService bundleGroupVersionService;
 	
-	private final Logger logger = LoggerFactory.getLogger(BundleController.class);
+	private final Logger logger = LoggerFactory.getLogger(AppBuilderBundleController.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
 	public AppBuilderBundleController(BundleService bundleService,

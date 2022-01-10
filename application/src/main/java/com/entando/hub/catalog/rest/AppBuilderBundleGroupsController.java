@@ -21,7 +21,7 @@ import io.swagger.v3.oas.annotations.Operation;
 public class AppBuilderBundleGroupsController {
     private final BundleGroupVersionController bundleGroupVersionController;
     
-    private final Logger logger = LoggerFactory.getLogger(BundleController.class);
+    private final Logger logger = LoggerFactory.getLogger(AppBuilderBundleGroupsController.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
     public AppBuilderBundleGroupsController(BundleGroupVersionController bundleGroupVersionController) {
