@@ -1,10 +1,5 @@
 package com.entando.hub.catalog.service;
 
-import com.entando.hub.catalog.persistence.OrganisationRepository;
-import com.entando.hub.catalog.persistence.PortalUserRepository;
-import com.entando.hub.catalog.persistence.entity.Organisation;
-import com.entando.hub.catalog.persistence.entity.PortalUser;
-import com.entando.hub.catalog.service.model.UserRepresentation;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -13,14 +8,20 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
 import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.entando.hub.catalog.persistence.OrganisationRepository;
+import com.entando.hub.catalog.persistence.PortalUserRepository;
+import com.entando.hub.catalog.persistence.entity.Organisation;
+import com.entando.hub.catalog.persistence.entity.PortalUser;
 import com.entando.hub.catalog.rest.model.OrganisationResponseView;
 import com.entando.hub.catalog.rest.model.PortalUserResponseView;
+import com.entando.hub.catalog.service.model.UserRepresentation;
 
 /**
  * @author E.Santoboni
@@ -29,6 +30,8 @@ import com.entando.hub.catalog.rest.model.PortalUserResponseView;
 public class PortalUserService {
 
     private static final Logger logger = LoggerFactory.getLogger(PortalUserService.class);
+    private final String CLASS_NAME = this.getClass().getSimpleName();
+
 
     @Autowired
     private KeycloakService keycloakService;
@@ -55,7 +58,7 @@ public class PortalUserService {
         } else {
             users = this.portalUserRepository.findAll();
         }
-
+        logger.info("{}: getUsersByOrganisation: Users found by Orgainsation Id : {}", CLASS_NAME , orgId );
         //TODO maybe this could be improved by caching
         return users.stream()
                 .filter(u -> null != this.keycloakService.getUser(u.getUsername()))
@@ -93,6 +96,7 @@ public class PortalUserService {
             return false;
         }
         this.portalUserRepository.save(portalUser);
+        logger.info("{}: addUserToOrganization: User is added to organization: {}", CLASS_NAME, orgId );
         return true;
     }
 
@@ -118,7 +122,6 @@ public class PortalUserService {
 			/** Delete the user if it is not associated with any organization */
 			this.portalUserRepository.deleteById(portalUser.getId());
         }
-
         return true;
     }
 
@@ -145,6 +148,7 @@ public class PortalUserService {
 			}
 			portalUserResponseView = PortalUserToPortalUserResponseView(portalUser);
 		}
+        logger.info("{}: getUserByUsername: User is found by username: {}", CLASS_NAME ,username );
 		return portalUserResponseView;
 	}
 

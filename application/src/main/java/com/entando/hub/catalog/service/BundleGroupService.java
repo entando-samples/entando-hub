@@ -31,7 +31,7 @@ public class BundleGroupService {
     final private CategoryRepository categoryRepository;
     private final BundleGroupVersionService bundleGroupVersionService;
 
-    private final Logger logger = LoggerFactory.getLogger(BundleController.class);
+    private final Logger logger = LoggerFactory.getLogger(BundleGroupService.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
 
     public BundleGroupService(BundleGroupRepository bundleGroupRepository, CategoryRepository categoryRepository, BundleGroupVersionService bundleGroupVersionService) {
