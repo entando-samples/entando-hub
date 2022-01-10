@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -25,6 +27,9 @@ public class AppBuilderBundleController {
 
 	private final BundleService bundleService;
 	private final BundleGroupVersionService bundleGroupVersionService;
+	
+	private final Logger logger = LoggerFactory.getLogger(BundleController.class);
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
 	public AppBuilderBundleController(BundleService bundleService,
 			BundleGroupVersionService bundleGroupVersionService) {
@@ -36,6 +41,7 @@ public class AppBuilderBundleController {
 	@CrossOrigin
 	@GetMapping("/")
 	public PagedContent<BundleController.Bundle, Bundle> getBundles(@RequestParam Integer page,@RequestParam Integer pageSize, @RequestParam(required = false) String bundleGroupId) {
+		logger.debug("REST request to get bundle by bundleGroup Id: {} ", bundleGroupId );
 		Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
 
 		Page<Bundle> bundlesPage = bundleService.getBundles(sanitizedPageNum, pageSize,Optional.ofNullable(bundleGroupId));
@@ -48,6 +54,7 @@ public class AppBuilderBundleController {
 						optionalBundleGroup.ifPresent(group -> bundle.setDescriptionImage(group.getDescriptionImage()));
 					}
 				}).collect(Collectors.toList()), bundlesPage);
+		logger.info("{}: getBundles: Bundles are found by bundleGroup Id: {} ", bundleGroupId );
 		return pagedContent;
 	}
 

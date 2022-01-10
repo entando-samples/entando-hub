@@ -1,9 +1,13 @@
 package com.entando.hub.catalog.service;
 
-import com.entando.hub.catalog.service.exception.OidcException;
-import com.entando.hub.catalog.service.model.AuthResponse;
-import com.entando.hub.catalog.service.model.UserRepresentation;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang3.StringUtils;
+import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +21,15 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
+import com.entando.hub.catalog.service.exception.OidcException;
+import com.entando.hub.catalog.service.model.AuthResponse;
+import com.entando.hub.catalog.service.model.UserRepresentation;
 
 @Service
 public class KeycloakService {
 
     private final Logger logger = LoggerFactory.getLogger(KeycloakService.class);
+    private final String CLASS_NAME = this.getClass().getSimpleName();
 
     private OpenIDConnectService oidcService;
     private KeycloakSpringBootProperties configuration;
@@ -61,6 +63,7 @@ public class KeycloakService {
         }
         final Map<String, String> params = Collections.singletonMap("username", username);
         List<UserRepresentation> list = this.listUsers(params);
+        logger.info("{}: getUser: Requested User found {}", CLASS_NAME, username );
         return list.stream().filter(ur -> ur.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
     }
     
@@ -68,6 +71,7 @@ public class KeycloakService {
         final String url = String.format("%s/admin/realms/%s/users", configuration.getAuthServerUrl(), configuration.getRealm());
         final ResponseEntity<UserRepresentation[]> response = this.executeRequest(url,
                 HttpMethod.GET, createEntity(), UserRepresentation[].class, params);
+        logger.info("{}: listUsers: getting the keycloack uses ", CLASS_NAME );
         return response.getBody() != null ? Arrays.asList(response.getBody()) : Collections.emptyList();
     }
     
