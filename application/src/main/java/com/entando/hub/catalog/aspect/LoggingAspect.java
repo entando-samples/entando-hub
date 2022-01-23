@@ -92,7 +92,7 @@ public class LoggingAspect {
 			log.info(request.getMethod() + " method {}.{}() by user: "
 							+ userName + " at time:"
 							+ timeStamp, joinPoint.getSignature().getDeclaringTypeName(),
-					joinPoint.getSignature().getName(), userName, auth.getPrincipal(), timeStamp, Arrays.toString(joinPoint.getArgs()));
+					joinPoint.getSignature().getName(), userName, auth.getPrincipal(), timeStamp);
 		}
 		if (log.isDebugEnabled()) {
 			log.debug(request.getMethod() + " method {}.{}() by user: "
