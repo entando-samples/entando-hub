@@ -5,7 +5,6 @@
   "dependencies": {
     "@carbon/grid": "^10.33.0",
     "@ckeditor/ckeditor5-build-classic": "^35.1.0",
-    "@ckeditor/ckeditor5-react": "^5.0.2",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^11.2.7",
     "@testing-library/user-event": "^12.8.3",

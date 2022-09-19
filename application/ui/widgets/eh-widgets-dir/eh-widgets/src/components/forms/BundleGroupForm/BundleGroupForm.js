@@ -34,7 +34,7 @@ import BundlesOfBundleGroup from "./update-bundle-group/bundles-of-bundle-group/
 import IconUploader from "./update-bundle-group/icon-uploader/IconUploader";
 import "./update-bundle-group/update-bundle-group.scss";
 import { isHubAdmin } from "../../../helpers/helpers";
-
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const BundleGroupForm = ({
                              bundleGroup,
@@ -55,13 +55,11 @@ const BundleGroupForm = ({
     const [isDocumentationAddressValid, setIsDocumentationAddressValid] = useState(false);
     const [isBundleVersionValid, setIsBundleVersionValid] = useState(false);
     const [isContactUrlValid, setIsContactUrlValid] = useState(false);
-
     const [showNameCharLimitErrMsg, setShowNameCharLimitErrMsg] = useState(false);
     const [showDescriptionCharLimitErrMsg, setShowDescriptionCharLimitErrMsg] = useState(false);
     const [showDocUrlCharLimitErrMsg, setShowDocUrlCharLimitErrMsg] = useState(false);
     const [showVersionCharLimitErrMsg, setShowVersionCharLimitErrMsg] = useState(false);
     const [showContactUrlCharLimitErrMsg, setShowContactUrlCharLimitErrMsg] = useState(false);
-
     const [mounted, setMounted] = useState(false);
     const timerRef = useRef(null);
 
@@ -131,7 +129,8 @@ const BundleGroupForm = ({
         changeBundleGroup("versionDetails", versionDetails)
     }
 
-    const disabled = selectStatusValues.disabled
+    const disabled = selectStatusValues.disabled;
+
     const createSelectOptionsForRoleAndSetSelectStatus =
         selectStatusValues.values.map((curr, index) => (
             <SelectItem key={index} value={curr.value} text={i18n.t(curr.text)}/>
@@ -254,13 +253,17 @@ const BundleGroupForm = ({
         setBundleStatus(e.target.value)
     }
 
-    const descriptionChangeHandler = (e) => {
-        setBundleDescriptionLength(e.target.value.length);
-        createVersionDetailsObj("description", e.target.value);
-        if (e.target.value.length < CHAR_LENGTH) {
-            const errorMessageForLengthZeroOrThree = e.target.value.trim().length === 0 ? i18n.t('formValidationMsg.descriptionRequired') : i18n.t('formValidationMsg.minDescription')
+    const descriptionChangeHandler = (editor) => {
+
+        let descriptionData = editor && editor.getData();
+
+        createVersionDetailsObj("description", descriptionData);
+        setBundleDescriptionLength(descriptionData.length);
+
+        if (descriptionData.length < CHAR_LENGTH) {
+            const errorMessageForLengthZeroOrThree = descriptionData.trim().length === 0 ? i18n.t('formValidationMsg.descriptionRequired') : i18n.t('formValidationMsg.minDescription')
             validationResult["versionDetails.description"] = [errorMessageForLengthZeroOrThree]
-        } else if (e.target.value.length > MAX_CHAR_LENGTH_FOR_DESC) {
+        } else if (descriptionData.length > MAX_CHAR_LENGTH_FOR_DESC) {
             validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')]
         }
     }
@@ -314,21 +317,85 @@ const BundleGroupForm = ({
         }
     }
 
+    const replaceTextAreaToCKEditor =() => {
+        let formDescriptionTextArea = document.querySelector('#description');
+        if(formDescriptionTextArea && formDescriptionTextArea.style && formDescriptionTextArea.style.display !== 'none'){
+            ClassicEditor
+                .create( document.querySelector( '#description' ), {
+                    toolbar: {
+                        items: [
+                            'undo', 'redo',
+                            '|',
+                            'selectAll',
+                            '|',
+                            'heading',
+                            '|',
+                            'bold', 'italic',
+                            // 'underline', 'code', 'subscript', 'superscript',
+                            '|',
+                            // 'specialCharacters', 'horizontalLine', 'pageBreak',
+                            // '|',
+                            // 'highlight', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
+                            '|',
+                            'link', 'blockQuote', 'insertTable',
+                            '|',
+                            'bulletedList', 'numberedList',
+                            // 'todoList',
+                            '|',
+                            'outdent', 'indent',
+                            // 'alignment',
+                            // '|',
+                            // 'textPartLanguage',
+                            // '|',
+                            // 'sourceEditing'
+                        ],
+                        shouldNotGroupWhenFull: true,
+                    },
+                } )
+                .then( editor => {
+                    window.editor = editor;
+                    editor.model.document.on( 'change:data', ( evt, data ) => {
+                        descriptionChangeHandler(editor)
+                    } );
+                } )
+                .catch( error => {
+                    console.error( error );
+                } );
+        }
+    };
+
     useEffect(() => {
         setMounted(true);
-        // Clear the interval when the component unmounts
         return () => {
             setMounted(false);
             clearTimeout(timerRef.current);
         };
     }, []);
 
+    useEffect(() => {
+        const onPageLoad = () => {
+            replaceTextAreaToCKEditor();
+        };
+        if (document.readyState === "complete") {
+            return () => {
+                onPageLoad()
+            };
+        } else {
+            window.addEventListener("load", onPageLoad);
+            // Remove the event listener when component unmounts
+            return () => window.removeEventListener("load", onPageLoad);
+        }
+
+    });
+
     const onAddOrRemoveBundleFromList = (newBundleList) => {
         createVersionDetailsObj("bundles", newBundleList)
     }
 
     const shouldDisable = disabled || (!bundleGroup.isEditable && mode === "Edit");
-    const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {}
+    const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {};
+
+
     return (
         <>
             <Content className="Edit-bundle-group">
@@ -410,6 +477,7 @@ const BundleGroupForm = ({
                         </Column>
 
                         {renderOrganisationColumn(bundleGroup.organisationId, orgsList)}
+
                         <Column sm={16} md={16} lg={16}>
                             <Select
                                 invalid={!!validationResult["versionDetails.status"]}
@@ -479,14 +547,16 @@ const BundleGroupForm = ({
                                 }
                                 disabled={disabled}
                                 value={versionDetails.description}
-                                onChange={descriptionChangeHandler}
                                 maxLength={MAX_CHAR_LENGTH_FOR_DESC}
-                                onKeyPress={keyPressHandler}
+                                // onKeyPress={keyPressHandler}
                                 onBlur={(e) => trimBeforeFormSubmitsHandler(e, "description")}
+                                // className="ckeditor"
                                 id={DESCRIPTION_FIELD_ID}
                                 labelText={`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}
                             />
-                            <div className="bg-form-counter bx--label">{versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
+
+                            <div className="bg-form-counter bx--label">{versionDetails && versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
+                            {/*<div className="bg-form-counter bx--label">{bundleDescriptionLength && bundleDescriptionLength > 0}/{MAX_CHAR_LENGTH_FOR_DESC}</div>*/}
                         </Column>
                     </Row>
                 </Grid>

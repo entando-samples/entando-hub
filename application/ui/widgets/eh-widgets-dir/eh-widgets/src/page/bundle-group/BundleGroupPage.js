@@ -17,6 +17,7 @@ import i18n from "../../i18n"
 import { SLASH_VERSIONS } from "../../helpers/constants"
 import BundlesOfBundleGroup
   from '../../components/forms/BundleGroupForm/update-bundle-group/bundles-of-bundle-group/BundlesOfBundleGroup';
+import parse from 'html-react-parser';
 
 /*
 BUNDLEGROUP:
@@ -93,7 +94,6 @@ const BundleGroupPage = () => {
   const checkContactUsModal = (url) => {
     return url && url.includes("discover.entando.com")
   }
-
 
   return (
       <>
@@ -173,41 +173,41 @@ const BundleGroupPage = () => {
                     </div>
                   </Tile>
                 </Column>
-              <Column lg={12}>
-                <Tile>
-                  <p className="BundleGroupPage-title">
-                    {pageModel.bundleGroup && pageModel.bundleGroup.name}
-                  </p>
+                <Column lg={12}>
+                  <Tile>
+                    <p className="BundleGroupPage-title">
+                      {pageModel.bundleGroup && pageModel.bundleGroup.name}
+                    </p>
 
-                  <div className="BundleGroupPage-flex">
-                    <Column className="BundleGroupPage-specs">
-                      {i18n.t('page.bundleGroupInfo.version')}
-                      <p>{pageModel.bundleGroup && pageModel.bundleGroup.version}</p>
-                    </Column>
+                    <div className="BundleGroupPage-flex">
+                      <Column className="BundleGroupPage-specs">
+                        {i18n.t('page.bundleGroupInfo.version')}
+                        <p>{pageModel.bundleGroup && pageModel.bundleGroup.version}</p>
+                      </Column>
 
-                    <Column className="BundleGroupPage-specs">
-                      {i18n.t('page.bundleGroupInfo.category')}
-                      <p>{pageModel.category && pageModel.category.name}</p>
-                    </Column>
+                      <Column className="BundleGroupPage-specs">
+                        {i18n.t('page.bundleGroupInfo.category')}
+                        <p>{pageModel.category && pageModel.category.name}</p>
+                      </Column>
 
-                    <Column className="BundleGroupPage-specs">
-                      {i18n.t('page.bundleGroupInfo.organisation')}
-                      <p>{pageModel.organisation && pageModel.organisation.name}</p>
-                    </Column>
-                  </div>
+                      <Column className="BundleGroupPage-specs">
+                        {i18n.t('page.bundleGroupInfo.organisation')}
+                        <p>{pageModel.organisation && pageModel.organisation.name}</p>
+                      </Column>
+                    </div>
 
-                  <div className="BundleGroupPage-description">
-                    {pageModel.bundleGroup && pageModel.bundleGroup.description}
-                  </div>
-                  {(pageModel.children && pageModel.children.length > 0) &&
-                  <>
-                    <BundlesOfBundleGroup
-                        initialBundleList={pageModel.children}
-                        disabled={true}
-                    />
-                  </>
-                  }
-                </Tile>
+                    <div className="BundleGroupPage-description">
+                      {pageModel && pageModel.bundleGroup && pageModel.bundleGroup.description && parse(pageModel.bundleGroup.description)}
+                    </div>
+                    {(pageModel.children && pageModel.children.length > 0) &&
+                    <>
+                      <BundlesOfBundleGroup
+                          initialBundleList={pageModel.children}
+                          disabled={true}
+                      />
+                    </>
+                    }
+                  </Tile>
               </Column>
               </Row>
             </div>
