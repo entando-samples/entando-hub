@@ -393,7 +393,6 @@ const BundleGroupForm = ({
     const shouldDisable = disabled || (!bundleGroup.isEditable && mode === "Edit");
     const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {};
 
-
     return (
         <>
             <Content className="Edit-bundle-group">
@@ -551,9 +550,7 @@ const BundleGroupForm = ({
                                 id={DESCRIPTION_FIELD_ID}
                                 labelText={`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}
                             />
-
                             <div className="bg-form-counter bx--label">{versionDetails && versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
-                            {/*<div className="bg-form-counter bx--label">{bundleDescriptionLength && bundleDescriptionLength > 0}/{MAX_CHAR_LENGTH_FOR_DESC}</div>*/}
                         </Column>
                     </Row>
                 </Grid>
