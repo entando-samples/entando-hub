@@ -62,7 +62,6 @@ const BundleGroupForm = ({
     const [showContactUrlCharLimitErrMsg, setShowContactUrlCharLimitErrMsg] = useState(false);
     const [mounted, setMounted] = useState(false);
     const timerRef = useRef(null);
-
     const orgsList = orgList && orgList.length ? orgList : [];
 
     const renderOrganisationColumn = (currOrganisationId, organisations) => {
@@ -254,17 +253,15 @@ const BundleGroupForm = ({
     }
 
     const descriptionChangeHandler = (editor) => {
-
         let descriptionData = editor && editor.getData();
-
         createVersionDetailsObj("description", descriptionData);
         setBundleDescriptionLength(descriptionData.length);
-
         if (descriptionData.length < CHAR_LENGTH) {
-            const errorMessageForLengthZeroOrThree = descriptionData.trim().length === 0 ? i18n.t('formValidationMsg.descriptionRequired') : i18n.t('formValidationMsg.minDescription')
-            validationResult["versionDetails.description"] = [errorMessageForLengthZeroOrThree]
+            const errorMessageForLengthZeroOrThree = descriptionData.trim().length === 0 ?
+                i18n.t('formValidationMsg.descriptionRequired') : i18n.t('formValidationMsg.minDescription')
+            validationResult["versionDetails.description"] = [errorMessageForLengthZeroOrThree];
         } else if (descriptionData.length > MAX_CHAR_LENGTH_FOR_DESC) {
-            validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')]
+            validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')];
         }
     }
 
@@ -366,6 +363,7 @@ const BundleGroupForm = ({
 
     useEffect(() => {
         setMounted(true);
+        // Clear the interval when the component unmounts
         return () => {
             setMounted(false);
             clearTimeout(timerRef.current);
@@ -548,9 +546,8 @@ const BundleGroupForm = ({
                                 disabled={disabled}
                                 value={versionDetails.description}
                                 maxLength={MAX_CHAR_LENGTH_FOR_DESC}
-                                // onKeyPress={keyPressHandler}
+                                onKeyPress={keyPressHandler}
                                 onBlur={(e) => trimBeforeFormSubmitsHandler(e, "description")}
-                                // className="ckeditor"
                                 id={DESCRIPTION_FIELD_ID}
                                 labelText={`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}
                             />
