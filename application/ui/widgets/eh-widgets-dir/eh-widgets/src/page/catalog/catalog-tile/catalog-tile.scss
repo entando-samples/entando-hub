@@ -20,6 +20,18 @@
   min-width: 220px;
 }
 
+.CatalogPageContent-wrapper .CatalogTile .ck.ck-editor__main {
+  cursor: text;
+}
+
+.ck-editor__editable_inline {
+  max-height: 150px;
+}
+
+.bx--modal-content .ck p {
+  padding-right: inherit;
+}
+
 .CatalogPageContent-wrapper .CatalogTile:hover {
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }

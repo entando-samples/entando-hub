@@ -6,7 +6,7 @@ import {
     Row,
     Select,
     SelectItem,
-    TextArea,
+    // TextArea,
     TextInput
 } from "carbon-components-react";
 import { useEffect, useRef, useState } from "react";
@@ -34,6 +34,7 @@ import BundlesOfBundleGroup from "./update-bundle-group/bundles-of-bundle-group/
 import IconUploader from "./update-bundle-group/icon-uploader/IconUploader";
 import "./update-bundle-group/update-bundle-group.scss";
 import { isHubAdmin } from "../../../helpers/helpers";
+import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const BundleGroupForm = ({
@@ -162,7 +163,13 @@ const BundleGroupForm = ({
      * @description Trimming whitespaces from the field value.
      */
     const trimBeforeFormSubmitsHandler = (e, field) => {
-        changeBundleGroup(field, e.target.value.trim())
+            changeBundleGroup(field, e.target.value.trim())
+    }
+
+    const trimCkEditorBeforeFormSubmitsHandler =(event, editor) => {
+        const editorData = editor.getData();
+        changeBundleGroup('description', editorData);
+
     }
 
     const organisationChangeHandler = (e) => {
@@ -253,15 +260,17 @@ const BundleGroupForm = ({
     }
 
     const descriptionChangeHandler = (editor) => {
+        let descriptionEditorId = editor && editor.id;
         let descriptionData = editor && editor.getData();
         createVersionDetailsObj("description", descriptionData);
         setBundleDescriptionLength(descriptionData.length);
-        if (descriptionData.length < CHAR_LENGTH) {
+        if (bundleDescriptionLength < CHAR_LENGTH) {
             const errorMessageForLengthZeroOrThree = descriptionData.trim().length === 0 ?
                 i18n.t('formValidationMsg.descriptionRequired') : i18n.t('formValidationMsg.minDescription')
             validationResult["versionDetails.description"] = [errorMessageForLengthZeroOrThree];
         } else if (descriptionData.length > MAX_CHAR_LENGTH_FOR_DESC) {
             validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')];
+            timerRef.current = setTimeout(() => disappearCharLimitErrMsg(descriptionEditorId), CHAR_LIMIT_MSG_SHOW_TIME);
         }
     }
 
@@ -293,6 +302,7 @@ const BundleGroupForm = ({
         }
     }
 
+
     const disappearCharLimitErrMsg = (fieldId) => {
         if (mounted) {
             if (fieldId === NAME_FIELD_ID) {
@@ -314,53 +324,6 @@ const BundleGroupForm = ({
         }
     }
 
-    const replaceTextAreaToCKEditor =() => {
-        let formDescriptionTextArea = document.querySelector('#description');
-        if(formDescriptionTextArea && formDescriptionTextArea.style && formDescriptionTextArea.style.display !== 'none'){
-            ClassicEditor
-                .create( document.querySelector( '#description' ), {
-                    toolbar: {
-                        items: [
-                            'undo', 'redo',
-                            '|',
-                            'selectAll',
-                            '|',
-                            'heading',
-                            '|',
-                            'bold', 'italic',
-                            // 'underline', 'code', 'subscript', 'superscript',
-                            '|',
-                            // 'specialCharacters', 'horizontalLine', 'pageBreak',
-                            // '|',
-                            // 'highlight', 'fontSize', 'fontFamily', 'fontColor', 'fontBackgroundColor',
-                            '|',
-                            'link', 'blockQuote', 'insertTable',
-                            '|',
-                            'bulletedList', 'numberedList',
-                            // 'todoList',
-                            '|',
-                            'outdent', 'indent',
-                            // 'alignment',
-                            // '|',
-                            // 'textPartLanguage',
-                            // '|',
-                            // 'sourceEditing'
-                        ],
-                        shouldNotGroupWhenFull: true,
-                    },
-                } )
-                .then( editor => {
-                    window.editor = editor;
-                    editor.model.document.on( 'change:data', ( evt, data ) => {
-                        descriptionChangeHandler(editor)
-                    } );
-                } )
-                .catch( error => {
-                    console.error( error );
-                } );
-        }
-    };
-
     useEffect(() => {
         setMounted(true);
         // Clear the interval when the component unmounts
@@ -372,7 +335,7 @@ const BundleGroupForm = ({
 
     useEffect(() => {
         const onPageLoad = () => {
-            replaceTextAreaToCKEditor();
+            // replaceTextAreaToCKEditor();
         };
         if (document.readyState === "complete") {
             return () => {
@@ -413,7 +376,7 @@ const BundleGroupForm = ({
                                 invalid={(bundleNameLength < CHAR_LENGTH || bundleNameLength > MAX_CHAR_LENGTH || showNameCharLimitErrMsg) && !!validationResult["name"]}
                                 invalidText={
                                     (bundleNameLength < CHAR_LENGTH || bundleNameLength > MAX_CHAR_LENGTH || showNameCharLimitErrMsg) ? (validationResult["name"] &&
-                                    validationResult["name"].join("; ")) : null
+                                        validationResult["name"].join("; ")) : null
                                 }
                                 disabled={shouldDisable}
                                 value={bundleGroup.name}
@@ -531,8 +494,42 @@ const BundleGroupForm = ({
                             />
                         </Column>
 
+                        <Column sm={16} md={16} lg={16}>
+                            <div className="bg-form-counter bx--label">{versionDetails && versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
+                        </Column>
+
                         <Column className="bg-form-textarea" sm={16} md={16} lg={16}>
-                            <TextArea
+
+                            {/*To be replaced with CKEDITOR REACT*/}
+
+                            {/*<TextArea*/}
+                            {/*    invalid={*/}
+                            {/*        (bundleDescriptionLength < CHAR_LENGTH || bundleDescriptionLength > MAX_CHAR_LENGTH_FOR_DESC || showDescriptionCharLimitErrMsg) &&*/}
+                            {/*        !!validationResult["versionDetails.description"]*/}
+                            {/*    }*/}
+                            {/*    invalidText={*/}
+                            {/*        (bundleDescriptionLength < CHAR_LENGTH || bundleDescriptionLength > MAX_CHAR_LENGTH_FOR_DESC || showDescriptionCharLimitErrMsg) &&*/}
+                            {/*        (validationResult["versionDetails.description"] &&*/}
+                            {/*            validationResult["versionDetails.description"].join("; "))*/}
+                            {/*    }*/}
+                            {/*    disabled={disabled}*/}
+                            {/*    value={versionDetails.description}*/}
+                            {/*    maxLength={MAX_CHAR_LENGTH_FOR_DESC}*/}
+                            {/*    onKeyPress={keyPressHandler}*/}
+                            {/*    onBlur={(e) => trimBeforeFormSubmitsHandler(e, "description")}*/}
+                            {/*    id={DESCRIPTION_FIELD_ID}*/}
+                            {/*    labelText={`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}*/}
+                            {/*/>*/}
+
+                            <CKEditor
+                                editor={ ClassicEditor }
+                                id={DESCRIPTION_FIELD_ID}
+                                config={{
+                                    toolbar: [ 'undo', 'redo', '|', 'heading', '|', 'bold', 'italic', '|',
+                                        // 'link',
+                                        'blockQuote', '|', 'bulletedList', 'numberedList' ],
+                                }}
+                                data={versionDetails.description}
                                 invalid={
                                     (bundleDescriptionLength < CHAR_LENGTH || bundleDescriptionLength > MAX_CHAR_LENGTH_FOR_DESC || showDescriptionCharLimitErrMsg) &&
                                     !!validationResult["versionDetails.description"]
@@ -542,15 +539,10 @@ const BundleGroupForm = ({
                                     (validationResult["versionDetails.description"] &&
                                         validationResult["versionDetails.description"].join("; "))
                                 }
-                                disabled={disabled}
-                                value={versionDetails.description}
-                                maxLength={MAX_CHAR_LENGTH_FOR_DESC}
-                                onKeyPress={keyPressHandler}
-                                onBlur={(e) => trimBeforeFormSubmitsHandler(e, "description")}
-                                id={DESCRIPTION_FIELD_ID}
-                                labelText={`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}
+                                onChange={ ( event, editor ) => descriptionChangeHandler(editor)}
+                                onBlur={(event, editor) => trimCkEditorBeforeFormSubmitsHandler(event ,editor)}
                             />
-                            <div className="bg-form-counter bx--label">{versionDetails && versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
+
                         </Column>
                     </Row>
                 </Grid>
