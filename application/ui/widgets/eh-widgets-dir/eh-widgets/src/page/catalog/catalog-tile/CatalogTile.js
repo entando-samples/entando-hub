@@ -7,6 +7,7 @@ import { isHubUser } from "../../../helpers/helpers";
 import { textFromStatus } from '../../../helpers/profiling';
 import { BUNDLE_STATUS, HOME_TO_BG_PAGE_URL, VERSIONS_TO_BG_PAGE_URL } from "../../../helpers/constants";
 import i18n from "../../../i18n";
+import parse from 'html-react-parser';
 
 const CatalogTile = ({
   bundleGroupId,
@@ -99,7 +100,7 @@ const CatalogTile = ({
               {i18n.t(textFromStatus(status))}
             </div>
           )}
-          <div className="CatalogTile-card-description">{description}</div>
+          <div className="CatalogTile-card-description">{parse(description)}</div>
           <div className="tag-setting">
             <Tag type={tagColor} title="Clear Filter">
               {categoryName}

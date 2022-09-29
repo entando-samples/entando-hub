@@ -17,6 +17,7 @@ import i18n from "../../i18n"
 import { SLASH_VERSIONS } from "../../helpers/constants"
 import BundlesOfBundleGroup
   from '../../components/forms/BundleGroupForm/update-bundle-group/bundles-of-bundle-group/BundlesOfBundleGroup';
+import parse from 'html-react-parser';
 
 /*
 BUNDLEGROUP:
@@ -197,7 +198,7 @@ const BundleGroupPage = () => {
                   </div>
 
                   <div className="BundleGroupPage-description">
-                    {pageModel.bundleGroup && pageModel.bundleGroup.description}
+                    {pageModel.bundleGroup && pageModel.bundleGroup.description && parse(pageModel.bundleGroup.description)}
                   </div>
                   {(pageModel.children && pageModel.children.length > 0) &&
                   <>
