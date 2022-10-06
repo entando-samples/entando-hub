@@ -56,10 +56,10 @@ const BundleGroupForm = ({
     const [isBundleVersionValid, setIsBundleVersionValid] = useState(false);
     const [isContactUrlValid, setIsContactUrlValid] = useState(false);
     const [showNameCharLimitErrMsg, setShowNameCharLimitErrMsg] = useState(false);
+    const [showDescriptionCharLimitErrMsg, setShowDescriptionCharLimitErrMsg] = useState(false);
     const [showDocUrlCharLimitErrMsg, setShowDocUrlCharLimitErrMsg] = useState(false);
     const [showVersionCharLimitErrMsg, setShowVersionCharLimitErrMsg] = useState(false);
     const [showContactUrlCharLimitErrMsg, setShowContactUrlCharLimitErrMsg] = useState(false);
-    const [showDescriptionCharLimitErrMsg, setShowDescriptionCharLimitErrMsg] = useState(false);
     const [mounted, setMounted] = useState(false);
     const timerRef = useRef(null);
     const reactQuillRef = useRef();
@@ -266,7 +266,7 @@ const BundleGroupForm = ({
             validationResult[NAME_FIELD_ID] = [i18n.t('formValidationMsg.max25Char')]
             setShowNameCharLimitErrMsg(true);
             timerRef.current = setTimeout(() => disappearCharLimitErrMsg(e.target.id), CHAR_LIMIT_MSG_SHOW_TIME);
-        } else if ((e.target.id === DESCRIPTION_FIELD_ID || 'div.ql-editor') && e.target.value.length >= MAX_CHAR_LENGTH_FOR_DESC) {
+        } else if (e.target.id === DESCRIPTION_FIELD_ID && e.target.value.length >= MAX_CHAR_LENGTH_FOR_DESC) {
             validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')]
             setShowDescriptionCharLimitErrMsg(true);
             timerRef.current = setTimeout(() => disappearCharLimitErrMsg(e.target.id), CHAR_LIMIT_MSG_SHOW_TIME);
@@ -290,6 +290,9 @@ const BundleGroupForm = ({
             if (fieldId === NAME_FIELD_ID) {
                 validationResult[NAME_FIELD_ID] = undefined;
                 setShowNameCharLimitErrMsg(false);
+            } else if (fieldId === DESCRIPTION_FIELD_ID) {
+                validationResult["versionDetails.description"] = undefined;
+                setShowDescriptionCharLimitErrMsg(false);
             } else if (fieldId === DOCUMENTATION_FIELD_ID) {
                 validationResult["versionDetails.documentationUrl"] = undefined;
                 setShowDocUrlCharLimitErrMsg(false);
@@ -299,10 +302,7 @@ const BundleGroupForm = ({
             } else if (fieldId === CONTACT_URL_FIELD_ID) {
                 validationResult["versionDetails.contactUrl"] = undefined;
                 setShowVersionCharLimitErrMsg(false);
-            } else if (fieldId === DESCRIPTION_FIELD_ID) {
-                validationResult["versionDetails.description"] = undefined;
-                setShowDescriptionCharLimitErrMsg(false);
-            }
+            } 
         }
     }
 
@@ -322,15 +322,15 @@ const BundleGroupForm = ({
     const shouldDisable = disabled || (!bundleGroup.isEditable && mode === "Edit");
     const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {};
 
-      const checkCharacterCount = (event) => {
-        const descLength = versionDetails && versionDetails.description && versionDetails.description.length;
-        if (descLength > MAX_CHAR_LENGTH_FOR_DESC-1 && event.key !== 'Backspace') {
-            setDescriptionError(true);
-            event.preventDefault();
-        } else {
-            setDescriptionError(false);
-        }
-      };
+    const checkCharacterCount = (event) => {
+    const descLength = versionDetails && versionDetails.description && versionDetails.description.length;
+    if (descLength > MAX_CHAR_LENGTH_FOR_DESC-1 && event.key !== 'Backspace') {
+        setDescriptionError(true);
+        event.preventDefault();
+    } else {
+        setDescriptionError(false);
+    }
+    };
 
     return (
         <>
