@@ -6,7 +6,7 @@ import {
     Row,
     Select,
     SelectItem,
-    TextInput
+    TextInput,
 } from "carbon-components-react";
 import { useEffect, useRef, useState } from "react";
 import values from "../../../config/common-configuration";
@@ -33,8 +33,11 @@ import BundlesOfBundleGroup from "./update-bundle-group/bundles-of-bundle-group/
 import IconUploader from "./update-bundle-group/icon-uploader/IconUploader";
 import "./update-bundle-group/update-bundle-group.scss";
 import { isHubAdmin } from "../../../helpers/helpers";
+
 import ReactQuill from 'react-quill';
+
 import 'react-quill/dist/quill.snow.css';
+
 
 const BundleGroupForm = ({
                              bundleGroup,
@@ -51,6 +54,7 @@ const BundleGroupForm = ({
 
     const [bundleStatus, setBundleStatus] = useState(theBundleStatus ? theBundleStatus : mode === 'Add' ? BUNDLE_STATUS.NOT_PUBLISHED : "");
     const [bundleNameLength, setBundleNameLength] = useState(0);
+    const [descriptionError, setDescriptionError] = useState(false);
     const [isDocumentationAddressValid, setIsDocumentationAddressValid] = useState(false);
     const [isBundleVersionValid, setIsBundleVersionValid] = useState(false);
     const [isContactUrlValid, setIsContactUrlValid] = useState(false);
@@ -58,10 +62,13 @@ const BundleGroupForm = ({
     const [showDocUrlCharLimitErrMsg, setShowDocUrlCharLimitErrMsg] = useState(false);
     const [showVersionCharLimitErrMsg, setShowVersionCharLimitErrMsg] = useState(false);
     const [showContactUrlCharLimitErrMsg, setShowContactUrlCharLimitErrMsg] = useState(false);
+    const [showDescriptionCharLimitErrMsg, setShowDescriptionCharLimitErrMsg] = useState(false);
     const [mounted, setMounted] = useState(false);
     const timerRef = useRef(null);
+    const reactQuillRef = useRef();
 
     const orgsList = orgList && orgList.length ? orgList : [];
+
 
     const renderOrganisationColumn = (currOrganisationId, organisations) => {
         if(!currOrganisationId) return;
@@ -263,6 +270,10 @@ const BundleGroupForm = ({
             validationResult[NAME_FIELD_ID] = [i18n.t('formValidationMsg.max25Char')]
             setShowNameCharLimitErrMsg(true);
             timerRef.current = setTimeout(() => disappearCharLimitErrMsg(e.target.id), CHAR_LIMIT_MSG_SHOW_TIME);
+        } else if ((e.target.id === DESCRIPTION_FIELD_ID || 'div.ql-editor') && e.target.value.length >= MAX_CHAR_LENGTH_FOR_DESC) {
+            validationResult["versionDetails.description"] = [i18n.t('formValidationMsg.maxDescription')]
+            setShowDescriptionCharLimitErrMsg(true);
+            timerRef.current = setTimeout(() => disappearCharLimitErrMsg(e.target.id), CHAR_LIMIT_MSG_SHOW_TIME);
         } else if (e.target.id === DOCUMENTATION_FIELD_ID && e.target.value.length >= CHAR_LENGTH_255) {
             validationResult["versionDetails.documentationUrl"] = [i18n.t('formValidationMsg.max255Char')]
             setShowDocUrlCharLimitErrMsg(true);
@@ -292,6 +303,9 @@ const BundleGroupForm = ({
             } else if (fieldId === CONTACT_URL_FIELD_ID) {
                 validationResult["versionDetails.contactUrl"] = undefined;
                 setShowVersionCharLimitErrMsg(false);
+            } else if (fieldId === DESCRIPTION_FIELD_ID) {
+                validationResult["versionDetails.description"] = undefined;
+                setShowDescriptionCharLimitErrMsg(false);
             }
         }
     }
@@ -311,6 +325,20 @@ const BundleGroupForm = ({
 
     const shouldDisable = disabled || (!bundleGroup.isEditable && mode === "Edit");
     const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {};
+
+
+
+      const checkCharacterCount = (event) => {
+        const descLength = versionDetails && versionDetails.description && versionDetails.description.length;
+        if (descLength > MAX_CHAR_LENGTH_FOR_DESC-1 && event.key !== 'Backspace') {
+            setDescriptionError(true);
+            event.preventDefault();
+        } else {
+            setDescriptionError(false);
+        }
+      };
+
+      
 
     return (
         <>
@@ -450,12 +478,27 @@ const BundleGroupForm = ({
                             />
                         </Column>
 
+                        <Column sm={16} md={16} lg={16}>
+                            <div className="bg-form-description-editor bx--label">
+                                {`${i18n.t('component.bundleModalFields.description')} ${bundleGroupSchema.fields.description.exclusiveTests.required ? " *" : ""}`}
+                            </div>
+                            <div className="bg-form-counter bx--label">
+                                {versionDetails && versionDetails.description && (versionDetails.description.length)}/{MAX_CHAR_LENGTH_FOR_DESC}
+                            </div>
+                        </Column>
+
                         <Column className="bg-form-textarea" sm={16} md={16} lg={16}>
+
+
 
                             <ReactQuill 
                                 id={DESCRIPTION_FIELD_ID}
+                                className={descriptionError ? "ql-error" : "ql-class"}
                                 theme="snow" 
-                                defaultValue ={versionDetails && versionDetails.description}                                
+                                disabled={disabled}
+                                ref={reactQuillRef}
+                                defaultValue ={versionDetails && versionDetails.description}
+                                onKeyDown={checkCharacterCount}
                                 onChange={descriptionChangeHandler}
                                 modules={{
                                     toolbar: [
@@ -473,8 +516,11 @@ const BundleGroupForm = ({
                                     'link'
                                   ]}
                             />
-                            
-                            <div className="bg-form-counter bx--label">{versionDetails.description && versionDetails.description.length}/{MAX_CHAR_LENGTH_FOR_DESC}</div>
+
+                            <p className="description-error">
+                                {(descriptionError || showDescriptionCharLimitErrMsg) && `The description must not exceed ${MAX_CHAR_LENGTH_FOR_DESC} characters`}
+                            </p>
+
                         
                         </Column>
                     </Row>

@@ -1,14 +1,44 @@
-.bg-form-textarea {
-    position: relative;
-}
 
-.bg-form-counter {
-    position: absolute;
-    right: 18px;
-    top: 18px;
+#description {
+    padding-bottom: 5px;
 }
 
 .bx--checkbox-label-text {
     font-size: 0.75rem;
     color: #525252;
+}
+
+.ql-container.ql-snow {
+    height: 300px;
+}
+
+.bg-form-counter.bx--label {
+    float: right;
+}
+
+.quill.ql-class {
+    .ql-toolbar {
+      border-bottom: 1px solid #ccc;
+    }
+    .ql-container {
+      border-left: 1px solid #ccc;
+      border-right: 1px solid #ccc;
+      border-bottom: 1px solid #ccc;
+    }
+  }
+
+.quill.ql-error {
+    .ql-toolbar {
+      border-bottom: 2px solid #da1e28;
+    }
+    .ql-container {
+      border-left: 2px solid #da1e28;
+      border-right: 2px solid #da1e28;
+      border-bottom: 2px solid #da1e28;
+    }
+  }
+
+.bg-form-textarea .description-error {
+    color: #da1e28;
+    font-size: 0.75rem;
 }
