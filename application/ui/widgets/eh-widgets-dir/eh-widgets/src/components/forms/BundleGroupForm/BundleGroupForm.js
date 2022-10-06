@@ -33,11 +33,8 @@ import BundlesOfBundleGroup from "./update-bundle-group/bundles-of-bundle-group/
 import IconUploader from "./update-bundle-group/icon-uploader/IconUploader";
 import "./update-bundle-group/update-bundle-group.scss";
 import { isHubAdmin } from "../../../helpers/helpers";
-
 import ReactQuill from 'react-quill';
-
 import 'react-quill/dist/quill.snow.css';
-
 
 const BundleGroupForm = ({
                              bundleGroup,
@@ -68,7 +65,6 @@ const BundleGroupForm = ({
     const reactQuillRef = useRef();
 
     const orgsList = orgList && orgList.length ? orgList : [];
-
 
     const renderOrganisationColumn = (currOrganisationId, organisations) => {
         if(!currOrganisationId) return;
@@ -134,9 +130,9 @@ const BundleGroupForm = ({
         changeBundleGroup("versionDetails", versionDetails)
     }
 
-    const disabled = selectStatusValues.disabled
-    const createSelectOptionsForRoleAndSetSelectStatus =
-        selectStatusValues.values.map((curr, index) => (
+    const disabled = selectStatusValues.disabled;
+
+    const createSelectOptionsForRoleAndSetSelectStatus = selectStatusValues.values.map((curr, index) => (
             <SelectItem key={index} value={curr.value} text={i18n.t(curr.text)}/>
         ))
 
@@ -326,8 +322,6 @@ const BundleGroupForm = ({
     const shouldDisable = disabled || (!bundleGroup.isEditable && mode === "Edit");
     const versionDetails = bundleGroup && bundleGroup.versionDetails ? bundleGroup.versionDetails : {};
 
-
-
       const checkCharacterCount = (event) => {
         const descLength = versionDetails && versionDetails.description && versionDetails.description.length;
         if (descLength > MAX_CHAR_LENGTH_FOR_DESC-1 && event.key !== 'Backspace') {
@@ -337,8 +331,6 @@ const BundleGroupForm = ({
             setDescriptionError(false);
         }
       };
-
-      
 
     return (
         <>
@@ -489,8 +481,6 @@ const BundleGroupForm = ({
 
                         <Column className="bg-form-textarea" sm={16} md={16} lg={16}>
 
-
-
                             <ReactQuill 
                                 id={DESCRIPTION_FIELD_ID}
                                 className={descriptionError ? "ql-error" : "ql-class"}
@@ -520,7 +510,6 @@ const BundleGroupForm = ({
                             <p className="description-error">
                                 {(descriptionError || showDescriptionCharLimitErrMsg) && `The description must not exceed ${MAX_CHAR_LENGTH_FOR_DESC} characters`}
                             </p>
-
                         
                         </Column>
                     </Row>
