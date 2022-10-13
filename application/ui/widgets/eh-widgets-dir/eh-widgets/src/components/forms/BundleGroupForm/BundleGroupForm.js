@@ -346,7 +346,7 @@ const BundleGroupForm = ({
                                 onImageDelete={imagesDeleteHandler}
                             />
                         </Column>
-                        <Column sm={16} md={8} lg={8}>
+                        <Column sm={16} md={8} lg={8} id={'includeInPublicCatalogCheckbox'}>
                             <Checkbox
                                 disabled={disabled}
                                 id={"includeInPublicCatalog"}
