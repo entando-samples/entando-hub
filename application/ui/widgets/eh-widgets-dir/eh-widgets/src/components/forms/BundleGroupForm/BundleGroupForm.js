@@ -191,6 +191,10 @@ const BundleGroupForm = ({
         createVersionDetailsObj("displayContactUrl", value);
     }
 
+    const includeInPublicCatalogChangeHandler = (value, name, e) => {
+        createVersionDetailsObj("includeInPublicCatalog", value);
+    }
+
     const documentationChangeHandler = (e) => {
         createVersionDetailsObj("documentationUrl", e.target.value);
         setIsValid(e.target.value.trim(), 'documentationUrl')
@@ -340,6 +344,15 @@ const BundleGroupForm = ({
                                 disabled={disabled}
                                 onImageChange={imagesChangeHandler}
                                 onImageDelete={imagesDeleteHandler}
+                            />
+                        </Column>
+                        <Column sm={16} md={8} lg={8}>
+                            <Checkbox
+                                disabled={disabled}
+                                id={"includeInPublicCatalog"}
+                                labelText={`${i18n.t('component.bundleModalFields.includeInPublicCatalog')}`}
+                                checked={versionDetails.includeInPublicCatalog || false}
+                                onChange={includeInPublicCatalogChangeHandler}
                             />
                         </Column>
                     </Row>

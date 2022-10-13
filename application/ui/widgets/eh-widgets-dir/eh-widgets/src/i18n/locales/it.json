@@ -46,6 +46,7 @@
   "component": {
     "bundleModalFields": {
       "addFiles": "Aggiungi file",
+      "includeInPublicCatalog": "Includi nel catalogo pubblico",
       "name": "Nome",
       "category": "Categoria",
       "documentAddress": "Indirizzo della documentazione",
