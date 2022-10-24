@@ -7,18 +7,16 @@ const SettingsOverflowMenu = ({}) => {
 
     const history = useHistory();
 
-    const handleTokenManagmentClick = () => {
+    const handleTokenManagementClick = () => {
         history.push("/tokens")
     }
 
     return (
         <>
-            <OverflowMenu 
-            renderIcon={Settings32} 
-            >
+            <OverflowMenu renderIcon={Settings32}>
                 <OverflowMenuItem 
                 itemText={i18n.t('navLink.tokenManagement')}
-                onClick={() => handleTokenManagmentClick()} 
+                onClick={() => handleTokenManagementClick()} 
                  />
             </OverflowMenu>
         </>

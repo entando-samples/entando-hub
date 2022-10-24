@@ -1,39 +1,39 @@
 import { Modal } from "carbon-components-react"
 import { TrashCan32 } from "@carbon/icons-react"
-import "./modal-delete-category.scss"
-import { deleteCategory } from "../../../integration/Integration"
+import "./modal-delete-token.scss"
+import { deleteToken } from "../../../integration/Integration"
 import i18n from "../../../i18n"
 
 export const ModalDeleteToken = ({
-    categoryObj,
+   tokenObj,
     open,
     onCloseModal,
     onAfterSubmit,
-    categories
+    tokens
 }) => {
 
-    const bundleGroupsLengthOfActiveCategory = categories.find(item => item.id === categoryObj.categoryId).bundleGroups.length;
+    const bundleGroupsLengthOfActiveToken = categories.find(item => item.id === tokenObj.tokenId).bundleGroups.length;
 
     const onRequestClose = (e) => {
         onCloseModal()
     }
 
     const onRequestDelete = async (e) => {
-        await deleteCategory(categoryObj.categoryId, categoryObj.name)
+        await deleteToken(tokenObj.tokenId, tokenObj.name)
         onCloseModal()
         onAfterSubmit()
     }
 
-    if (bundleGroupsLengthOfActiveCategory) {
+    if (bundleGroupsLengthOfActiveToken) {
         return (<Modal
             open
             passiveModal
             onRequestClose={onRequestClose}
-            modalHeading={i18n.t("modalMsg.impossibleToRemoveCat")}></Modal>)
+            modalHeading={i18n.t("modalMsg.impossibleToRemoveToken")}></Modal>)
     }
 
     return (<Modal
-        className="Modal-Update-organization"
+        className="Modal-Update-token"
         modalLabel={i18n.t('component.button.delete')}
         primaryButtonText={i18n.t('component.button.delete')}
         secondaryButtonText={i18n.t('component.button.cancel')}
@@ -41,12 +41,12 @@ export const ModalDeleteToken = ({
         onRequestClose={onRequestClose}
         onRequestSubmit={onRequestDelete}
     >
-        <div className="Modal-delete-category-group">
-            <div className="Modal-delete-category-group-wrapper">
+        <div className="Modal-delete-token-group">
+            <div className="Modal-delete-token-group-wrapper">
                 <TrashCan32 />
             </div>
             <div>
-                {i18n.t("modalMsg.deleteCat")}
+                {i18n.t("modalMsg.deleteToken")}
             </div>
         </div>
     </Modal>)

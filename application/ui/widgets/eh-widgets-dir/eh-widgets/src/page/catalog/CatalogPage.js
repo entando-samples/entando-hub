@@ -1,4 +1,4 @@
-import { Content, Search, Button, Link } from "carbon-components-react";
+import { Content, Search } from "carbon-components-react";
 import CatalogPageContent from "./catalog-page-content/CatalogPageContent";
 import EhBreadcrumb from "../../components/eh-breadcrumb/EhBreadcrumb";
 import { ModalAddNewBundleGroup } from "./modal-add-new-bundle-group/ModalAddNewBundleGroup";
@@ -12,7 +12,6 @@ import { getPortalUserByUsername } from "../../integration/Integration";
 import './catalogPage.scss';
 import { SHOW_NAVBAR_ON_MOUNTED_PAGE, BUNDLE_STATUS } from "../../helpers/constants";
 import ScrollToTop from "../../helpers/scrollToTop";
-import { Settings32 } from '@carbon/icons-react'
 import SettingsOverflowMenu from "./SettingsOverflowMenu/SettingsOverflowMenu";
 /*
 This is the HUB landing page

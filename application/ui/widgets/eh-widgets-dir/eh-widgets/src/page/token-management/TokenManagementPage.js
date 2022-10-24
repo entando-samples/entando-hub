@@ -16,8 +16,6 @@ import {
   OverflowMenu, 
   OverflowMenuItem
 } from "carbon-components-react"
-// import CategoryManagementOverflowMenu from "../catagory-management/overflow-menu/CategoryManagementOverflowMenu"
-// import {ModalAddNewCategory} from "../catagory-management/modal-add-new-category/ModalAddNewCategory"
 import {ModalAddNewToken} from "./modal-add-new-token/ModalAddNewToken"
 import {getAllTokens} from "../../integration/Integration"
 import EhBreadcrumb from "../../components/eh-breadcrumb/EhBreadcrumb"

@@ -165,7 +165,8 @@
     "removeUserFromOrgMsg": "Are you sure you want to remove this User from the Organization?",
     "impossibleToRemoveCat": "This category is already in use.",
     "deleteCat": "Are you sure you want to delete this Category?",
-    "addNewVersion": "Add New Version"
+    "addNewVersion": "Add New Version",
+    "impossibleToRemoveToken": "Impossibile to remove Token"
   },
   "navLink": {
     "userManagement": "User Management",
