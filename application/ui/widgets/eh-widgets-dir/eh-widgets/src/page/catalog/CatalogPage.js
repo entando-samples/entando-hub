@@ -1,4 +1,4 @@
-import { Content, Search } from "carbon-components-react";
+import { Content, Search, Button, Link } from "carbon-components-react";
 import CatalogPageContent from "./catalog-page-content/CatalogPageContent";
 import EhBreadcrumb from "../../components/eh-breadcrumb/EhBreadcrumb";
 import { ModalAddNewBundleGroup } from "./modal-add-new-bundle-group/ModalAddNewBundleGroup";
@@ -12,7 +12,8 @@ import { getPortalUserByUsername } from "../../integration/Integration";
 import './catalogPage.scss';
 import { SHOW_NAVBAR_ON_MOUNTED_PAGE, BUNDLE_STATUS } from "../../helpers/constants";
 import ScrollToTop from "../../helpers/scrollToTop";
-
+import { Settings32 } from '@carbon/icons-react'
+import SettingsOverflowMenu from "./SettingsOverflowMenu/SettingsOverflowMenu";
 /*
 This is the HUB landing page
 */
@@ -166,7 +167,7 @@ const CatalogPage = ({versionSearchTerm, setVersionSearchTerm}) => {
                 <div className="bx--col-lg-4 CatalogPage-section">
                   {i18n.t('page.catalogPanel.catalogHomePage.categories')}
                 </div>
-                <div className="bx--col-lg-5 CatalogPage-section">
+                <div className="bx--col-lg-3 CatalogPage-section">
                   {i18n.t('page.catalogPanel.catalogHomePage.catalog')}
                 </div>
                 <div className="bx--col-lg-3 CatalogPage-section">
@@ -175,6 +176,9 @@ const CatalogPage = ({versionSearchTerm, setVersionSearchTerm}) => {
                     I will wait fe status filter loading, to avoid double rendering (and use effect) call
                    */}
                   {showFullPage && hubUser && statusFilterValue !== "LOADING" && <ModalAddNewBundleGroup isLoading={loading} orgList={orgList} catList={categories} onAfterSubmit={onAfterSubmit} currentUserOrg={currentUserOrg} />}
+                </div>
+                <div className="bx--col-lg-2 CatalogPage-section settings-overflow-menu">
+                  {showFullPage && hubUser && <SettingsOverflowMenu />}
                 </div>
                 <div className="bx--col-lg-4 CatalogPage-section">
                   {/*{i18n.t('component.button.search')}*/}
@@ -185,7 +189,6 @@ const CatalogPage = ({versionSearchTerm, setVersionSearchTerm}) => {
               {/*  If the user is an HUB authenticated one (has HUB roles)
                         can see the status filter
                 */}
-
               {showFullPage && hubUser &&
                 <div className="bx--row">
                   <div className="bx--col-lg-4 CatalogPage-section">

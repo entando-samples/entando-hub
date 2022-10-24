@@ -59,7 +59,8 @@
       "description": "Descrizione",
       "search": "Ricerca",
       "bundleUrl": "URI del bundle",
-      "sourceUrl": "URL di origine"
+      "sourceUrl": "URL di origine",
+      "token": "Token"
     },
     "button": {
       "add": "Aggiungi",
@@ -73,6 +74,7 @@
       "install": "Installare",
       "addCategory": "Aggiungi Categoria",
       "addOrganisation": "Aggiungi Organizzazione",
+      "addToken": "Aggiungi token",
       "remove": "Rimuovere",
       "selectOneUsername": "Seleziona un nome utente",
       "newVersion": "Nuova versione",
@@ -103,6 +105,11 @@
     "impossibleToCreateCategory": "Impossibile creare la categoria.",
     "impossibleToUpdateCategory": "Impossibile aggiornare la categoria.",
     "impossibleToDeleteCategory": "Impossibile eliminare la categoria.",
+    "impossibleToLoadTokens": "Impossibile caricare i token.",
+    "impossibleToLoadToken": "Impossibile caricare il token.",
+    "impossibleToCreateToken": "Impossibile creare un token.",
+    "impossibleToUpdateToken": "Impossibile aggiornare un token.",
+    "impossibleToDeleteToken": "Impossibile eliminare un token.",
     "impossibleToLoadBundles": "Impossibile caricare i bundle.",
     "impossibleToLoadBundle": "Impossibile caricare il bundle.",
     "impossibleToCreateBundle": "Impossibile creare il bundle.",
@@ -163,7 +170,8 @@
   "navLink": {
     "userManagement": "Gestione utente",
     "categoryManagement": "Gestione delle categorie",
-    "organisationManagement": "Gestione dell'organizzazione"
+    "organisationManagement": "Gestione dell'organizzazione",
+    "tokenManagement": "Gestione dei gettoni"
   },
   "Draft": "Non pubblicato",
   "Publication Request": "Richiesta di pubblicazione",

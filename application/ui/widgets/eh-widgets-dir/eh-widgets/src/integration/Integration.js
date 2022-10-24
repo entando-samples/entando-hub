@@ -6,6 +6,7 @@ import i18n from "../i18n";
 // endpoints
 const urlOrganisations = `${process.env.REACT_APP_PUBLIC_API_URL}/organisation/`
 const urlCategories = `${process.env.REACT_APP_PUBLIC_API_URL}/category/`
+const urlTokens = `${process.env.REACT_APP_PUBLIC_API_URL}/tokens/`
 const urlBundles = `${process.env.REACT_APP_PUBLIC_API_URL}/bundles/`
 const urlBundleGroups = `${process.env.REACT_APP_PUBLIC_API_URL}/bundlegroups/`
 const urlUsers = `${process.env.REACT_APP_PUBLIC_API_URL}/users/`
@@ -178,6 +179,76 @@ export const deleteCategory = async (id, categoryName) => {
   return checkForErrorsAndSendResponse(data, isError, "deletedCategory")
 }
 
+
+/*********************
+ * TOKENS ********
+ *********************/
+
+ export const getAllTokens = async () => {
+  const { data, isError } = await getData(urlTokens)
+
+  eventHandler(
+    isError,
+    `${i18n.t('toasterMessage.impossibleToLoadTokens')} ${data ? data.message : ""}`
+  )
+
+  return checkForErrorsAndSendResponse(data, isError, "tokenList")
+}
+
+export const getSingleToken = async (id) => {
+  const { data, isError } = await getData(urlTokens, id)
+
+  eventHandler(
+    isError,
+    `${i18n.t('toasterMessage.impossibleToLoadToken')} ${data ? data.message : ""}`
+  )
+  
+  return checkForErrorsAndSendResponse(data, isError, "token")
+}
+
+export const addNewToken = async (tokenData) => {
+  const { data, isError } = await postData(urlTokens, tokenData)
+
+  eventHandler(
+    isError,
+    `${i18n.t('toasterMessage.impossibleToCreateToken')}  ${data ? data.message : ""}`,
+    `${i18n.t('component.bundleModalFields.token')} ${data.data ? data.data.name : ""} ${i18n.t('toasterMessage.created')}`
+  )
+
+  return checkForErrorsAndSendResponse(data, isError, "newToken")
+}
+
+export const editToken = async (tokenData, id) => {
+  const { data, isError } = await postData(urlTokens, tokenData, id)
+
+  eventHandler(
+    isError,
+    `${i18n.t('toasterMessage.impossibleToUpdateToken')}  ${data ? data.message : ""}`,
+    `${i18n.t('component.bundleModalFields.token')} ${data.data ? data.data.name : ""} ${i18n.t('toasterMessage.updated')}`
+  )
+
+  return checkForErrorsAndSendResponse(data, isError, "editedToken")
+}
+
+const TOKEN_APPLIED_ON_BUNDLE_GROUP_MSG = "This token is already in use."
+
+export const deleteToken = async (id, tokenName) => {
+  const { data, isError } = await deleteData(urlTokens, id)
+  const dataMessageLength = data.message ? data.message.split(" ").length : null
+  const statusCode = dataMessageLength ? data.message.split(" ")[dataMessageLength - 1] : 0
+
+  if (statusCode && statusCode === HTTP_STATUS.EXPECTATION_FAILED) {
+    data.message = TOKEN_APPLIED_ON_BUNDLE_GROUP_MSG
+  }
+
+  eventHandler(
+    isError,
+    `${i18n.t('toasterMessage.impossibleToDeleteToken')} ${data ? data.message : ""}`,
+    `${i18n.t('component.bundleModalFields.token')} ${tokenName ? tokenName : ""}  ${i18n.t('toasterMessage.deleted')}`
+  )
+
+  return checkForErrorsAndSendResponse(data, isError, "deletedToken")
+}
 
 /*********************
  * BUNDLES ***********

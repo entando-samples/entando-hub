@@ -116,6 +116,7 @@ export const SHOW_NAVBAR_ON_MOUNTED_PAGE = {
     isCategoryManagementPage: "categoryManagementPage",
     isUserManagementPage: "userManagementPage",
     isOrganisationManagementPage: "organisationManagementPage",
+    isTokenManagmentPage: "tokenManagementPage"
 }
 
 // Git Repo Address

@@ -59,7 +59,8 @@
       "description": "Description",
       "search": "Search",
       "bundleUrl": "Bundle URI",
-      "sourceUrl": "Source URL"
+      "sourceUrl": "Source URL",
+      "token": "Token"
     },
     "button": {
       "add": "Add",
@@ -73,6 +74,7 @@
       "install": "Install",
       "addCategory": "Add Category",
       "addOrganisation": "Add Organisation",
+      "addToken": "Add Token",
       "addUser": "Add User",
       "remove": "Remove",
       "selectOneUsername": "Select one Username",
@@ -104,6 +106,11 @@
     "impossibleToCreateCategory": "Impossible to create category.",
     "impossibleToUpdateCategory": "Impossible to update category.",
     "impossibleToDeleteCategory": "Impossible to delete category.",
+    "impossibleToLoadTokens": "Impossible to load tokens.",
+    "impossibleToLoadToken": "Impossible to load token.",
+    "impossibleToCreateToken": "Impossible to create token.",
+    "impossibleToUpdateToken": "Impossible to update token.",
+    "impossibleToDeleteToken": "Impossible to delete token.",
     "impossibleToLoadBundles": "Impossible to load bundles.",
     "impossibleToLoadBundle": "Impossible to load bundle.",
     "impossibleToCreateBundle": "Impossible to create bundle.",
@@ -163,7 +170,8 @@
   "navLink": {
     "userManagement": "User Management",
     "categoryManagement": "Category Management",
-    "organisationManagement": "Organisation Management"
+    "organisationManagement": "Organisation Management",
+    "tokenManagement": "Token Management"
   },
   "Draft": "Draft",
   "Publication Request": "Publication Request",
