@@ -15,6 +15,7 @@ const NewToken = ({ onDataChange, validationResult }) => {
   const timerRef = useRef(null);
 
   const [showNameCharLimitErrMsg, setShowNameCharLimitErrMsg] = useState(false);
+  const [showTokenDataCharLimitErrMsg, setShowTokenDataCharLimitErrMsg] = useState(false);
 
   const changeToken = (field, value) => {
     const newObj = {
@@ -58,8 +59,6 @@ const NewToken = ({ onDataChange, validationResult }) => {
       validationResult[fieldId] = undefined;
       if (fieldId === NAME_FIELD_ID) {
         setShowNameCharLimitErrMsg(false);
-      } else if (fieldId === DESCRIPTION_FIELD_ID) {
-        setShowDescriptionCharLimitErrMsg(false);
       }
     }
   }
