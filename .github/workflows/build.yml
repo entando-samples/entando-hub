@@ -18,6 +18,6 @@ jobs:
         id: ent
         uses: ./actions/ent-action
         with:
-          ent-command: 'cd application && ent bundle build --all'
+          ent-command: 'cd application && ent bundle build --all --stdout'
       - name: Get the output time
         run: echo "The time was ${{ steps.ent.outputs.time }}"
