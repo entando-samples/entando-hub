@@ -11,15 +11,19 @@ jobs:
       image: cecchisandrone/ent:v7.1.3
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
-      credentials:
-        username: ${{ secrets.DOCKERHUB_USER }}
-        password: ${{ secrets.DOCKERHUB_PASSWORD }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Login to the Registry.
+      - name: Debug
         run : |
-          echo $DOCKERHUB_PASSWORD > password.txt
-          cat password.txt | docker login -u $DOCKERHUB_USER --password-stdin
+          env
+      - name: Login to the registry
+        env:
+          REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
+          REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+        run : |
+          env
+          echo $REGISTRY_USERNAME > password.txt
+          cat password.txt | docker login -u $REGISTRY_PASSWORD --password-stdin
       - name: Pack the bundle
         run: cd application && ent bundle pack --org cecchisandrone --stdout
