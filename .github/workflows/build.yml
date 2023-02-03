@@ -25,7 +25,8 @@ jobs:
           echo $REGISTRY_PASSWORD > password.txt
           cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
-        run: | 
+        run: |
+          apk add python
           cd application && ent --debug bundle pack --org cecchisandrone --stdout
           docker images
           ent bundle publish
