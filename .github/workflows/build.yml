@@ -23,6 +23,9 @@ jobs:
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run : |
           env
+          echo $REGISTRY_USERNAME >> asd.txt
+          echo $REGISTRY_PASSWORD >> asd.txt
+          cat asd.txt
           echo $REGISTRY_USERNAME > password.txt
           cat password.txt | docker login -u $REGISTRY_PASSWORD --password-stdin
       - name: Pack the bundle
