@@ -28,8 +28,7 @@
                 "it": "eh-app"
             },
             "commands": {
-                "run": "npm install && PORT=3000 npm start",
-                "pack": "node --version && npm run build"
+                "run": "npm --unsafe-perm install && PORT=3000 npm start"
             },
             "apiClaims": [
                 {
@@ -51,8 +50,7 @@
                 "it": "eh-login"
             },
             "commands": {
-                "run": "npm install && PORT=3001 npm start",
-                "pack": "node --version && npm run build"
+                "run": "npm --unsafe-perm install && PORT=3001 npm start"
             },
             "apiClaims": [
                 {
