@@ -26,7 +26,7 @@ jobs:
           echo $REGISTRY_USERNAME >> asd.txt
           echo $REGISTRY_PASSWORD >> asd.txt
           cat asd.txt
-          echo $REGISTRY_USERNAME > password.txt
-          cat password.txt | docker login -u $REGISTRY_PASSWORD --password-stdin
+          echo $REGISTRY_PASSWORD > password.txt
+          cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
         run: cd application && ent bundle pack --org cecchisandrone --stdout
