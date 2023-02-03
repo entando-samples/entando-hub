@@ -29,4 +29,4 @@ jobs:
           echo $REGISTRY_PASSWORD > password.txt
           cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
-        run: cd application && ent bundle pack --org cecchisandrone --stdout
+        run: cd application && ent --debug bundle pack --org cecchisandrone --stdout
