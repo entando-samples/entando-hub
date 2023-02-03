@@ -22,11 +22,10 @@ jobs:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run : |
-          env
-          echo $REGISTRY_USERNAME >> asd.txt
-          echo $REGISTRY_PASSWORD >> asd.txt
-          cat asd.txt
           echo $REGISTRY_PASSWORD > password.txt
           cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
-        run: cd application && ent --debug bundle pack --org cecchisandrone --stdout
+        run: | 
+          cd application && ent --debug bundle pack --org cecchisandrone --stdout
+          docker images
+          ent bundle publish
