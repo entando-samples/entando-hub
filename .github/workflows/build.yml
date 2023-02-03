@@ -26,9 +26,8 @@ jobs:
           cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
         run: |
-          whoami
-          which npm
-          which node
+          npm --version
+          node --version
           pwd
           ls -al
           apk add python3
