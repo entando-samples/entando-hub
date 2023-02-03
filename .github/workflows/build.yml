@@ -26,11 +26,9 @@ jobs:
           cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
       - name: Pack the bundle
         run: |
+          apk add python3 nodejs npm
           npm --version
           node --version
-          pwd
-          ls -al
-          apk add python3
           cd application && ent --debug bundle pack --org cecchisandrone --stdout
           docker images
           ent bundle publish
