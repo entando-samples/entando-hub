@@ -1,0 +1,16 @@
+# action.yml
+name: 'ent action'
+description: 'An action using ent to do something'
+inputs:
+  ent-command:  # id of input
+    description: 'The ent command to run'
+    required: true
+    default: 'ent which'
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
+  args:
+    - ${{ inputs.ent-command }}
