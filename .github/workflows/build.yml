@@ -14,19 +14,12 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Debug
-        run : |
-          env
-      - name: Login to the registry
+      - name: Pack the bundle
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-        run : |
-          echo $REGISTRY_PASSWORD > password.txt
-          cat password.txt | docker login -u $REGISTRY_USERNAME --password-stdin
-      - name: Pack the bundle
         run: |
+          docker login -u $REGISTRY_USERNAME -P $REGISTRY_PASSWORD
           apk add python3
           cd application && ent --debug bundle pack --org cecchisandrone --stdout
-          docker images
           ent bundle publish
