@@ -19,8 +19,9 @@ jobs:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
-          cat $HOME/.docker/config.json
           docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+          cat $HOME/.docker/config.json
+          # Needed to build node-sass
           apk add python3
           cd application 
           ent --debug bundle pack --org cecchisandrone --stdout
