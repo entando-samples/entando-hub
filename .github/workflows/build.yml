@@ -36,21 +36,25 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v2
-      - name: Add comment with artifact name
-        uses: thollander/actions-comment-pull-request@v2
+      - name: Check PR name
+        uses: Slashgear/action-check-pr-title@v4.3.0
         with:
-          message: |
-            Hello world ! :wave:
+          regexp: "^EHUB-[0-9]{3,5} .*$"
+          helpMessage: "Example: 'EHUB-123 A change'"
       - name: Pack the layout bundle
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           REGISTRY_HOST: registry.hub.docker.com
           DOCKER_ORG: cecchisandrone
-          PR_TITLE: ${{ github.event.pull_request.title }}
         run: |
           echo ${{ github.event.pull_request.title }}
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           cd content 
           ent --debug bundle pack --org $DOCKER_ORG --stdout
           ent --debug bundle publish
+      - name: Publish artifact version
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Hello world ! :wave:
