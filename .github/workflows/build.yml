@@ -18,13 +18,13 @@ jobs:
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          REGISTRY_HOST: registry.hub.docker.com
         run: |
-          docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
-          cat $HOME/.docker/config.json
+          docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           # Needed to build node-sass
           apk add python3
           cd application 
           ent --debug bundle pack --org cecchisandrone --stdout
-          docker info
+          cat $HOME/.docker/config.json
           ent --debug bundle publish
           echo "Published bundle"
