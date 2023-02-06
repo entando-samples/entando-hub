@@ -19,11 +19,11 @@ jobs:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
         run: |
+          cat $HOME/.docker/config.json
           docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           apk add python3
           cd application 
           ent --debug bundle pack --org cecchisandrone --stdout
           docker info
-          cat $HOME/.docker/config.json
           ent --debug bundle publish
           echo "Published bundle"
