@@ -22,4 +22,4 @@ jobs:
           docker login -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           apk add python3
           cd application && ent --debug bundle pack --org cecchisandrone --stdout
-          ent bundle publish
+          ent --debug bundle publish
