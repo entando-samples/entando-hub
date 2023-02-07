@@ -52,7 +52,8 @@ jobs:
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           versionPrefix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           cd content
-          version=$(bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-)
+          bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-
+          version=$(../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           ent --debug bundle pack --org $DOCKER_ORG --stdout
           ent --debug bundle publish
@@ -60,4 +61,4 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            Published bundle version: `${{ steps.pack.outputs.VERSION }}`
+            Published bundle image: `${{ steps.pack.outputs.VERSION }}`

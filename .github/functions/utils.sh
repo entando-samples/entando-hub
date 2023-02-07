@@ -4,7 +4,10 @@ function setBundleVersion() {
     ver="$versionPrefix$version"
     value=".version=\"$ver\""
     jq $value entando.json > temp.json && mv temp.json entando.json
-    echo $ver
+}
+
+function getBundleImage() {
+    ent bundle images | grep bundle | awk '{printf "%s:%s", $1, $2}' 
 }
 
 function setComponentVersions() {
