@@ -51,7 +51,9 @@ jobs:
         run: |
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           cd content
+          echo ${{ github.event.pull_request.title }}
           versionPrefix=$(bash ../.github/functions/utils.sh getTicketNumber ${{ github.event.pull_request.title }})
+          echo $versionPrefix
           version=$(bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           ent --debug bundle pack --org $DOCKER_ORG --stdout
