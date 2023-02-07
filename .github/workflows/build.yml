@@ -14,7 +14,13 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v3
+      - name: Check PR name
+        uses: Slashgear/action-check-pr-title@v4.3.0
+        with:
+          regexp: "^EHUB-[0-9]{3,5} .*$"
+          helpMessage: "Example: 'EHUB-123 A change'"
       - name: Pack the application bundle
+        id: pack
         env:
           REGISTRY_USERNAME: ${{ secrets.DOCKERHUB_USER }}
           REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
@@ -32,6 +38,11 @@ jobs:
           ent --debug bundle publish
           version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
+      - name: Publish artifact version
+        uses: thollander/actions-comment-pull-request@v2
+        with:
+          message: |
+            Published bundle image: `${{ steps.pack.outputs.VERSION }}`
   layout-build:
     runs-on: ubuntu-latest
     container:
