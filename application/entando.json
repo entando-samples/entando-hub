@@ -6,7 +6,8 @@
             "healthCheckPath": "/actuator/health",
             "dbms": "postgresql",
             "commands": {
-                "run": "mvn spring-boot:run -Dspring-boot.run.profiles=dev"
+                "run": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
+                "pack": "mvn package -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn"
             },
             "roles": [
                 "eh-author",
