@@ -7,7 +7,7 @@
             "dbms": "postgresql",
             "commands": {
                 "run": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
-                "pack": "mvn -q package"
+                "pack": "mvn -q npm package"
             },
             "roles": [
                 "eh-author",

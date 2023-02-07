@@ -1,7 +1,7 @@
 function setBundleVersion() {
-    local versionPrefix=$1
+    local versionSuffix=$1
     version=$(ent bundle info | grep "Version:" | awk '{print $2}')
-    ver="$versionPrefix$version"
+    ver="$version$versionSuffix"
     value=".version=\"$ver\""
     jq $value entando.json > temp.json && mv temp.json entando.json
 }
@@ -11,7 +11,7 @@ function getBundleImage() {
 }
 
 function setComponentVersions() {
-    local versionPrefix=$1
+    local versionSuffix=$1
 
     components=$(ent bundle list | tail -n +$((n + 3)))
     while IFS= read -r line
@@ -24,7 +24,7 @@ function setComponentVersions() {
         # Enter component folder
         cd "$type"s/"$name"
 
-        ver="$versionPrefix$version"
+        ver="$version$versionSuffix"
         echo "Setting version=$ver for component $name"
 
         if [ "$stack" = "spring-boot" ]; then
