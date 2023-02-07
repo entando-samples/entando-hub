@@ -53,7 +53,7 @@ jobs:
           versionPrefix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           cd content
           bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-
-          version=$(../.github/functions/utils.sh getBundleImage)
+          version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           ent --debug bundle pack --org $DOCKER_ORG --stdout
           ent --debug bundle publish
