@@ -1,8 +1,10 @@
 function setBundleVersion() {
     local versionPrefix=$1
     version=$(ent bundle info | grep "Version:" | awk '{print $2}')
-    value=".version=\"$versionPrefix$version\""
+    ver="$versionPrefix$version"
+    value=".version=\"$ver\""
     jq $value entando.json > temp.json && mv temp.json entando.json
+    echo $ver
 }
 
 function setComponentVersions() {
