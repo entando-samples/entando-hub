@@ -1,7 +1,7 @@
 function getTicketNumber() {
     local str=$1
     echo "input: $str"
-    result=$(echo "$str" | grep -o "^EHUB-\\d*")
+    result=$(echo "$str" | egrep -o "^EHUB-\\d*")
     echo "$result"
 }
 

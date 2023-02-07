@@ -51,11 +51,6 @@ jobs:
         run: |
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           versionPrefix=$(bash .github/functions/utils.sh getTicketNumber "${{ github.event.pull_request.title }}")
-          cd content
-          version=$(bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-)
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
-          ent --debug bundle pack --org $DOCKER_ORG --stdout
-          ent --debug bundle publish
       - name: Publish artifact version
         uses: thollander/actions-comment-pull-request@v2
         with:
