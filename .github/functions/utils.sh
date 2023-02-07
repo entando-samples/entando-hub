@@ -1,11 +1,3 @@
-function getTicketNumber() {
-    set -x
-    local str=$1
-    echo "input: $str"
-    result=$(echo "$str" | grep -oE "^EHUB-\\d+")
-    echo "$result"
-}
-
 function setBundleVersion() {
     local versionPrefix=$1
     version=$(ent bundle info | grep "Version:" | awk '{print $2}')
