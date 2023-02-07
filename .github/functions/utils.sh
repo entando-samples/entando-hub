@@ -2,7 +2,7 @@ function getTicketNumber() {
     local str=$1
     echo $str
     grep --version
-    result=$(echo "$str" | grep -o "^EHUB-\\d*")
+    result=$(echo "$str" | grep -o '^EHUB-\d*')
     echo "$result"
 }
 
