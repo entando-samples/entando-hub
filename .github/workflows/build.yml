@@ -50,6 +50,7 @@ jobs:
           DOCKER_ORG: cecchisandrone
         run: |
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
+          ls -al
           versionPrefix=$(bash .github/functions/utils.sh getTicketNumber "${{ github.event.pull_request.title }}")
       - name: Publish artifact version
         uses: thollander/actions-comment-pull-request@v2
