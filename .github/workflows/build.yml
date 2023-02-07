@@ -24,9 +24,14 @@ jobs:
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           # Needed to build node-sass
           apk add python3
-          cd application 
+          versionPrefix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
+          cd application
+          bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-
+          bash ../.github/functions/utils.sh setComponentVersions $versionPrefix-
           ent --debug bundle pack --org $DOCKER_ORG --stdout
           ent --debug bundle publish
+          version=$(bash ../.github/functions/utils.sh getBundleImage)
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
   layout-build:
     runs-on: ubuntu-latest
     container:
@@ -53,10 +58,10 @@ jobs:
           versionPrefix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           cd content
           bash ../.github/functions/utils.sh setBundleVersion $versionPrefix-
-          version=$(bash ../.github/functions/utils.sh getBundleImage)
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
           ent --debug bundle pack --org $DOCKER_ORG --stdout
           ent --debug bundle publish
+          version=$(bash ../.github/functions/utils.sh getBundleImage)
+          echo "VERSION=$version" >> $GITHUB_OUTPUT
       - name: Publish artifact version
         uses: thollander/actions-comment-pull-request@v2
         with:
