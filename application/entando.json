@@ -6,8 +6,7 @@
             "healthCheckPath": "/actuator/health",
             "dbms": "postgresql",
             "commands": {
-                "run": "mvn spring-boot:run -Dspring-boot.run.profiles=dev",
-                "pack": "mvn -q npm package"
+                "run": "mvn spring-boot:run -Dspring-boot.run.profiles=dev"
             },
             "roles": [
                 "eh-author",
