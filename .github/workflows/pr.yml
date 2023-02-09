@@ -66,6 +66,7 @@ jobs:
           REGISTRY_HOST: registry.hub.docker.com
           DOCKER_ORG: entando
         run: |
+          curl blabla
           docker login $REGISTRY_HOST -u $REGISTRY_USERNAME -p $REGISTRY_PASSWORD
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           cd content
