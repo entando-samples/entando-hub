@@ -1,0 +1,7 @@
+organization=entando-samples
+projectKey=entando-samples_eh-login
+serverUrl=https://sonarcloud.io
+serverVersion=8.0.0.37873
+dashboardUrl=https://sonarcloud.io/dashboard?id=entando-samples_eh-login
+ceTaskId=AYZvaSmO-LfiR9Ty-Gpq
+ceTaskUrl=https://sonarcloud.io/api/ce/task?id=AYZvaSmO-LfiR9Ty-Gpq
