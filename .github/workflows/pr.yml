@@ -22,7 +22,7 @@ jobs:
         cd application
         bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
         bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
-        ent bundle build --all
+        ent bundle build --all --stdout --fail-fast
         cd application/microservices/entando-hub-catalog-ms && mvn sonar:sonar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
