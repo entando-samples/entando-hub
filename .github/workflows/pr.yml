@@ -18,8 +18,12 @@ jobs:
         fetch-depth: 0
     - name: SonarQube Scan
       run: |
-        echo "SONAR_HOST_URL $SONAR_HOST_URL"
-        env
+        versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
+        cd application
+        bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
+        bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
+        ent bundle build --all --stdout --fail-fast
+        cd microservices/entando-hub-catalog-ms && mvn sonar:sonar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
