@@ -23,6 +23,7 @@ jobs:
         bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
         bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
         ent bundle build --all --stdout --fail-fast
+        echo $SONAR_HOST_URL
         cd microservices/entando-hub-catalog-ms && mvn sonar:sonar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
