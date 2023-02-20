@@ -26,7 +26,7 @@ jobs:
         cd application/microservices/entando-hub-catalog-ms && mvn sonar:sonar
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ variables.SONAR_HOST_URL }}
+        SONAR_HOST_URL: ${{ env.SONAR_HOST_URL }}
   app-build:
     runs-on: ubuntu-latest
     container:
