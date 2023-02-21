@@ -14,6 +14,8 @@
 # minimum example usage ./set-bundle-id.sh -o mydockerorg
 # full example usage ./set-bundle-id.sh -o mydockerorg -f microfrontends -a MY_CUSTOM_PLACEHOLDER -c MY_CUSTOM_PLACEHOLDER_2
 
+set -x
+
 while [ "$#" -gt 0 ]; do
   case "$1" in
     "-f") FOLDER_OVERRIDE="$2";shift;;
