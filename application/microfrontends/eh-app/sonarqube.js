@@ -16,7 +16,7 @@ const options = {
 
   'sonar.organization': 'entando-samples',
 
-  'sonar.projectKey': 'entando-samples_eh-login',
+  'sonar.projectKey': 'entando-samples_eh-app',
 
   // Path is relative to the sonar-project.properties file. Defaults to .
   'sonar.sources': 'src',

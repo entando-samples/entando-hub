@@ -29,7 +29,7 @@
     "start": "craco start",
     "build": "craco build",
     "test": "craco test",
-    "sonar": "node sonarqube.js"
+    "sonar": "craco test --coverage && node sonarqube.js"
   },
   "eslintConfig": {
     "extends": [
