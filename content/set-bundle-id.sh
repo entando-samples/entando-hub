@@ -49,11 +49,6 @@ echo "Content Bundle ID: ${CONTENT_BUNDLE_ID}"
 echo "#########################"
 echo "Replacing..."
 
-echo "current folder $(pwd)"
-
-grep -rl "${APPLICATION_TARGET}" "${FOLDER}"
-grep -rl "${CONTENT_TARGET}" "${FOLDER}"
-
 grep -rl "${APPLICATION_TARGET}" "${FOLDER}" | xargs sed -ie "s/${APPLICATION_TARGET}/${APPLICATION_BUNDLE_ID}/g"
 grep -rl "${CONTENT_TARGET}" "${FOLDER}" | xargs sed -ie "s/${CONTENT_TARGET}/${CONTENT_BUNDLE_ID}/g"
 
