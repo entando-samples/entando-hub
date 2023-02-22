@@ -49,6 +49,8 @@ echo "Content Bundle ID: ${CONTENT_BUNDLE_ID}"
 echo "#########################"
 echo "Replacing..."
 
+echo "current folder $(pwd)"
+
 grep -rl "${APPLICATION_TARGET}" "${FOLDER}"
 grep -rl "${CONTENT_TARGET}" "${FOLDER}"
 
