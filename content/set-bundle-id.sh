@@ -54,7 +54,7 @@ echo "current folder $(pwd)"
 grep -rl "${APPLICATION_TARGET}" "${FOLDER}"
 grep -rl "${CONTENT_TARGET}" "${FOLDER}"
 
-grep -rl "${APPLICATION_TARGET}" "${FOLDER}" | xargs sed -i "" -e "s/${APPLICATION_TARGET}/${APPLICATION_BUNDLE_ID}/g"
-grep -rl "${CONTENT_TARGET}" "${FOLDER}" | xargs sed -i "" -e "s/${CONTENT_TARGET}/${CONTENT_BUNDLE_ID}/g"
+grep -rl "${APPLICATION_TARGET}" "${FOLDER}" | xargs sed -e "s/${APPLICATION_TARGET}/${APPLICATION_BUNDLE_ID}/g"
+grep -rl "${CONTENT_TARGET}" "${FOLDER}" | xargs sed -e "s/${CONTENT_TARGET}/${CONTENT_BUNDLE_ID}/g"
 
 echo "...DONE"
