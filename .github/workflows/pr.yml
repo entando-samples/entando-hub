@@ -56,13 +56,19 @@ jobs:
         run: |
           ( set -euo pipefail
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}') 
+          echo $?
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix 
+          echo $?
           bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix 
+          echo $?
           ent --debug bundle pack --org $DOCKER_ORG --stdout --fail-fast
+          echo $?
           ent --debug bundle publish
+          echo $?
           version=$(bash ../.github/functions/utils.sh getBundleImage)
+          echo $?
           echo "VERSION=$version" >> $GITHUB_OUTPUT
-          ) || exit 1
+          ) 
           echo $?
         working-directory: ./application
       - name: Publish artifact version
