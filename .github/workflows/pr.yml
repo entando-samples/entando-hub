@@ -53,7 +53,7 @@ jobs:
         id: pack
         env:
           DOCKER_ORG: entando
-        run: |
+        run: >-
           set -ex
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}') &&
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix &&
