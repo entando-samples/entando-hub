@@ -58,10 +58,7 @@ jobs:
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}') &&
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix &&
           bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix &&
-          ent --debug bundle pack --org $DOCKER_ORG --stdout --fail-fast || exit 1 &&
-         
-          version=$(bash ../.github/functions/utils.sh getBundleImage) &&
-          echo "VERSION=$version" >> $GITHUB_OUTPUT
+          ent --debug bundle pack --org $DOCKER_ORG --stdout --fail-fast || exit 1 
         working-directory: ./application
       - name: Publish artifact version
         uses: thollander/actions-comment-pull-request@v2
