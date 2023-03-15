@@ -63,6 +63,7 @@ jobs:
           version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
           ) || exit 1
+          echo $?
         working-directory: ./application
       - name: Publish artifact version
         uses: thollander/actions-comment-pull-request@v2
