@@ -57,11 +57,6 @@ jobs:
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
           bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
-      - name: Pack the application bundle2
-        id: pack2
-        env:
-          DOCKER_ORG: entando
-        run: |
           ent --debug bundle pack --org $DOCKER_ORG --stdout --fail-fast
           ent --debug bundle publish
           version=$(bash ../.github/functions/utils.sh getBundleImage)
@@ -71,7 +66,7 @@ jobs:
         uses: thollander/actions-comment-pull-request@v2
         with:
           message: |
-            Requested publication of version: `${{ steps.pack2.outputs.VERSION }}`
+            Requested publication of version: `${{ steps.pack.outputs.VERSION }}`
   layout-build:
     runs-on: ubuntu-latest
     container:
