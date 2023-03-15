@@ -54,6 +54,7 @@ jobs:
         env:
           DOCKER_ORG: entando
         run: |
+          set -e
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
           bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
