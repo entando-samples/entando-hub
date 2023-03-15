@@ -54,7 +54,7 @@ jobs:
         env:
           DOCKER_ORG: entando
         run: |
-          ( set -euo pipefail
+          set -euo pipefail
           versionSuffix=$(echo "${{ github.event.pull_request.title }}" | awk '{print $1}') 
           echo $?
           bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix 
@@ -68,7 +68,6 @@ jobs:
           version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo $?
           echo "VERSION=$version" >> $GITHUB_OUTPUT
-          ) 
           echo $?
         working-directory: ./application
       - name: Publish artifact version
