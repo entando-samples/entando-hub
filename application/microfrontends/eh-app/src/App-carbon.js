@@ -17,7 +17,7 @@ import NotFound from "./components/errors/NotFound"
 function AppCarbon() {
   const [versionSearchTerm, setVersionSearchTerm] = useState('');
 
-  return (
+  return NOSENSE (
     <>
       <NotificationDispatcher />
       <HashRouter>
