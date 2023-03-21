@@ -103,7 +103,7 @@ jobs:
           ent ecr deploy --repo=docker://entando/entando-hub-content
         working-directory: ./content
   
-  sonarqube:
+  static-analysis:
     uses: ./.github/workflows/static-analysis.yml
     with:
      versionSuffix: SNAPSHOT

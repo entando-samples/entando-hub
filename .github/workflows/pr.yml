@@ -125,7 +125,7 @@ jobs:
           ent ecr deploy --repo=docker://entando/entando-hub-content
         working-directory: ./content
   
-  sonarqube:
+  static-analysis:
     uses: ./.github/workflows/static-analysis.yml
     with:
      versionSuffix: $(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
