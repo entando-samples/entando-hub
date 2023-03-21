@@ -6,6 +6,12 @@ on:
       versionSuffix: 
         required: true
         type: string
+      SONAR_HOST_URL: 
+        required: true
+        type: string
+    secrets:
+       SONAR_TOKEN:
+         required: true
 
 jobs:
  sonarqube:
@@ -29,4 +35,4 @@ jobs:
       working-directory: ./application
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+        SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}

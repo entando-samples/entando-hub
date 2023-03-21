@@ -129,3 +129,6 @@ jobs:
     uses: ./.github/workflows/static-analysis.yml
     with:
      versionSuffix: $(echo "${{ github.event.pull_request.title }}" | awk '{print $1}')
+     SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+    secrets:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
