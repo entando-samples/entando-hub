@@ -56,6 +56,7 @@ jobs:
           ent profile use $PROFILE_NAME
           ent ecr deploy --repo=docker://entando/entando-hub-application
         working-directory: ./application 
+  
   layout-build:
     runs-on: ubuntu-latest
     container:
@@ -101,26 +102,8 @@ jobs:
           ent profile use $PROFILE_NAME
           ent ecr deploy --repo=docker://entando/entando-hub-content
         working-directory: ./content
+  
   sonarqube:
-    runs-on: ubuntu-latest
-    container:
-      image: entando/ent:v7.1.3
-      volumes:
-        - /var/run/docker.sock:/var/run/docker.sock
-    steps:
-    - uses: actions/checkout@v3
-      with:
-        fetch-depth: 0
-    - name: SonarQube Scan
-      run: |
-        versionSuffix=SNAPSHOT
-        bash ../.github/functions/utils.sh setBundleVersion -$versionSuffix
-        bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
-        ent bundle build --all --stdout --fail-fast
-        cd microservices/entando-hub-catalog-ms && mvn sonar:sonar --no-transfer-progress && cd ../..
-        cd microfrontends/eh-login && ent npm run sonar && cd ../..
-        cd microfrontends/eh-app && ent npm run sonar && cd ../..
-      working-directory: ./application
-      env:
-        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
+    uses: ./.github/workflows/static-analysis.yml
+    with:
+     versionSuffix: SNAPSHOT
