@@ -38,23 +38,6 @@ jobs:
           ent --debug bundle publish
           version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
-        working-directory: ./application
-      - uses: redhat-actions/oc-installer@v1
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-      - name: Cluster Login
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-        uses: redhat-actions/oc-login@v1
-        with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-      - name: Deploy on EntandoApp 
-        id: deploy 
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-        run: |
-          ent profile new $PROFILE_NAME $ENTANDO_APP_NAME $ENTANDO_NAMESPACE
-          ent profile use $PROFILE_NAME
-          ent ecr deploy --repo=docker://entando/entando-hub-application
         working-directory: ./application 
   
   layout-build:
@@ -85,23 +68,6 @@ jobs:
           version=$(bash ../.github/functions/utils.sh getBundleImage)
           echo "VERSION=$version" >> $GITHUB_OUTPUT
         working-directory: ./content
-      - uses: redhat-actions/oc-installer@v1
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-      - name: Cluster Login
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-        uses: redhat-actions/oc-login@v1
-        with:
-          openshift_server_url: ${{ secrets.OPENSHIFT_SERVER }}
-          openshift_token: ${{ secrets.OPENSHIFT_TOKEN }}
-          namespace: ${{ secrets.OPENSHIFT_NAMESPACE }}
-      - name: Deploy on EntandoApp 
-        id: deploy 
-        if: ${{ env.SKIP_DEPLOY == 'false' }}
-        run: |
-          ent profile new $PROFILE_NAME $ENTANDO_APP_NAME $ENTANDO_NAMESPACE
-          ent profile use $PROFILE_NAME
-          ent ecr deploy --repo=docker://entando/entando-hub-content
-        working-directory: ./content
   
   static-analysis:
     uses: ./.github/workflows/static-analysis.yml
@@ -110,3 +76,33 @@ jobs:
      SONAR_HOST_URL: ${{ vars.SONAR_HOST_URL }}
     secrets:
       SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+  
+  app-deploy:
+    uses: ./.github/workflows/deploy.yml
+    needs: app-build
+    if: ${{ env.SKIP_DEPLOY == 'false' }}
+    with:
+     PROFILE_NAME: ${{ env.PROFILE_NAME }}
+     ENTANDO_APP_NAME: ${{ env.ENTANDO_APP_NAME }}
+     ENTANDO_NAMESPACE: ${{ env.ENTANDO_NAMESPACE }}
+     REPOSITORY_NAME: entando-hub-application
+     WD: ./application
+    secrets: 
+     OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+     OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+     OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
+
+  layout-deploy:
+    uses: ./.github/workflows/deploy.yml
+    needs: layout-build
+    if: ${{ env.SKIP_DEPLOY == 'false' }}
+    with:
+      PROFILE_NAME: ${{ env.PROFILE_NAME }}
+      ENTANDO_APP_NAME: ${{ env.ENTANDO_APP_NAME }}
+      ENTANDO_NAMESPACE: ${{ env.ENTANDO_NAMESPACE }}
+      REPOSITORY_NAME: entando-hub-content
+      WD: ./content
+    secrets: 
+      OPENSHIFT_SERVER: ${{ secrets.OPENSHIFT_SERVER }}
+      OPENSHIFT_TOKEN: ${{ secrets.OPENSHIFT_TOKEN }}
+      OPENSHIFT_NAMESPACE: ${{ secrets.OPENSHIFT_NAMESPACE }}
