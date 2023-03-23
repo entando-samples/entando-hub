@@ -5,11 +5,6 @@ on:
       - opened
       - synchronize
       - reopened
-env: 
-  SKIP_DEPLOY: ${{ vars.SKIP_DEPLOY }}
-  PROFILE_NAME: ${{ vars.PROFILE_NAME }}
-  ENTANDO_APP_NAME: ${{ vars.ENTANDO_APP_NAME }}
-  ENTANDO_NAMESPACE: ${{ vars.ENTANDO_NAMESPACE }}
 
 jobs:
   
@@ -102,11 +97,11 @@ jobs:
   app-deploy:
     uses: ./.github/workflows/deploy.yml
     needs: app-build
-    if: ${{ env.SKIP_DEPLOY == 'false' }}
+    if: ${{ vars.SKIP_DEPLOY == 'false' }}
     with:
-     PROFILE_NAME: ${{ env.PROFILE_NAME }}
-     ENTANDO_APP_NAME: ${{ env.ENTANDO_APP_NAME }}
-     ENTANDO_NAMESPACE: ${{ env.ENTANDO_NAMESPACE }}
+     PROFILE_NAME: ${{ vars.PROFILE_NAME }}
+     ENTANDO_APP_NAME: ${{ vars.ENTANDO_APP_NAME }}
+     ENTANDO_NAMESPACE: ${{ vars.ENTANDO_NAMESPACE }}
      REPOSITORY_NAME: entando-hub-application
      WD: ./application
     secrets: 
@@ -117,11 +112,11 @@ jobs:
   layout-deploy:
     uses: ./.github/workflows/deploy.yml
     needs: layout-build
-    if: ${{ env.SKIP_DEPLOY == 'false' }}
+    if: ${{ vars.SKIP_DEPLOY == 'false' }}
     with:
-      PROFILE_NAME: ${{ env.PROFILE_NAME }}
-      ENTANDO_APP_NAME: ${{ env.ENTANDO_APP_NAME }}
-      ENTANDO_NAMESPACE: ${{ env.ENTANDO_NAMESPACE }}
+      PROFILE_NAME: ${{ vars.PROFILE_NAME }}
+      ENTANDO_APP_NAME: ${{ vars.ENTANDO_APP_NAME }}
+      ENTANDO_NAMESPACE: ${{ vars.ENTANDO_NAMESPACE }}
       REPOSITORY_NAME: entando-hub-content
       WD: ./content
     secrets: 
