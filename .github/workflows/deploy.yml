@@ -15,6 +15,9 @@ on:
       REPOSITORY_NAME:
         required: true
         type: string
+      WD:
+        required: true
+        type: string
     secrets:
        OPENSHIFT_SERVER:
          required: true
