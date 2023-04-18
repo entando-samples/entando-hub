@@ -1,5 +1,12 @@
 package com.entando.hub.catalog.service;
 
+import static com.entando.hub.catalog.service.PrivateCatalogApiKeyGeneratorHelper.LABEL;
+import static com.entando.hub.catalog.service.PrivateCatalogApiKeyGeneratorHelper.PORTAL_USER_USERNAME;
+import static com.entando.hub.catalog.service.PrivateCatalogApiKeyGeneratorHelper.generatePortalUserEntity;
+import static com.entando.hub.catalog.service.PrivateCatalogApiKeyGeneratorHelper.generatePrivateCatalogApiKeyEntity;
+import static com.entando.hub.catalog.service.PrivateCatalogApiKeyService.getPageable;
+import static org.mockito.ArgumentMatchers.any;
+
 import com.entando.hub.catalog.persistence.PortalUserRepository;
 import com.entando.hub.catalog.persistence.PrivateCatalogApiKeyRepository;
 import com.entando.hub.catalog.persistence.entity.PortalUser;
@@ -7,9 +14,13 @@ import com.entando.hub.catalog.persistence.entity.PrivateCatalogApiKey;
 import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.service.dto.apikey.ApiKeyResponseDTO;
 import com.entando.hub.catalog.service.exception.BadRequestException;
+import com.entando.hub.catalog.service.exception.NotFoundException;
 import com.entando.hub.catalog.service.mapper.PrivateCatalogApiKeyMapper;
 import com.entando.hub.catalog.service.mapper.PrivateCatalogApiKeyMapperImpl;
 import com.entando.hub.catalog.service.security.ApiKeyGeneratorHelper;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,15 +35,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
-import static com.entando.hub.catalog.service.PrivateCatalogApiKeyGeneratorHelper.*;
-import static com.entando.hub.catalog.service.PrivateCatalogApiKeyService.getPageable;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 
 @SpringBootTest
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -189,7 +191,46 @@ public class PrivateCatalogApiKeyServiceTest {
             Assert.assertTrue(e instanceof BadRequestException);
         }
     }
+    @Test
+    void getUsernameByApiKeyTest(){
+        PrivateCatalogApiKey privateCatalogApiKey1 = createPrivateCatalogApiKey1();
+        Mockito.when(this.privateCatalogApiKeyRepository.findByApiKey(apiKeyGeneratorHelper.toSha(API_KEY))).thenReturn(Optional.of(privateCatalogApiKey1));
+        String usernameByApiKey = this.privateCatalogApiKeyService.getUsernameByApiKey(API_KEY);
+        Assertions.assertNotNull(usernameByApiKey);
+    }
 
+    @Test
+    void getUsernameByInvalidApiKeyTest(){
+        Mockito.when(this.privateCatalogApiKeyRepository.findByApiKey(apiKeyGeneratorHelper.toSha(API_KEY))).thenReturn(Optional.empty());
+        try {
+            this.privateCatalogApiKeyService.getUsernameByApiKey(API_KEY);
+        } catch (Exception e) {
+            Assert.assertTrue(e instanceof NotFoundException);
+        }
+    }
+
+    @Test
+    void doesApiKeyExistsTest(){
+        Mockito.when(this.apiKeyGeneratorHelper.toSha(API_KEY)).thenReturn(API_KEY_SHA);
+        Mockito.when(this.privateCatalogApiKeyRepository.existsByApiKey(API_KEY_SHA)).thenReturn(true);
+        boolean apiKeyExist = this.privateCatalogApiKeyService.doesApiKeyExist(API_KEY);
+        Assert.assertTrue(apiKeyExist);
+    }
+
+    @Test
+    void doesApiKeyExistsFalseTest(){
+        Mockito.when(this.apiKeyGeneratorHelper.toSha(API_KEY)).thenReturn(API_KEY_SHA);
+        Mockito.when(this.privateCatalogApiKeyRepository.existsByApiKey(API_KEY_SHA)).thenReturn(false);
+        boolean apiKeyExist = this.privateCatalogApiKeyService.doesApiKeyExist(API_KEY);
+        Assert.assertFalse(apiKeyExist);
+    }
+
+    @Test
+    void doesApiKeyExistsEmptyTest(){
+        Mockito.when(this.privateCatalogApiKeyRepository.existsByApiKey(null)).thenReturn(false);
+        boolean apiKeyExist = this.privateCatalogApiKeyService.doesApiKeyExist(null);
+        Assert.assertFalse(apiKeyExist);
+    }
     private PrivateCatalogApiKey createPrivateCatalogApiKey1() {
         return generatePrivateCatalogApiKeyEntity(API_KEY_ID,PORTAL_USER_ID);
     }

@@ -5,48 +5,37 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.entando.hub.catalog.rest.dto.RestUserRepresentationDto;
+import com.entando.hub.catalog.rest.model.SearchKeycloackUserRequest;
+import com.entando.hub.catalog.service.KeycloakService;
+import com.entando.hub.catalog.service.model.UserRepresentation;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import com.entando.hub.catalog.rest.dto.RestUserRepresentationDto;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import com.entando.hub.catalog.rest.model.SearchKeycloackUserRequest;
-import com.entando.hub.catalog.service.KeycloakService;
-import com.entando.hub.catalog.service.model.UserRepresentation;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
+@SpringBootTest
+@AutoConfigureMockMvc
 @WithMockUser(username="admin",roles={ADMIN})
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(KeycloakUserController.class)
-public class KeycloakUserControllerTest {
+class KeycloakUserControllerTest {
 
-	@Autowired
-    WebApplicationContext webApplicationContext;
     @Autowired
     private MockMvc mockMvc;
-    @InjectMocks
-	KeycloakUserController keyCloakUserController;
 	@MockBean
 	KeycloakService keyCloakService;
 	private static final String URI = "/api/keycloak/users/";
@@ -59,13 +48,8 @@ public class KeycloakUserControllerTest {
     private final String EMAILVERIFIED = "admin.123@test.co.in";
     private final String ORGID = "2001";
 
-	@Before
-    public void setUp() {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
 	@Test
-	public void testSearchUsers() throws Exception{
+	void testSearchUsers() throws Exception{
 		UserRepresentation user = populateUserRepresentation();
 		SearchKeycloackUserRequest request = populateSearchKeycloackUserRequest();
         List<UserRepresentation> userRepresentationList = new ArrayList<>();
@@ -73,7 +57,7 @@ public class KeycloakUserControllerTest {
         Map<String, String> map = new HashMap<>();
         String inputJson = mapToJson(request);
         Mockito.when(keyCloakService.searchUsers(map)).thenReturn(userRepresentationList);
-       mockMvc.perform(MockMvcRequestBuilders.get(URI)
+        mockMvc.perform(MockMvcRequestBuilders.get(URI)
         		.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content(inputJson))
 				.andExpect(status().isOk())
@@ -84,7 +68,7 @@ public class KeycloakUserControllerTest {
 	}
 
 	@Test
-	public void testGetUser() throws Exception {
+	void testGetUser() throws Exception {
 		UserRepresentation user = populateUserRepresentation();
 	    String username=user.getUsername();
 		RestUserRepresentationDto restUserRepresentation = populateRestUserRepresentation();
@@ -96,7 +80,7 @@ public class KeycloakUserControllerTest {
 	}
 	
 	@Test
-	public void testGetUserFails() throws Exception{
+	void testGetUserFails() throws Exception{
 		UserRepresentation user = populateUserRepresentation();
 	    String username=user.getUsername();
 		Mockito.when(keyCloakService.getUser(null)).thenReturn(null);

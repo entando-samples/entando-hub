@@ -7,16 +7,16 @@ import com.entando.hub.catalog.persistence.entity.PrivateCatalogApiKey;
 import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.service.dto.apikey.ApiKeyResponseDTO;
 import com.entando.hub.catalog.service.exception.BadRequestException;
+import com.entando.hub.catalog.service.exception.NotFoundException;
 import com.entando.hub.catalog.service.mapper.PrivateCatalogApiKeyMapper;
 import com.entando.hub.catalog.service.security.ApiKeyGeneratorHelper;
+import java.util.List;
+import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class PrivateCatalogApiKeyService {
@@ -98,6 +98,24 @@ public class PrivateCatalogApiKeyService {
         List<PrivateCatalogApiKey> content = apiKeys.getContent();
         List<ApiKeyResponseDTO> response = this.privateCatalogApiKeyMapper.toApiKeyResponseDTO(content);
         return new PagedContent<>( this.privateCatalogApiKeyMapper.removeApiKey(response), apiKeys);
+    }
+
+    public String getUsernameByApiKey(String apiKey) {
+        Optional<PrivateCatalogApiKey> apiKeyOptional = this.privateCatalogApiKeyRepository.findByApiKey(apiKeyGeneratorHelper.toSha(apiKey));
+        if (apiKeyOptional.isPresent()) {
+            return apiKeyOptional.get().getPortalUser().getUsername();
+        } else {
+            String errorMessage = "Invalid Api key";
+            throw new NotFoundException(errorMessage);
+        }
+    }
+
+    public boolean doesApiKeyExist(String apiKey) {
+        if (null!=apiKey) {
+            String apiKeySha = apiKeyGeneratorHelper.toSha(apiKey);
+            return this.privateCatalogApiKeyRepository.existsByApiKey(apiKeySha);
+        }
+        return false;
     }
 
     public static Pageable getPageable(Integer pageSize, int pageNum) {

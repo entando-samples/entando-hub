@@ -3,59 +3,41 @@ package com.entando.hub.catalog.rest;
 import static com.entando.hub.catalog.config.AuthoritiesConstants.ADMIN;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertNull;
-import static net.bytebuddy.matcher.ElementMatchers.is;
-import static org.hamcrest.MatcherAssert.assertThat;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.Organisation;
+import com.entando.hub.catalog.rest.dto.OrganisationDto;
+import com.entando.hub.catalog.service.OrganisationService;
+import com.entando.hub.catalog.service.mapper.OrganizationMapper;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
-
-import com.entando.hub.catalog.rest.dto.OrganisationDto;
-import com.entando.hub.catalog.service.mapper.OrganizationMapper;
-import com.entando.hub.catalog.service.mapper.OrganizationMapperImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.context.WebApplicationContext;
 
-import com.entando.hub.catalog.persistence.entity.BundleGroup;
-import com.entando.hub.catalog.persistence.entity.Organisation;
-import com.entando.hub.catalog.service.OrganisationService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(OrganisationController.class)
-@ComponentScan(basePackageClasses = {OrganizationMapper.class, OrganizationMapperImpl.class})
-public class OrganisationControllerTest {
+@SpringBootTest
+@AutoConfigureMockMvc
+class OrganisationControllerTest {
 
 	@Autowired
 	private OrganizationMapper organizationMapper;
 
-	@Autowired
-	WebApplicationContext webApplicationContext;
 
 	@Autowired
 	private MockMvc mockMvc;
-
-	@InjectMocks
-	OrganisationController organisationController;
-
 	@MockBean
 	OrganisationService organisationService;
 
@@ -67,13 +49,8 @@ public class OrganisationControllerTest {
 	private static final Long BUNDLE_GROUP_ID = 1000L;
 	private static final String BUNDLE_GROUP_NAME = "Test Bundle Group Name";
 
-	@Before
-	public void setUp() {
-		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-	}
-	
 	@Test
-	public void testGetOrganisations() throws Exception {
+	void testGetOrganisations() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		Mockito.when(organisationService.getOrganisations()).thenReturn(List.of(organisation));
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON_VALUE))
@@ -83,7 +60,7 @@ public class OrganisationControllerTest {
 	}
 
 	@Test
-	public void testGetOrganisation() throws Exception {
+	void testGetOrganisation() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		Long organisationId = organisation.getId();
 		Mockito.when(organisationService.getOrganisation(organisationId)).thenReturn(Optional.of(organisation));
@@ -94,7 +71,7 @@ public class OrganisationControllerTest {
 	}
 
 	@Test
-	public void testGetOrganisationFails() throws Exception {
+	void testGetOrganisationFails() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		Long organisationId = organisation.getId();
 		Mockito.when(organisationService.getOrganisation(null)).thenReturn(Optional.of(organisation));
@@ -105,7 +82,7 @@ public class OrganisationControllerTest {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void testCreateOrganisation() throws Exception {
+	void testCreateOrganisation() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		BundleGroup bundleGroup = getBundleGroupObj();
 		organisation.setBundleGroups(Set.of(bundleGroup));
@@ -129,7 +106,7 @@ public class OrganisationControllerTest {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void testUpdateOrganisation() throws Exception {
+	void testUpdateOrganisation() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		BundleGroup bundleGroup = getBundleGroupObj();
 		organisation.setBundleGroups(Set.of(bundleGroup));
@@ -162,7 +139,7 @@ public class OrganisationControllerTest {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void testUpdateOrganisationFails() throws Exception {
+	void testUpdateOrganisationFails() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		BundleGroup bundleGroup = getBundleGroupObj();
 		organisation.setBundleGroups(Set.of(bundleGroup));
@@ -178,7 +155,7 @@ public class OrganisationControllerTest {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void testDeleteOrganisation() throws Exception {
+	void testDeleteOrganisation() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		BundleGroup bundleGroup = getBundleGroupObj();
 		organisation.setBundleGroups(Set.of(bundleGroup));
@@ -191,7 +168,7 @@ public class OrganisationControllerTest {
 
 	@Test
 	@WithMockUser(roles = { ADMIN })
-	public void testDeleteOrganisationFails() throws Exception {
+	void testDeleteOrganisationFails() throws Exception {
 		Organisation organisation = getOrganisationObj();
 		Long organisationId = organisation.getId();
 		Mockito.when(organisationService.getOrganisation(null)).thenReturn(Optional.of(organisation));
