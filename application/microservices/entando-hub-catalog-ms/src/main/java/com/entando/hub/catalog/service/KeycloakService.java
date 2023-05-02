@@ -2,6 +2,7 @@ package com.entando.hub.catalog.service;
 
 import com.entando.hub.catalog.service.exception.OidcException;
 import com.entando.hub.catalog.service.model.AuthResponse;
+import com.entando.hub.catalog.service.model.RoleMappingsRepresentation;
 import com.entando.hub.catalog.service.model.UserRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -64,13 +65,22 @@ public class KeycloakService {
         List<UserRepresentation> list = this.listUsers(params);
         return list.stream().filter(ur -> ur.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
     }
-    
+
     private List<UserRepresentation> listUsers(Map<String, String> params) {
     	logger.debug("listUsers: getting the keycloak users " );
         final String url = String.format("%s/admin/realms/%s/users", configuration.getAuthServerUrl(), configuration.getRealm());
         final ResponseEntity<UserRepresentation[]> response = this.executeRequest(url,
                 HttpMethod.GET, createEntity(), UserRepresentation[].class, params);
         return response.getBody() != null ? Arrays.asList(response.getBody()) : Collections.emptyList();
+    }
+
+    public RoleMappingsRepresentation getRolesByUsername(String username){
+        UserRepresentation user = this.getUser(username);
+        final String url = String.format("%s/admin/realms/%s/users/%s/role-mappings", configuration.getAuthServerUrl(), configuration.getRealm(), user.getId());
+        final ResponseEntity<RoleMappingsRepresentation> response = this.executeRequest(url,
+                HttpMethod.GET, createEntity(), RoleMappingsRepresentation.class, Collections.emptyMap());
+        logger.info("RESPONSE BODY: {}", response.getBody().toString());
+        return response.getBody();
     }
     
     private <T> HttpEntity<T> createEntity() {
