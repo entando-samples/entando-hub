@@ -20,7 +20,8 @@ public class BundleTemplateDto {
   private Long bundleGroupId;
   private Long bundleId;
 
-  public BundleTemplateDto(BundleGroupVersion bundleGroupVersion, BundleGroup bundleGroup, Bundle bundle) {
+  public BundleTemplateDto(BundleGroupVersion bundleGroupVersion, Bundle bundle) {
+    BundleGroup bundleGroup = bundleGroupVersion.getBundleGroup();
     this.bundleGroupName = bundleGroup.getName();
     this.bundleName = bundle.getName();
     this.gitSrcRepoAddress = bundle.getGitSrcRepoAddress();
