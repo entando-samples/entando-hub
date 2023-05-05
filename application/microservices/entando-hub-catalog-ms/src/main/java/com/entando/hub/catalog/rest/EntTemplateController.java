@@ -44,12 +44,15 @@ public class EntTemplateController {
     public List<BundleTemplateDto> getBundleTemplates(
             @RequestHeader(name = API_KEY_HEADER, required = false) String apiKey,
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId) {
+        List<BundleTemplateDto> result;
         Catalog userCatalog;
         if (StringUtils.isNotEmpty(apiKey)) {
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
-            return bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(userCatalog.getId());
+            result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(userCatalog.getId());
+        } else {
+            result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
         }
-        return bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
+        return result;
     }
 
     @Operation(summary = "Get all the bundle groups having templates in them, they can be filtered by name part", description = "Public api, no authentication required.")
@@ -60,19 +63,23 @@ public class EntTemplateController {
             @RequestHeader(name = API_KEY_HEADER, required = false) String apiKey,
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId,
             @RequestParam(required = false) String name) {
+        List<BundleGroupTemplateDto> result;
         Catalog userCatalog;
         if (StringUtils.isNotEmpty(apiKey)) {
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
             if (name != null) {
-                return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(userCatalog.getId(), name);
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(userCatalog.getId(), name);
+            } else {
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(userCatalog.getId());
             }
-            return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(userCatalog.getId());
         } else {
             if (name != null) {
-                return bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(name);
+                result = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(name);
+            } else {
+                result = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates();
             }
-            return bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates();
         }
+        return result;
     }
 
     @Operation(summary = "Get the templates for the bundle given the bundlegroup id", description = "Public api, no authentication required.")
@@ -84,16 +91,17 @@ public class EntTemplateController {
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId,
             @PathVariable Long id) {
         Catalog userCatalog;
+        List<BundleTemplateDto> result = new ArrayList<>();
         if (StringUtils.isNotEmpty(apiKey)) {
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
             if (id != null) {
-                return bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(userCatalog.getId(), id);
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(userCatalog.getId(), id);
             }
         } else {
             if (id != null) {
-                return bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id);
+                result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id);
             }
         }
-        return new ArrayList<>();
+        return result;
     }
 }
