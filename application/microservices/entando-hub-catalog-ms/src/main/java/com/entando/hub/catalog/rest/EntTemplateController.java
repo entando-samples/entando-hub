@@ -12,6 +12,7 @@ import com.entando.hub.catalog.service.CatalogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import java.util.ArrayList;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.MediaType;
@@ -61,14 +62,12 @@ public class EntTemplateController {
             @RequestParam(required = false) String name) {
         Catalog userCatalog;
         if (StringUtils.isNotEmpty(apiKey)) {
-            // Private Catalog published
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
             if (name != null) {
                 return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(userCatalog.getId(), name);
             }
             return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(userCatalog.getId());
         } else {
-            // Public
             if (name != null) {
                 return bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(name);
             }
@@ -86,18 +85,15 @@ public class EntTemplateController {
             @PathVariable Long id) {
         Catalog userCatalog;
         if (StringUtils.isNotEmpty(apiKey)) {
-            // Return Templates from Private Catalog with state Published
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
             if (id != null) {
                 return bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(userCatalog.getId(), id);
             }
-            return bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(userCatalog.getId());
         } else {
-            // Return  Public Templates
             if (id != null) {
                 return bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id);
             }
-            return bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
         }
+        return new ArrayList<>();
     }
 }
