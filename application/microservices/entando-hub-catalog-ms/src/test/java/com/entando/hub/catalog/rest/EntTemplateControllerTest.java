@@ -70,7 +70,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
@@ -89,7 +88,6 @@ class EntTemplateControllerTest {
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates()).thenReturn(bundleTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLES_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
@@ -110,7 +108,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
@@ -124,7 +121,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, String.valueOf(INVALID_CATALOG_ID))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
@@ -140,7 +136,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
@@ -155,7 +150,6 @@ class EntTemplateControllerTest {
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates()).thenReturn(bundleGroupTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
@@ -176,7 +170,6 @@ class EntTemplateControllerTest {
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .param(BUNDLE_GROUP_NAME_PARAM, BUNDLE_GROUP_NAME)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
@@ -191,7 +184,6 @@ class EntTemplateControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .param(BUNDLE_GROUP_NAME_PARAM, BUNDLE_GROUP_NAME)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
@@ -207,7 +199,6 @@ class EntTemplateControllerTest {
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates()).thenReturn(bundleGroupTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
@@ -226,7 +217,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
@@ -245,7 +235,6 @@ class EntTemplateControllerTest {
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI+BUNDLE_GROUP_ID)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
@@ -257,6 +246,33 @@ class EntTemplateControllerTest {
     }
 
     @Test
+    void testGetBundleTemplatesByIDEmptyList1() throws Exception {
+        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI)
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+    @Test
+    void testGetBundleTemplatesByIDWithApiKeyEmptyList() throws Exception {
+        Catalog catalog = new Catalog();
+        catalog.setId(CATALOG_ID);
+        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
+        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI)
+                        .header(API_KEY_HEADER, API_KEY)
+                        .param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID))
+                        .accept(MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(status().isOk())
+                .andExpect(content().string("[]"));
+    }
+
+
+    @Test
     void testGetBundlesTemplatesByIDApiKeyNotExists() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
@@ -266,7 +282,6 @@ class EntTemplateControllerTest {
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID))
                         .accept(MediaType.APPLICATION_JSON_VALUE))
-                .andDo(print())
                 .andExpect(status().isUnauthorized());
     }
 
