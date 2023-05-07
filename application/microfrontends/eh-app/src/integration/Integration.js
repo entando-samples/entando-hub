@@ -350,7 +350,7 @@ export const editBundleGroup = async (apiUrl,bundleGroupData, id) => {
   return checkForErrorsAndSendResponse(data, isError, API_RESPONSE_KEY.EDITED_BUNDLE_GROUP)
 }
 
-export const deleteBundle = async (apiUrl,id, bundleName) => {
+export const deleteBundleGroup = async (apiUrl,id, bundleName) => {
   const { data, isError } = await deleteData(apiUrl+urlBundleGroups, id)
 
   eventHandler(
