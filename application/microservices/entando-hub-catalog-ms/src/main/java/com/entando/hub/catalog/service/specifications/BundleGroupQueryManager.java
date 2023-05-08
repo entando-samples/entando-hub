@@ -1,4 +1,4 @@
-package com.entando.hub.catalog.service;
+package com.entando.hub.catalog.service.specifications;
 
 import com.entando.hub.catalog.persistence.entity.BundleGroup;
 import com.entando.hub.catalog.persistence.entity.BundleGroup_;

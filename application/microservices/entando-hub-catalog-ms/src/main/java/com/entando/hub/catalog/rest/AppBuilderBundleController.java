@@ -83,7 +83,7 @@ public class AppBuilderBundleController {
 		logger.debug("{}: REST request to get bundles for the current published version by bundleGroup Id: {} ",CLASS_NAME, bundleGroupId );
 		Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
 		Set<DescriptorVersion> versions = descriptorVersionsToSet(descriptorVersions);
-		Page<Bundle> bundlesPage = bundleService.getBundles(apiKey, sanitizedPageNum, pageSize, Optional.ofNullable(bundleGroupId), versions);
+		Page<Bundle> bundlesPage = bundleService.getBundles(apiKey, sanitizedPageNum, pageSize, bundleGroupId, versions, catalogId);
 		Page<BundleEntityDto> converted = convertToDto(bundlesPage);
 
 		return new PagedContent<>(bundlesPage.getContent().stream()

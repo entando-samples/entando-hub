@@ -5,13 +5,13 @@ import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.entity.*;
 import com.entando.hub.catalog.rest.dto.BundleDto;
-import com.entando.hub.catalog.service.exception.BadRequestException;
-import com.entando.hub.catalog.service.exception.NotFoundException;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleStandardMapper;
 import com.entando.hub.catalog.service.security.SecurityHelperService;
+import com.entando.hub.catalog.service.specifications.BundleQueryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
@@ -47,62 +47,102 @@ public class BundleService {
         this.catalogService = catalogService;
     }
 
+    private Set<DescriptorVersion> getDescriptorVersions(Set<DescriptorVersion> descriptorVersions){
+        // Controllers can override but default to all versions otherwise.
+        if (descriptorVersions.isEmpty()) {
+            return EnumSet.allOf(DescriptorVersion.class);
+        }
+        return descriptorVersions;
+    }
+
+    public Page<Bundle> getBundles(String apiKey, Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions, Long catalogId) {
+
+        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}", CLASS_NAME, bundleGroupId, descriptorVersions);
+
+        Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
+        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+
+        Set<DescriptorVersion> parsedDescriptorVersions = getDescriptorVersions(descriptorVersions);
+        logger.debug("{}: getBundles: parsed descriptorVersions: {}", CLASS_NAME, parsedDescriptorVersions);
+
+        Boolean publicCatalog = (apiKey != null) ?  false :  true;
+        logger.debug("{}: getBundles: publicCatalog: {}", CLASS_NAME, publicCatalog);
+
+        return this.getBundlesWithFilters(catalogId, parsedDescriptorVersions, publicCatalog, bundleGroupId, paging);
+    }
+
+    // TODO: removes this method here and from test
     public Page<Bundle> getBundles(String apiKey, Integer pageNum, Integer pageSize, Optional<String> bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
 
         logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}", CLASS_NAME, bundleGroupId, descriptorVersions);
-        Pageable paging;
-        if (pageSize == 0) {
-            paging = Pageable.unpaged();
-        } else {
-            paging = PageRequest.of(pageNum, pageSize, Sort.by(Sort.Direction.ASC, "name"));
-        }
-        //Controllers can override but default to all versions otherwise.
-        if (descriptorVersions == null) {
-            descriptorVersions = new HashSet<>();
-            Collections.addAll(descriptorVersions, DescriptorVersion.values());
-        }
-        Page<Bundle> response;
+
+
+        Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
+        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+
+        Set<DescriptorVersion> parsedDescriptorVersions = getDescriptorVersions(descriptorVersions);
+
         Catalog userCatalog = null;
+
         if (null != apiKey) {
             userCatalog = catalogService.getCatalogByApiKey(apiKey);
         }
-        if (bundleGroupId.isPresent()) {
-            Long bundleGroupEntityId = Long.parseLong(bundleGroupId.get());
-            Optional<BundleGroup> bundleGroupEntity = bundleGroupRepository.findById(bundleGroupEntityId);
-            if (bundleGroupEntity.isPresent()) {
-                 if (null!=apiKey
-                        && !Objects.equals(bundleGroupEntity.get().getCatalogId(), userCatalog.getId())) {
-                     throw new BadRequestException("Invalid api key and bundleGroupId");
-                }
-                BundleGroupVersion publishedVersion = bundleGroupVersionRepository.findByBundleGroupAndStatus(bundleGroupEntity.get(), BundleGroupVersion.Status.PUBLISHED);
-                Boolean isPublicCatalog= false;
-                 if (publishedVersion != null) {
-                    isPublicCatalog = publishedVersion.getBundleGroup().getPublicCatalog();
-                }
-                if ((Boolean.TRUE.equals(isPublicCatalog))
-                    || (null!=userCatalog && Objects.equals(bundleGroupEntity.get().getCatalogId(), userCatalog.getId()))) {
-                     response = bundleRepository.findByBundleGroupVersionsIsAndDescriptorVersionIn(
-                            publishedVersion, descriptorVersions, paging);
-                } else {
-                    throw new NotFoundException("Bundle Group " +bundleGroupEntityId+ " not found");
-                }
-            } else {
-                throw new NotFoundException("Bundle Group " +bundleGroupEntityId+ " not found");
-            }
-        } else {
-            if (null != apiKey){
-                response = bundleRepository.getPrivateCatalogBundlesPublished(userCatalog.getId(),descriptorVersions, paging);
-            } else {
-                logger.debug("{}: getBundles: bundle group id is not present: {}, descriptorVersion: {}", CLASS_NAME, bundleGroupId, descriptorVersions);
-                List<BundleGroupVersion> bundleGroupsVersion = bundleGroupVersionRepository.getPublicCatalogPublishedBundleGroups(descriptorVersions);
-                response = bundleRepository.findByBundleGroupVersionsInAndDescriptorVersionIn(bundleGroupsVersion, descriptorVersions, paging);
-            }
+
+        String bundleGroupIdString = null;
+        if(bundleGroupId.isPresent() ) {
+            bundleGroupIdString = bundleGroupId.get();
         }
-        return response;
+
+        Boolean publicCatalog = null;
+        if (apiKey==null) {
+            publicCatalog=true;
+            userCatalog.setId(null);
+        }
+
+        return this.getBundlesWithFilters(userCatalog.getId(), parsedDescriptorVersions, publicCatalog, bundleGroupIdString, paging);
+    }
+
+
+    public Page<Bundle> getBundlesWithFilters(Long catalogId, Set<DescriptorVersion> descriptorVersions, Boolean publicCatalog, String bundleGroupId, Pageable paging){
+        List<Specification<Bundle>> filters = new ArrayList<>();
+
+        logger.debug("{}: adding filter by published status", CLASS_NAME);
+        filters.add(BundleQueryManager.addPublishedStatus());
+
+        logger.debug("{}: adding filter by hasGitRepoAddress", CLASS_NAME);
+        filters.add(BundleQueryManager.hasGitRepoAddress());
+
+        logger.debug("{}: adding filter by descriptorVersions {}", CLASS_NAME, descriptorVersions);
+        filters.add(BundleQueryManager.descriptorVersionsIn(descriptorVersions));
+
+        if(bundleGroupId!=null){
+            logger.debug("{}: adding filter by bundleGroupId {}", CLASS_NAME, bundleGroupId);
+            filters.add(BundleQueryManager.hasBundleGroupId(bundleGroupId));
+        }
+
+        if(catalogId!=null) {
+            logger.debug("{}: adding filter by catalogId {}", CLASS_NAME, catalogId);
+            filters.add(BundleQueryManager.hasCatalogId(catalogId));
+        }
+
+        if(publicCatalog!=null){
+            logger.debug("{}: adding filter by publicCatalog {}", CLASS_NAME, publicCatalog);
+            filters.add(BundleQueryManager.isInPublicCatalog(publicCatalog));
+        }
+        return this.findAllBundleGroups(filters, paging);
+    }
+
+
+    public Page<Bundle> findAllBundleGroups(List<Specification<Bundle>> filters, Pageable paging){
+        if(!filters.isEmpty()) {
+            return bundleRepository.findAll(BundleQueryManager.getSpecificationFromFilters(filters), paging);
+        }else {
+            return bundleRepository.findAll(paging);
+        }
     }
 
     public Page<Bundle> getBundles(Integer pageNum, Integer pageSize, Optional<String> bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
-        return getBundles(null, pageNum, pageSize, bundleGroupId,  descriptorVersions);
+        return getBundles(null, pageNum, pageSize, String.valueOf(bundleGroupId),  descriptorVersions, null);
     }
     public List<Bundle> getBundles() {
         return bundleRepository.findAll();

@@ -10,6 +10,7 @@ import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapper;
+import com.entando.hub.catalog.service.specifications.BundleGroupQueryManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
@@ -27,8 +28,6 @@ public class BundleGroupVersionService {
 
     private final Logger logger = LoggerFactory.getLogger(BundleGroupVersionService.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
-
-    private final int MAX_PAGE_SIZE = 50;
     private static final String ORDER_BY_NAME = "bundleGroup.name";
     private final BundleGroupVersionRepository bundleGroupVersionRepository;
     final private BundleGroupRepository bundleGroupRepository;
@@ -397,7 +396,7 @@ public class BundleGroupVersionService {
         bundleGroups = searchText != null ? this.filterSearchText(bundleGroups, searchText): bundleGroups;
 
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, ORDER_BY_NAME)).and(Sort.by("lastUpdated").descending());
-        Pageable paging = this.getPaging(pageNum, pageSize, sort);
+        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
 
         Page<BundleGroupVersion> page = this.getBundleGroupVersionByStatus(bundleGroups, statuses, paging);
         Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
@@ -464,24 +463,16 @@ public class BundleGroupVersionService {
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPrivateCatalogPublishedBundleGroupVersions(Long userCatalogId, Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
-        Pageable paging = getPaging(pageNum, pageSize, sort);
+        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
         Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPublicCatalogPublishedBundleGroupVersions(Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
-        Pageable paging = getPaging(pageNum, pageSize, sort);
+        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
         Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
         return new PagedContent<>(toResponseViewList(page), page);
-    }
-
-    private Pageable getPaging(Integer pageNum, Integer pageSize, Sort sort){
-        if (pageSize <= 0 || pageSize > MAX_PAGE_SIZE) {
-            logger.warn("An unexpected pageSize {} was provided. Setting maximum to {}.", pageSize, MAX_PAGE_SIZE);
-            pageSize = MAX_PAGE_SIZE;
-        }
-        return PageRequest.of(pageNum, pageSize, sort);
     }
 
     protected Page<BundleGroupVersionEntityDto> convertoToDto(Page<BundleGroupVersion> page) {
