@@ -12,6 +12,15 @@ import {
   addNewBundleGroup,
   editBundleGroup,
   deleteBundleGroup,
+  addNewBundleGroupVersion,
+  getAllBundleGroupVersionByBundleGroupId,
+  deleteBundleGroupVersion,
+  editBundleGroupVersion,
+  getBundleGroupDetailsByBundleGroupVersionId,
+  createAUserForAnOrganisation,
+  getAllUsers,
+  getAllUserForAnOrganisation,
+  deleteUser
 } from './Integration';
 
 jest.mock('./http');
@@ -374,5 +383,274 @@ describe('Integration', () => {
         expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToDeleteBundle');
       });
     });
+
+    describe("addNewBundleGroupVersion", () => {
+      it("should add a new bundle group version and return editedBundleGroup", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+        const bundleGroupVersionData = { name: "TestBundleGroupVersion" };
+
+        const result = await addNewBundleGroupVersion(mockApiUrl, bundleGroupVersionData);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionData);
+        expect(result).toEqual({
+          editedBundleGroup: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+        const bundleGroupVersionData = { name: "TestBundleGroupVersion" };
+
+        const result = await addNewBundleGroupVersion(mockApiUrl, bundleGroupVersionData);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionData);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.unableToAddBundleGroupVersion');
+      });
+    });
+
+    describe("getAllBundleGroupVersionByBundleGroupId", () => {
+      it("should fetch all bundle group versions by bundle group id and return versions", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+        const bundleGroupId = 1;
+        const page = 1;
+        const pageSize = 10;
+        const bundleStatuses = [1, 2];
+
+        const result = await getAllBundleGroupVersionByBundleGroupId(mockApiUrl, bundleGroupId, page, pageSize, bundleStatuses);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/versions/1?page=1&pageSize=10&statuses=1,2`);
+        expect(result).toEqual({
+          versions: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+        const bundleGroupId = 1;
+        const page = 1;
+        const pageSize = 10;
+        const bundleStatuses = [1, 2];
+
+        const result = await getAllBundleGroupVersionByBundleGroupId(mockApiUrl, bundleGroupId, page, pageSize, bundleStatuses);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/versions/1?page=1&pageSize=10&statuses=1,2`);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToLoadBundleGroupVersions');
+      });
+    });
+
+    describe("deleteBundleGroupVersion", () => {
+      it("should delete a bundle group version and return deletedBundle", async () => {
+        deleteData.mockResolvedValue(mockDataResponse);
+        const bundleGroupVersionId = 1;
+
+        const result = await deleteBundleGroupVersion(mockApiUrl, bundleGroupVersionId);
+
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionId);
+        expect(result).toEqual({
+          deletedBundle: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        deleteData.mockResolvedValue(mockErrorResponse);
+        const bundleGroupVersionId = 1;
+
+        const result = await deleteBundleGroupVersion(mockApiUrl, bundleGroupVersionId);
+
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionId);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToDeleteBundle');
+      });
+    });
+
+    describe("editBundleGroupVersion", () => {
+      it("should update a bundle group version and return editedBundleGroup", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+        const bundleGroupVersionData = { name: "UpdatedBundleGroupVersion" };
+        const bundleGroupVersionId = 1;
+
+        const result = await editBundleGroupVersion(mockApiUrl, bundleGroupVersionData, bundleGroupVersionId);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionData, bundleGroupVersionId);
+        expect(result).toEqual({
+          editedBundleGroup: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+        const bundleGroupVersionData = { name: "UpdatedBundleGroupVersion" };
+        const bundleGroupVersionId = 1;
+
+        const result = await editBundleGroupVersion(mockApiUrl, bundleGroupVersionData, bundleGroupVersionId);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/`, bundleGroupVersionData, bundleGroupVersionId);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToUpdateBundleGroup');
+      });
+    });
+
+    describe("getBundleGroupDetailsByBundleGroupVersionId", () => {
+      it("should fetch bundle group details by bundle group version id and return bgVersionDetails", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+        const bundleGroupVersionId = 1;
+        const params = { catalogId: 2 };
+
+        const result = await getBundleGroupDetailsByBundleGroupVersionId(mockApiUrl, bundleGroupVersionId, params);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/1?catalogId=2`);
+        expect(result).toEqual({
+          bgVersionDetails: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+        const bundleGroupVersionId = 1;
+        const params = { catalogId: 2 };
+
+        const result = await getBundleGroupDetailsByBundleGroupVersionId(mockApiUrl, bundleGroupVersionId, params);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/bundlegroupversions/1?catalogId=2`);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToLoadBundleGroup');
+      });
+    });
   });
+
+  describe('Users', () => {
+    describe("createAUserForAnOrganisation", () => {
+      it("should create a user for an organisation and return newUserForOrganization", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+        const organisationId = 1;
+        const userData = { username: "testuser" };
+        const type = "create";
+
+        const result = await createAUserForAnOrganisation(mockApiUrl, organisationId, userData, type);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/1`, { username: userData });
+        expect(result).toEqual({
+          newUserForOrganization: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+        const organisationId = 1;
+        const userData = { username: "testuser" };
+        const type = "create";
+
+        const result = await createAUserForAnOrganisation(mockApiUrl, organisationId, userData, type);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/1`, { username: userData });
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToCreateUser');
+      });
+    });
+
+    describe("getAllUsers", () => {
+      it("should fetch all users and return userList", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+
+        const result = await getAllUsers(mockApiUrl);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/`);
+        expect(result).toEqual({
+          userList: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+
+        const result = await getAllUsers(mockApiUrl);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/`);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToLoadUsers');
+      });
+    });
+
+    describe("getAllUserForAnOrganisation", () => {
+      it("should fetch all users for an organisation and return userList", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+        const organisationId = 1;
+
+        const result = await getAllUserForAnOrganisation(mockApiUrl, organisationId);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/?organisationId=1`);
+        expect(result).toEqual({
+          userList: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+        const organisationId = 1;
+
+        const result = await getAllUserForAnOrganisation(mockApiUrl, organisationId);
+
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/?organisationId=1`);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToLoadUsers');
+      });
+    });
+
+    describe("deleteUser", () => {
+      it("should delete a user and return data", async () => {
+        deleteData.mockResolvedValue(mockDataResponse);
+        const username = "testuser";
+
+        const result = await deleteUser(mockApiUrl, username);
+
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/testuser`);
+        expect(result).toEqual(mockData);
+      });
+
+      it("should handle error and return errorBody", async () => {
+        deleteData.mockResolvedValue(mockErrorResponse);
+        const username = "testuser";
+
+        const result = await deleteUser(mockApiUrl, username);
+
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/users/testuser`);
+        expect(result).toEqual(mockErrorResponse.data);
+        expect(i18n.t).toHaveBeenCalledWith('toasterMessage.impossibleToDeleteUser');
+      });
+    });
+  })
 });

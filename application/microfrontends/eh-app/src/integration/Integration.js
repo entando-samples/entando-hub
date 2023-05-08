@@ -397,7 +397,7 @@ export const createAUserForAnOrganisation = async (
 
 // GET input: nothing -> get all the users
 export const getAllUsers = async (apiUrl) => {
-  const { data, isError } = await getData(apiUrl,urlUsers)
+  const { data, isError } = await getData(apiUrl + urlUsers)
 
   eventHandler(isError, `${i18n.t('toasterMessage.impossibleToLoadUsers')}: ${data?.error || ''}`)
 
