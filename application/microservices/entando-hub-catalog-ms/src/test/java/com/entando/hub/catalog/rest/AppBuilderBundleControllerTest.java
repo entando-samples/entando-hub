@@ -15,6 +15,7 @@ import com.entando.hub.catalog.rest.dto.BundleDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.BundleService;
 import com.entando.hub.catalog.service.CatalogService;
+import com.entando.hub.catalog.service.KeycloakService;
 import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import com.entando.hub.catalog.service.mapper.BundleMapper;
 import com.entando.hub.catalog.service.mapper.BundleMapperImpl;
@@ -56,6 +57,9 @@ class AppBuilderBundleControllerTest {
 
     @MockBean
     private CatalogService catalogService;
+
+    @MockBean
+    KeycloakService keycloakService;
 
     private static final String URI = "/appbuilder/api/bundles/";
     private static final String PAGE_PARAM = "page";

@@ -15,6 +15,7 @@ import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
 import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.CatalogService;
+import com.entando.hub.catalog.service.KeycloakService;
 import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import java.util.ArrayList;
 import java.util.List;
@@ -44,8 +45,10 @@ class EntTemplateControllerTest {
     @MockBean
     CatalogService catalogService;
 
+    @MockBean
+    KeycloakService keycloakService;
+
     private final Long ID = 1001L;
-    private final String ADMIN_USERNAME = "Admin";
     private static final String API_KEY = "api-key";
     private static final Long CATALOG_ID = 1L;
     private static final Long INVALID_CATALOG_ID = 2L;
