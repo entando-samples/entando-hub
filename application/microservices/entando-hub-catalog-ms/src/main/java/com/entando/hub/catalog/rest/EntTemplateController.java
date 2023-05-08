@@ -4,17 +4,14 @@ import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER
 import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 
 import com.entando.hub.catalog.config.SwaggerConstants;
-import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
 import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
-import com.entando.hub.catalog.service.CatalogService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.StringUtils;
+import javax.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,12 +26,8 @@ public class EntTemplateController {
 
     private final BundleGroupVersionService bundleGroupVersionService;
 
-    private CatalogService catalogService;
-
-    public EntTemplateController(BundleGroupVersionService bundleGroupVersionService,
-            CatalogService catalogService) {
+    public EntTemplateController(BundleGroupVersionService bundleGroupVersionService) {
         this.bundleGroupVersionService = bundleGroupVersionService;
-        this.catalogService = catalogService;
     }
 
     @Operation(summary = "Get all the templates for the bundle that are in the hub", description = "Public api, no authentication required.")
@@ -45,10 +38,8 @@ public class EntTemplateController {
             @RequestHeader(name = API_KEY_HEADER, required = false) String apiKey,
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId) {
         List<BundleTemplateDto> result;
-        Catalog userCatalog;
-        if (StringUtils.isNotEmpty(apiKey)) {
-            userCatalog = catalogService.getCatalogByApiKey(apiKey);
-            result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(userCatalog.getId());
+        if (null != catalogId) {
+            result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(catalogId);
         } else {
             result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
         }
@@ -64,13 +55,11 @@ public class EntTemplateController {
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId,
             @RequestParam(required = false) String name) {
         List<BundleGroupTemplateDto> result;
-        Catalog userCatalog;
-        if (StringUtils.isNotEmpty(apiKey)) {
-            userCatalog = catalogService.getCatalogByApiKey(apiKey);
+        if (null != catalogId) {
             if (name != null) {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(userCatalog.getId(), name);
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(catalogId, name);
             } else {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(userCatalog.getId());
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(catalogId);
             }
         } else {
             if (name != null) {
@@ -89,18 +78,12 @@ public class EntTemplateController {
     public List<BundleTemplateDto> getBundleTemplateByBundleGroupId(
             @RequestHeader(name = API_KEY_HEADER, required = false) String apiKey,
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId,
-            @PathVariable Long id) {
-        Catalog userCatalog;
-        List<BundleTemplateDto> result = new ArrayList<>();
-        if (StringUtils.isNotEmpty(apiKey)) {
-            userCatalog = catalogService.getCatalogByApiKey(apiKey);
-            if (id != null) {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(userCatalog.getId(), id);
-            }
+            @NotNull @PathVariable Long id) {
+        List<BundleTemplateDto> result;
+        if (null != catalogId) {
+                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(catalogId, id);
         } else {
-            if (id != null) {
                 result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id);
-            }
         }
         return result;
     }

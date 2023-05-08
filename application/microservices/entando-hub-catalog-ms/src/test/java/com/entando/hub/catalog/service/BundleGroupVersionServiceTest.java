@@ -1,13 +1,24 @@
 package com.entando.hub.catalog.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+
 import com.entando.hub.catalog.persistence.BundleGroupRepository;
 import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.CategoryRepository;
-import com.entando.hub.catalog.persistence.entity.*;
+import com.entando.hub.catalog.persistence.entity.Bundle;
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
+import com.entando.hub.catalog.persistence.entity.Category;
+import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.PagedContent;
+import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
+import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.BundleGroupVersionMapper;
 import com.entando.hub.catalog.service.mapper.BundleGroupVersionMapperImpl;
@@ -15,6 +26,13 @@ import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntity
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapperImpl;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionStandardMapper;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionStandardMapperImpl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,14 +47,11 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -67,30 +82,27 @@ public class BundleGroupVersionServiceTest {
 	@Spy
 	private BundleGroupVersionEntityMapper bundleGroupVersionEntityMapper = new BundleGroupVersionEntityMapperImpl();
 
-
 	private static final Long BUNDLE_GROUP_VERSION_ID = 1002L;
     private static final String BUNDLE_GROUP_VERSION_DESCRIPTION = "Test Bundle Group Version Decription";
     private static final String BUNDLE_GROUP_VERSION_VERSION = "v1.0.0";
     private static final String BUNDLE_GROUP_VERSION_DES_IMAGE = "TEST IMAGE CONTENTS";
     private static final String BUNDLE_GROUP_VERSION_DOC_URL = "testdocurl@testdoc.com";
-    
     private static final Long BUNDLE_GROUP_ID = 1000L;
     private static final String BUNDLE_GROUP_NAME = "Test Bundle Group Name";
-    
     private static final Long BUNDLE_ID = 1001L; 
 	private static final String BUNDLE_NAME = "Test Bundle Name";
 	private static final String BUNDLE_DESCRIPTION = "Test Bundle Decription";
 	private static final String BUNDLE_GIT_REPO_ADDRESS = "https://github.com/entando/TEST-portal.git";
 	private static final String BUNDLE_DEPENDENCIES = "Test Dependencies";
-	
 	private static final Long CATEGORY_ID = 3000L;
     private static final String CATEGORY_NAME = "Test Category Name";
     private static final String CATEGORY_DESCRIPTION = "Test Category Description";
-    
     private static final Long ORG_ID = 2000L;
     private static final String ORG_NAME = "Test Org Name";
     private static final String ORG_DESCRIOPTION = "Test Org Decription";
+	private static final Long CATALOG_ID = 1L;
 
+	private static final String BUNDLE_SRC_REPO_ADDRESS = "bundle_src";
 	@Test
 	public void getBundleGroupVersionTest() {
 		BundleGroupVersion bundleGroupVersion = createBundleGroupVersion();
@@ -444,7 +456,7 @@ public class BundleGroupVersionServiceTest {
 		assertNotNull(privateCatalogPublishedBundleGroupVersions);
 	}
 	@Test
-	public void getPublicCatalogPublishedBundleGroupVersions(){
+	public void getPublicCatalogPublishedBundleGroupVersionsTest(){
 		List<BundleGroupVersion> bundleGroupVersionsList = new ArrayList<>();
 		BundleGroupVersion bundleGroupVersion = createBundleGroupVersion();
 		BundleGroup bundleGroup = createBundleGroup();
@@ -454,6 +466,129 @@ public class BundleGroupVersionServiceTest {
 		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublished(any())).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> privateCatalogPublishedBundleGroupVersions = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupVersions(1, 25);
 		assertNotNull(privateCatalogPublishedBundleGroupVersions);
+	}
+
+	@Test
+	public void getPrivateCatalogPublishedBundleGroupTemplatesTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(CATALOG_ID)).thenReturn(response);
+		List<BundleGroupTemplateDto> templates = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(CATALOG_ID);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+	}
+
+	@Test
+	public void getPublicCatalogPublishedBundleGroupTemplatesTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublishedTemplates()).thenReturn(response);
+		List<BundleGroupTemplateDto> templates = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates();
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+	}
+
+	@Test
+	public void getPrivateCatalogPublishedBundleGroupTemplatesByNameTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesByName(CATALOG_ID, BUNDLE_GROUP_NAME)).thenReturn(response);
+		List<BundleGroupTemplateDto> templates = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(CATALOG_ID, BUNDLE_GROUP_NAME);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+	}
+
+	@Test
+	public void getPublicCatalogPublishedBundleGroupTemplatesByNameTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesByName(BUNDLE_GROUP_NAME)).thenReturn(response);
+		List<BundleGroupTemplateDto> templates = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(BUNDLE_GROUP_NAME);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+	}
+
+	@Test
+	public void getPublicCatalogPublishedBundleTemplatesTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublishedTemplates()).thenReturn(response);
+		List<BundleTemplateDto> templates = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_SRC_REPO_ADDRESS, templates.get(0).getGitSrcRepoAddress());
+		assertEquals(BUNDLE_GROUP_ID, templates.get(0).getBundleGroupId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+		assertEquals(BUNDLE_ID, templates.get(0).getBundleId());
+		assertEquals(BUNDLE_NAME, templates.get(0).getBundleName());
+	}
+
+	@Test
+	public void getPrivateCatalogPublishedBundleTemplatesByIdTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesById(CATALOG_ID, BUNDLE_GROUP_VERSION_ID)).thenReturn(response);
+		List<BundleTemplateDto> templates = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(
+				CATALOG_ID, BUNDLE_GROUP_VERSION_ID);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_SRC_REPO_ADDRESS, templates.get(0).getGitSrcRepoAddress());
+		assertEquals(BUNDLE_GROUP_ID, templates.get(0).getBundleGroupId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+		assertEquals(BUNDLE_ID, templates.get(0).getBundleId());
+		assertEquals(BUNDLE_NAME, templates.get(0).getBundleName());
+	}
+
+	@Test
+	public void getPublicCatalogPublishedBundleTemplatesByIdTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesById(BUNDLE_GROUP_VERSION_ID)).thenReturn(response);
+		List<BundleTemplateDto> templates = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(
+				BUNDLE_GROUP_VERSION_ID);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_SRC_REPO_ADDRESS, templates.get(0).getGitSrcRepoAddress());
+		assertEquals(BUNDLE_GROUP_ID, templates.get(0).getBundleGroupId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+		assertEquals(BUNDLE_ID, templates.get(0).getBundleId());
+		assertEquals(BUNDLE_NAME, templates.get(0).getBundleName());
+	}
+
+ 	@Test
+	public void getPrivateCatalogPublishedBundleTemplatesTest(){
+		List<BundleGroupVersion> response = createBundleGroupVersionTemplateList();
+		Mockito.when(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(CATALOG_ID)).thenReturn(response);
+		List<BundleTemplateDto> templates = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(
+				CATALOG_ID);
+		assertNotNull(templates);
+		assertEquals(BUNDLE_GROUP_VERSION_ID, templates.get(0).getBundleGroupVersionId());
+		assertEquals(BUNDLE_SRC_REPO_ADDRESS, templates.get(0).getGitSrcRepoAddress());
+		assertEquals(BUNDLE_GROUP_ID, templates.get(0).getBundleGroupId());
+		assertEquals(BUNDLE_GROUP_NAME, templates.get(0).getBundleGroupName());
+		assertEquals(BUNDLE_ID, templates.get(0).getBundleId());
+		assertEquals(BUNDLE_NAME, templates.get(0).getBundleName());
+	}
+
+	private List<BundleGroupVersion> createBundleGroupVersionTemplateList() {
+		List<BundleGroupVersion> bgvList = new ArrayList<>();
+		BundleGroupVersion bundleGroupVersion = createBundleGroupVersionTemplate();
+		bgvList.add(bundleGroupVersion);
+		return bgvList;
+	}
+
+	private BundleGroupVersion createBundleGroupVersionTemplate() {
+		BundleGroupVersion bundleGroupVersion = new BundleGroupVersion();
+		BundleGroup bundleGroup = new BundleGroup();
+		bundleGroupVersion.setBundleGroup(bundleGroup);
+		Bundle bundle = new Bundle();
+		bundleGroup.setName(BUNDLE_GROUP_NAME);
+		bundle.setName(BUNDLE_NAME);
+		bundle.setGitSrcRepoAddress(BUNDLE_SRC_REPO_ADDRESS);
+		bundleGroupVersion.setId(BUNDLE_GROUP_VERSION_ID);
+		bundleGroup.setId(BUNDLE_GROUP_ID);
+		bundle.setId(BUNDLE_ID);
+		Set<Bundle> bundles = new HashSet<>();
+		bundles.add(bundle);
+		bundleGroupVersion.setBundles(bundles);
+		return bundleGroupVersion;
 	}
 
 	private BundleGroupVersion createBundleGroupVersion() {
@@ -482,7 +617,6 @@ public class BundleGroupVersionServiceTest {
 		return bundleGroup;
 	}
 
-
 	private Bundle createBundle() {
 		Bundle bundle = new Bundle();
 		bundle.setId(BUNDLE_ID);
@@ -508,8 +642,4 @@ public class BundleGroupVersionServiceTest {
 		organisation.setDescription(ORG_DESCRIOPTION);
 		return organisation;
 	}
-
-
-
-
 }

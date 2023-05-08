@@ -18,6 +18,8 @@ public class ApiKeyCatalogIdValidator {
         if ((StringUtils.isEmpty(apiKey) && null != catalogId) || (StringUtils.isNotEmpty(apiKey) && null == catalogId)){
             return false;
         } else if (StringUtils.isNotEmpty(apiKey)) {
+            //TODO - GET THE ROLE FROM APIKEY RELATED USER AND SKIP THE CHECK BELOW
+            // RETURNING ALWAYS TRUE IF IT IS AN ADMIN
             Catalog userCatalog = catalogService.getCatalogByApiKey(apiKey);
             Long userCatalogId = null;
             if (null != userCatalog) {
