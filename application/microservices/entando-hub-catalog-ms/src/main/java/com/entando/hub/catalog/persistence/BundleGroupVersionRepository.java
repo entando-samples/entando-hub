@@ -97,15 +97,6 @@ public interface BundleGroupVersionRepository extends JpaRepository<BundleGroupV
 			nativeQuery = true)
 	List<BundleGroupVersion> getPublicCatalogPublishedTemplates();
 
-	@Query(value = "select distinct bgv " +
-			"from BundleGroupVersion bgv " +
-			"	join bgv.bundles b " +
-			"   join bgv.bundleGroup bg " +
-			"where bg.name like :name " +
-			"  and bgv.status = 'PUBLISHED' " +
-			"  and b.gitSrcRepoAddress is not null")
-	List<BundleGroupVersion> getByTemplateInItFilteredByName(@Param("name") String name);
-
 	@Query(value = "select distinct bgv.* " +
 			"from bundle_group_version as bgv,"+
 			"     bundle as b, "+
