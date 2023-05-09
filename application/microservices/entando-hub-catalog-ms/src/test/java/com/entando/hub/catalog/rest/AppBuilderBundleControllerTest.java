@@ -174,7 +174,7 @@ class AppBuilderBundleControllerTest {
                 andExpect(status().isUnauthorized());
 
         //Provide one more good descriptorVersion as well as a bad one (which should be excluded).
-        versions.add(DescriptorVersion.V5);
+        versions.add(DescriptorVersion.V1);
         bundle.setBundleGroupVersions(Set.of(bundleGroupVersion));
         Mockito.when(bundleService.getBundles(null, page, pageSize, null, versions, null))
                 .thenReturn(response);
