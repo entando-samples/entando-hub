@@ -1,10 +1,7 @@
 package com.entando.hub.catalog.service.model.roles;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.Map;
 
@@ -12,6 +9,8 @@ import java.util.Map;
 @Setter
 @ToString
 @NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class RoleMappingsRepresentation {
         @JsonProperty("clientMappings")
         private Map<String, ClientMapping> clientMappings;

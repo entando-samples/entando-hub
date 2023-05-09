@@ -71,38 +71,6 @@ public class BundleService {
         return this.getBundlesWithFilters(catalogId, parsedDescriptorVersions, publicCatalog, bundleGroupId, paging);
     }
 
-    // TODO: removes this method here and from test
-    public Page<Bundle> getBundles(String apiKey, Integer pageNum, Integer pageSize, Optional<String> bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
-
-        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}", CLASS_NAME, bundleGroupId, descriptorVersions);
-
-
-        Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
-        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
-
-        Set<DescriptorVersion> parsedDescriptorVersions = getDescriptorVersions(descriptorVersions);
-
-        Catalog userCatalog = null;
-
-        if (null != apiKey) {
-            userCatalog = catalogService.getCatalogByApiKey(apiKey);
-        }
-
-        String bundleGroupIdString = null;
-        if(bundleGroupId.isPresent() ) {
-            bundleGroupIdString = bundleGroupId.get();
-        }
-
-        Boolean publicCatalog = null;
-        if (apiKey==null) {
-            publicCatalog=true;
-            userCatalog.setId(null);
-        }
-
-        return this.getBundlesWithFilters(userCatalog.getId(), parsedDescriptorVersions, publicCatalog, bundleGroupIdString, paging);
-    }
-
-
     public Page<Bundle> getBundlesWithFilters(Long catalogId, Set<DescriptorVersion> descriptorVersions, Boolean publicCatalog, String bundleGroupId, Pageable paging){
         List<Specification<Bundle>> filters = new ArrayList<>();
 
@@ -141,8 +109,8 @@ public class BundleService {
         }
     }
 
-    public Page<Bundle> getBundles(Integer pageNum, Integer pageSize, Optional<String> bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
-        return getBundles(null, pageNum, pageSize, String.valueOf(bundleGroupId),  descriptorVersions, null);
+    public Page<Bundle> getBundles(Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
+        return getBundles(null, pageNum, pageSize, bundleGroupId,  descriptorVersions, null);
     }
     public List<Bundle> getBundles() {
         return bundleRepository.findAll();
