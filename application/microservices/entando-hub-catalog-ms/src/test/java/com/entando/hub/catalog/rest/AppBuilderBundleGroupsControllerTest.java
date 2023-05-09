@@ -12,7 +12,7 @@ import com.entando.hub.catalog.persistence.entity.BundleGroupVersion.Status;
 import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
-import com.entando.hub.catalog.rest.helpers.AppBuilderBundleControllerTestHelper;
+import com.entando.hub.catalog.rest.helpers.RoleMappingsRepresentationTestHelper;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.CatalogService;
 import com.entando.hub.catalog.service.KeycloakService;
@@ -109,7 +109,7 @@ class AppBuilderBundleGroupsControllerTest {
 		Long userCatalogId = 1L;
 		Catalog catalog = new Catalog();
 		catalog.setId(userCatalogId);
-		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(AppBuilderBundleControllerTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, false));
+		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, false));
 		Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
 		Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, page, pageSize)).thenReturn(pagedContent);
@@ -124,7 +124,7 @@ class AppBuilderBundleGroupsControllerTest {
 				.andExpect(jsonPath("$.payload.[*].version").value(bundleGroupVersion.getVersion()));
 
 		//Case 3: when passing a valid admin api-key, any catalog id is fine
-		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(AppBuilderBundleControllerTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
+		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
 		Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, page, pageSize)).thenReturn(pagedContent);
 		mockMvc.perform(MockMvcRequestBuilders.get("/appbuilder/api/bundlegroups/")
@@ -139,7 +139,7 @@ class AppBuilderBundleGroupsControllerTest {
 				.andExpect(jsonPath("$.payload.[*].version").value(bundleGroupVersion.getVersion()));
 
 		//Case 4: when passing an invalid api-key returns Unauthorized
-		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(AppBuilderBundleControllerTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, false));
+		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, false));
 		Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(false);
 		Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, page, pageSize)).thenReturn(pagedContent);
@@ -152,7 +152,7 @@ class AppBuilderBundleGroupsControllerTest {
 				.andExpect(status().isUnauthorized());
 
 		//Case 5: when passing an valid api-key without catalogId returns Unauthorized
-		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(AppBuilderBundleControllerTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
+		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
 		Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, page, pageSize)).thenReturn(pagedContent);
 

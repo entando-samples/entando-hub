@@ -1,7 +1,5 @@
 package com.entando.hub.catalog.service;
 
-import com.entando.hub.catalog.persistence.BundleGroupRepository;
-import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.entity.*;
 import com.entando.hub.catalog.rest.dto.BundleDto;
@@ -22,29 +20,21 @@ import java.util.stream.Collectors;
 public class BundleService {
 
     private final BundleRepository bundleRepository;
-    private final BundleGroupVersionRepository bundleGroupVersionRepository;
-    private final BundleGroupRepository bundleGroupRepository;
-
     private final SecurityHelperService securityHelperService;
 
 	private final BundleStandardMapper bundleMapper;
-
-    private final CatalogService catalogService;
     private final Logger logger = LoggerFactory.getLogger(BundleService.class);
     private final String CLASS_NAME = this.getClass().getSimpleName();
     private final PortalUserService portalUserService;
 
-    public BundleService(BundleRepository bundleRepository, BundleGroupVersionRepository bundleGroupVersionRepository,
-                         BundleGroupRepository bundleGroupRepository, SecurityHelperService securityHelperService,
-                         BundleStandardMapper bundleMapper, PortalUserService portalUserService,
-                         CatalogService catalogService) {
+    public BundleService(BundleRepository bundleRepository,
+                         SecurityHelperService securityHelperService,
+                         BundleStandardMapper bundleMapper,
+                         PortalUserService portalUserService) {
         this.bundleRepository = bundleRepository;
-        this.bundleGroupVersionRepository = bundleGroupVersionRepository;
-        this.bundleGroupRepository = bundleGroupRepository;
         this.securityHelperService = securityHelperService;
         this.bundleMapper = bundleMapper;
         this.portalUserService = portalUserService;
-        this.catalogService = catalogService;
     }
 
     private Set<DescriptorVersion> getDescriptorVersions(Set<DescriptorVersion> descriptorVersions){
@@ -57,7 +47,7 @@ public class BundleService {
 
     public Page<Bundle> getBundles(String apiKey, Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions, Long catalogId) {
 
-        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}", CLASS_NAME, bundleGroupId, descriptorVersions);
+        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}, catalogId: {}", CLASS_NAME, bundleGroupId, descriptorVersions, catalogId);
 
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
         Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);

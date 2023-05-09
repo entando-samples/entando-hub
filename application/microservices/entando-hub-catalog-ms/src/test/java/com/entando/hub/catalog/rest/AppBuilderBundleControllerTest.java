@@ -12,7 +12,7 @@ import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
 import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.DescriptorVersion;
 import com.entando.hub.catalog.rest.dto.BundleDto;
-import com.entando.hub.catalog.rest.helpers.AppBuilderBundleControllerTestHelper;
+import com.entando.hub.catalog.rest.helpers.RoleMappingsRepresentationTestHelper;
 import com.entando.hub.catalog.service.*;
 import com.entando.hub.catalog.service.mapper.BundleMapper;
 import com.entando.hub.catalog.service.mapper.BundleMapperImpl;
@@ -142,7 +142,7 @@ class AppBuilderBundleControllerTest {
 		//bundleGroupId is empty and passing a valid admin api-key
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-        Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(AppBuilderBundleControllerTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
+        Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
 
 		Mockito.when(bundleService.getBundles(API_KEY, page, pageSize, null, versions, CATALOG_ID)).thenReturn(response);
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).

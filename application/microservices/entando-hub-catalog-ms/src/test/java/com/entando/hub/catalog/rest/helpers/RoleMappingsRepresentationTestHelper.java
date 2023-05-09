@@ -6,7 +6,7 @@ import com.entando.hub.catalog.service.model.roles.RoleMapping;
 import com.entando.hub.catalog.service.model.roles.RoleMappingsRepresentation;
 
 import java.util.Collections;
-public class AppBuilderBundleControllerTestHelper {
+public class RoleMappingsRepresentationTestHelper {
    public static RoleMappingsRepresentation getMockRoleMappingsRepresentation(String clientName, boolean isAdmin) {
         return new RoleMappingsRepresentation().builder()
                 .clientMappings(Collections.singletonMap(clientName, getMockClientMapping(clientName, isAdmin)))
