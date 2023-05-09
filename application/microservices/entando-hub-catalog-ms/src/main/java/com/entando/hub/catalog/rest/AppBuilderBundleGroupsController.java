@@ -6,7 +6,6 @@ import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PAR
 import com.entando.hub.catalog.config.SwaggerConstants;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
-import com.entando.hub.catalog.service.CatalogService;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -28,12 +27,8 @@ public class AppBuilderBundleGroupsController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppBuilderBundleGroupsController.class);
 
-    private final CatalogService catalogService;
-
-    public AppBuilderBundleGroupsController(BundleGroupVersionService bundleGroupVersionService,
-                                            CatalogService catalogService) {
+    public AppBuilderBundleGroupsController(BundleGroupVersionService bundleGroupVersionService) {
         this.bundleGroupVersionService = bundleGroupVersionService;
-        this.catalogService = catalogService;
     }
 
     @Operation(summary = "Get all the bundleGroups in the hub", description = "Public api, no authentication required.")
