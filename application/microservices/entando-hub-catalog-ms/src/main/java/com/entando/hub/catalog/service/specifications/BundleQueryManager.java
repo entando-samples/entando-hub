@@ -1,6 +1,7 @@
 package com.entando.hub.catalog.service.specifications;
 
 import com.entando.hub.catalog.persistence.entity.*;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Join;
@@ -10,6 +11,7 @@ import java.util.Set;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
+@UtilityClass
 public class BundleQueryManager {
 
     public static Join<Bundle, BundleGroupVersion> joinBundleGroupVersion(Root<Bundle> root) {

@@ -88,7 +88,6 @@ class AppBuilderBundleControllerTest {
         String bundleGroupId = bundleGroup.getId().toString();
 
         BundleGroupVersion bundleGroupVersion = getBundleGroupVersionObj();
-        String bundleGroupVersionId = bundleGroupVersion.getId().toString();
         List<Bundle> bundlesList = new ArrayList<>();
         Bundle bundle = getBundleObj();
         bundlesList.add(bundle);
@@ -106,7 +105,7 @@ class AppBuilderBundleControllerTest {
         catalog.setId(CATALOG_ID);
 
         //BundleGroupId not provided, page = 0, bundle has null versions
-        Mockito.when(bundleService.getBundles(null, page, pageSize, null, versions, null))
+        Mockito.when(bundleService.getBundles(page, pageSize, null, versions, null))
                 .thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
@@ -128,7 +127,7 @@ class AppBuilderBundleControllerTest {
                 .andExpect(status().isOk());
 
         //BundleGroupId provided
-        Mockito.when(bundleService.getBundles(null, page, pageSize, bundleGroupId, versions, null))
+        Mockito.when(bundleService.getBundles(page, pageSize, bundleGroupId, versions, null))
                 .thenReturn(response);
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .queryParam("bundleGroupId", bundleGroupId)
@@ -144,7 +143,7 @@ class AppBuilderBundleControllerTest {
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
 
-		Mockito.when(bundleService.getBundles(API_KEY, page, pageSize, null, versions, CATALOG_ID)).thenReturn(response);
+		Mockito.when(bundleService.getBundles(page, pageSize, null, versions, CATALOG_ID)).thenReturn(response);
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).
 						header(API_KEY_HEADER, API_KEY).
                         param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID)).
@@ -176,7 +175,7 @@ class AppBuilderBundleControllerTest {
         //Provide one more good descriptorVersion as well as a bad one (which should be excluded).
         versions.add(DescriptorVersion.V1);
         bundle.setBundleGroupVersions(Set.of(bundleGroupVersion));
-        Mockito.when(bundleService.getBundles(null, page, pageSize, null, versions, null))
+        Mockito.when(bundleService.getBundles(page, pageSize, null, versions, null))
                 .thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get(URI)

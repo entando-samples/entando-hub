@@ -396,7 +396,7 @@ public class BundleGroupVersionService {
         bundleGroups = searchText != null ? this.filterSearchText(bundleGroups, searchText): bundleGroups;
 
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, ORDER_BY_NAME)).and(Sort.by("lastUpdated").descending());
-        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+        Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
 
         Page<BundleGroupVersion> page = this.getBundleGroupVersionByStatus(bundleGroups, statuses, paging);
         Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
@@ -463,14 +463,14 @@ public class BundleGroupVersionService {
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPrivateCatalogPublishedBundleGroupVersions(Long userCatalogId, Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
-        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+        Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
         Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPublicCatalogPublishedBundleGroupVersions(Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
-        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+        Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
         Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }

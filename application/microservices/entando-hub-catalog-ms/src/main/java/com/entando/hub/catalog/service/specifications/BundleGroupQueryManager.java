@@ -4,6 +4,7 @@ import com.entando.hub.catalog.persistence.entity.BundleGroup;
 import com.entando.hub.catalog.persistence.entity.BundleGroup_;
 import com.entando.hub.catalog.persistence.entity.Category;
 import com.entando.hub.catalog.persistence.entity.Organisation_;
+import lombok.experimental.UtilityClass;
 import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.SetJoin;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 import static org.springframework.data.jpa.domain.Specification.where;
 
+@UtilityClass
 public class BundleGroupQueryManager {
     public static Specification<BundleGroup> hasCatalogId(Long catalogId){
         return (root, query, criteriaBuilder) -> {

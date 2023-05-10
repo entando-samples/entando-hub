@@ -45,24 +45,22 @@ public class BundleService {
         return descriptorVersions;
     }
 
-    public Page<Bundle> getBundles(String apiKey, Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions, Long catalogId) {
+    public Page<Bundle> getBundles(Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions, Long catalogId) {
 
-        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id: {}, descriptorVersions: {}, catalogId: {}", CLASS_NAME, bundleGroupId, descriptorVersions, catalogId);
+        logger.debug("{}: getBundles: Get bundles paginated by bundle group  id, descriptorVersions, catalogId", CLASS_NAME);
 
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, "name"));
-        Pageable paging = HelperService.getPaging(pageNum, pageSize, sort);
+        Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
 
         Set<DescriptorVersion> parsedDescriptorVersions = getDescriptorVersions(descriptorVersions);
         logger.debug("{}: getBundles: parsed descriptorVersions: {}", CLASS_NAME, parsedDescriptorVersions);
 
-        Boolean publicCatalog = (apiKey != null) ?  false :  true;
-        logger.debug("{}: getBundles: publicCatalog: {}", CLASS_NAME, publicCatalog);
-
-        return this.getBundlesWithFilters(catalogId, parsedDescriptorVersions, publicCatalog, bundleGroupId, paging);
+        return this.getBundlesWithFilters(catalogId, parsedDescriptorVersions, bundleGroupId, paging);
     }
 
-    public Page<Bundle> getBundlesWithFilters(Long catalogId, Set<DescriptorVersion> descriptorVersions, Boolean publicCatalog, String bundleGroupId, Pageable paging){
+    public Page<Bundle> getBundlesWithFilters(Long catalogId, Set<DescriptorVersion> descriptorVersions, String bundleGroupId, Pageable paging){
         List<Specification<Bundle>> filters = new ArrayList<>();
+        boolean publicCatalog=false;
 
         logger.debug("{}: adding filter by published status", CLASS_NAME);
         filters.add(BundleQueryManager.addPublishedStatus());
@@ -79,14 +77,14 @@ public class BundleService {
         }
 
         if(catalogId!=null) {
+            publicCatalog = true;
             logger.debug("{}: adding filter by catalogId {}", CLASS_NAME, catalogId);
             filters.add(BundleQueryManager.hasCatalogId(catalogId));
         }
 
-        if(publicCatalog!=null){
-            logger.debug("{}: adding filter by publicCatalog {}", CLASS_NAME, publicCatalog);
-            filters.add(BundleQueryManager.isInPublicCatalog(publicCatalog));
-        }
+        logger.debug("{}: adding filter by publicCatalog {}", CLASS_NAME, publicCatalog);
+        filters.add(BundleQueryManager.isInPublicCatalog(publicCatalog));
+
         return this.findAllBundleGroups(filters, paging);
     }
 
@@ -100,7 +98,7 @@ public class BundleService {
     }
 
     public Page<Bundle> getBundles(Integer pageNum, Integer pageSize, String bundleGroupId, Set<DescriptorVersion> descriptorVersions) {
-        return getBundles(null, pageNum, pageSize, bundleGroupId,  descriptorVersions, null);
+        return getBundles(pageNum, pageSize, bundleGroupId,  descriptorVersions, null);
     }
     public List<Bundle> getBundles() {
         return bundleRepository.findAll();

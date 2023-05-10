@@ -43,7 +43,6 @@ public class BundleServiceTest {
     @Mock
     SecurityHelperService securityHelperService;
     private static final Long CATALOG_ID = 1L;
-    private static final String API_KEY = "api-key";
     private static final Long BUNDLE_ID = 1001L;
     private static final String BUNDLE_NAME = "Test Bundle Name";
     private static final String BUNDLE_DESCRIPTION = "Test Bundle Decription";
@@ -81,13 +80,13 @@ public class BundleServiceTest {
 
         Mockito.when(bundleRepository.findAll((Specification<Bundle>) any(), (Pageable) any())).thenReturn(response);
 
-		Page<Bundle> bundleResult = bundleService.getBundles(API_KEY, pageNum, pageSize, null, versions, catalog.getId());
+		Page<Bundle> bundleResult = bundleService.getBundles(pageNum, pageSize, null, versions, catalog.getId());
 
 		assertNotNull(bundleResult);
 		assertEquals(response.getSize(), bundleResult.getSize());
 
 		//bundle group id is present, pageSize > 0
-        bundleResult = bundleService.getBundles(API_KEY, pageNum, pageSize, bundleGroupId.toString(), versions, catalog.getId());
+        bundleResult = bundleService.getBundles(pageNum, pageSize, bundleGroupId.toString(), versions, catalog.getId());
         assertNotNull(bundleResult);
         assertEquals(response.getSize(), bundleResult.getSize());
 
