@@ -11,14 +11,14 @@ import com.entando.hub.catalog.persistence.entity.Bundle;
 import com.entando.hub.catalog.persistence.entity.BundleGroup;
 import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
 import com.entando.hub.catalog.persistence.entity.Catalog;
-import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
-import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.CatalogService;
 import com.entando.hub.catalog.service.KeycloakService;
 import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,8 +47,6 @@ class EntTemplateControllerTest {
 
     @MockBean
     KeycloakService keycloakService;
-
-    private final Long ID = 1001L;
     private static final String API_KEY = "api-key";
     private static final Long CATALOG_ID = 1L;
     private static final Long INVALID_CATALOG_ID = 2L;
@@ -58,47 +56,50 @@ class EntTemplateControllerTest {
     private static final String BUNDLE_GROUP_NAME = "BUNDLE_GROUP_NAME";
     private static final String BUNDLE_GROUP_NAME_PARAM = "name";
     private static final String BUNDLE_NAME = "BUNDLE_NAME";
-    private static final Long BUNDLE_GROUP_ID = 1L;
+    private static final Long BUNDLE_ID = 1L;
+    private static final Long BUNDLE_GROUP_ID = 2L;
+    private static final Long  BUNDLE_GROUP_VERSION_ID = 2L;
     private static final String BUNDLE_GROUPS_BY_ID_URI = "/ent/api/templates/bundlegroups/";
+
 
     @Test
     void testGetPrivateCatalogPublishedBundleTemplates() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(CATALOG_ID)).thenReturn(bundleTemplateDtoList);
+        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(CATALOG_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLES_URI)
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
-                .andExpect(jsonPath("$.[0].bundleGroupId").value(bundleTemplateDtoList.get(0).getBundleGroupId()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleTemplateDtoList.get(0).getBundleGroupVersionId()))
-                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(bundleTemplateDtoList.get(0).getGitSrcRepoAddress()))
-                .andExpect(jsonPath("$.[0].bundleName").value(bundleTemplateDtoList.get(0).getBundleName()))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleTemplateDtoList.get(0).getBundleGroupName()));
+                .andExpect(jsonPath("$.[0].bundleId").value(BUNDLE_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupId").value(BUNDLE_GROUP_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID))
+                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(SRC_REPO_ADDRESS))
+                .andExpect(jsonPath("$.[0].bundleName").value(BUNDLE_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME));
     }
 
     @Test
     void testGetPublicCatalogPublishedBundleTemplates() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        List<BundleGroupVersion> bundleTemplateDtoList = createBundleTemplateList();
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates()).thenReturn(bundleTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLES_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
-                .andExpect(jsonPath("$.[0].bundleGroupId").value(bundleTemplateDtoList.get(0).getBundleGroupId()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleTemplateDtoList.get(0).getBundleGroupVersionId()))
-                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(bundleTemplateDtoList.get(0).getGitSrcRepoAddress()))
-                .andExpect(jsonPath("$.[0].bundleName").value(bundleTemplateDtoList.get(0).getBundleName()))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleTemplateDtoList.get(0).getBundleGroupName()));
+                .andExpect(jsonPath("$.[0].bundleId").value(BUNDLE_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupId").value(BUNDLE_GROUP_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID))
+                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(SRC_REPO_ADDRESS))
+                .andExpect(jsonPath("$.[0].bundleName").value(BUNDLE_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME));
     }
 
     @Test
@@ -131,39 +132,39 @@ class EntTemplateControllerTest {
     void testGetPrivateCatalogPublishedBundleGroupsTemplates() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = createBundleGroupTemplateDtoList();
+        List<BundleGroupVersion> bundleGroupTemplateList = createBundleGroupTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(CATALOG_ID)).thenReturn(bundleGroupTemplateDtoList);
+        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(CATALOG_ID)).thenReturn(bundleGroupTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleGroupTemplateDtoList.get(0).getBundleGroupVersionId()));
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID));
     }
 
     @Test
     void testGetPublicCatalogPublishedBundleGroupsTemplates() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = createBundleGroupTemplateDtoList();
+        List<BundleGroupVersion> bundleGroupTemplateDtoList = createBundleGroupTemplateList();
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates()).thenReturn(bundleGroupTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleGroupTemplateDtoList.get(0).getBundleGroupVersionId()));
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID));
     }
 
     @Test
     void testGetPrivateCatalogPublishedBundleGroupsTemplatesByName() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = createBundleGroupTemplateDtoList();
+        List<BundleGroupVersion> bundleGroupTemplateDtoList = createBundleGroupTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(CATALOG_ID,BUNDLE_GROUP_NAME))
@@ -175,83 +176,84 @@ class EntTemplateControllerTest {
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleGroupTemplateDtoList.get(0).getBundleGroupVersionId()));
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID));
     }
 
     @Test
     void testGetPublicCatalogPublishedBundleGroupsTemplatesByName() throws Exception {
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = createBundleGroupTemplateDtoList();
+        List<BundleGroupVersion> bundleGroupTemplateList = createBundleGroupTemplateList();
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(BUNDLE_GROUP_NAME))
-                .thenReturn(bundleGroupTemplateDtoList);
+                .thenReturn(bundleGroupTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .param(BUNDLE_GROUP_NAME_PARAM, BUNDLE_GROUP_NAME)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleGroupTemplateDtoList.get(0).getBundleGroupVersionId()));
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID));
     }
 
     @Test
     void testGetPublicCatalogPublishedBundleGroupsTemplatesFilteredByName() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = createBundleGroupTemplateDtoList();
+        List<BundleGroupVersion> bundleGroupTemplateDtoList = createBundleGroupTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates()).thenReturn(bundleGroupTemplateDtoList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleGroupTemplateDtoList.get(0).getBundleGroupName()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleGroupTemplateDtoList.get(0).getBundleGroupVersionId()));
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID));
     }
 
     @Test
     void testGetPrivateCatalogPublishedBundleTemplatesByID() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(CATALOG_ID, BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(CATALOG_ID, BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI+BUNDLE_GROUP_ID)
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, CATALOG_ID.toString())
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
-                .andExpect(jsonPath("$.[0].bundleGroupId").value(bundleTemplateDtoList.get(0).getBundleGroupId()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleTemplateDtoList.get(0).getBundleGroupVersionId()))
-                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(bundleTemplateDtoList.get(0).getGitSrcRepoAddress()))
-                .andExpect(jsonPath("$.[0].bundleName").value(bundleTemplateDtoList.get(0).getBundleName()))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleTemplateDtoList.get(0).getBundleGroupName()));
+                .andExpect(jsonPath("$.[0].bundleId").value(BUNDLE_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupId").value(BUNDLE_GROUP_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID))
+                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(SRC_REPO_ADDRESS))
+                .andExpect(jsonPath("$.[0].bundleName").value(BUNDLE_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME));
+
     }
 
     @Test
     void testGetPublicCatalogPublishedBundleTemplatesByID() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
-        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
+        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI+BUNDLE_GROUP_ID)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.[0].bundleId").value(bundleTemplateDtoList.get(0).getBundleId()))
-                .andExpect(jsonPath("$.[0].bundleGroupId").value(bundleTemplateDtoList.get(0).getBundleGroupId()))
-                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(bundleTemplateDtoList.get(0).getBundleGroupVersionId()))
-                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(bundleTemplateDtoList.get(0).getGitSrcRepoAddress()))
-                .andExpect(jsonPath("$.[0].bundleName").value(bundleTemplateDtoList.get(0).getBundleName()))
-                .andExpect(jsonPath("$.[0].bundleGroupName").value(bundleTemplateDtoList.get(0).getBundleGroupName()));
+                .andExpect(jsonPath("$.[0].bundleId").value(BUNDLE_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupId").value(BUNDLE_GROUP_ID))
+                .andExpect(jsonPath("$.[0].bundleGroupVersionId").value(BUNDLE_GROUP_VERSION_ID))
+                .andExpect(jsonPath("$.[0].gitSrcRepoAddress").value(SRC_REPO_ADDRESS))
+                .andExpect(jsonPath("$.[0].bundleName").value(BUNDLE_NAME))
+                .andExpect(jsonPath("$.[0].bundleGroupName").value(BUNDLE_GROUP_NAME));
     }
 
     @Test
     void testGetBundleTemplatesByIDEmptyList1() throws Exception {
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
-        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
+        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI)
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isOk())
@@ -262,10 +264,10 @@ class EntTemplateControllerTest {
     void testGetBundleTemplatesByIDWithApiKeyEmptyList() throws Exception {
         Catalog catalog = new Catalog();
         catalog.setId(CATALOG_ID);
-        List<BundleTemplateDto> bundleTemplateDtoList = createBundleTemplateDtoList();
+        List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateDtoList);
+        Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI)
                         .header(API_KEY_HEADER, API_KEY)
                         .param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID))
@@ -330,43 +332,43 @@ class EntTemplateControllerTest {
                 .andExpect(status().isUnauthorized());
     }
 
-    private List<BundleGroupTemplateDto> createBundleGroupTemplateDtoList() {
-        List<BundleGroupTemplateDto> bundleGroupTemplateDtoList = new ArrayList<>();
-        bundleGroupTemplateDtoList.add(createBundleGroupTemplateDto("test1",1L));
-        bundleGroupTemplateDtoList.add(createBundleGroupTemplateDto("test2",2L));
-        return bundleGroupTemplateDtoList;
+    private List<BundleGroupVersion> createBundleGroupTemplateList() {
+        List<BundleGroupVersion> bundleGroupTemplateList = new ArrayList<>();
+        bundleGroupTemplateList.add(createBundleGroupTemplate(BUNDLE_GROUP_NAME, BUNDLE_GROUP_VERSION_ID));
+        return bundleGroupTemplateList;
     }
 
-    private BundleGroupTemplateDto createBundleGroupTemplateDto(String bundleGroupName,Long bundleGroupVersionId) {
+    private BundleGroupVersion createBundleGroupTemplate(String bundleGroupName,Long bundleGroupVersionId) {
         BundleGroupVersion bundleGroupVersion = new BundleGroupVersion();
         BundleGroup bundleGroup = new BundleGroup();
         bundleGroup.setName(bundleGroupName);
         bundleGroupVersion.setId(bundleGroupVersionId);
-        return new BundleGroupTemplateDto(bundleGroupVersion, bundleGroup);
+        bundleGroupVersion.setBundleGroup(bundleGroup);
+        return bundleGroupVersion;
     }
 
 
-    private List<BundleTemplateDto> createBundleTemplateDtoList() {
-        List<BundleTemplateDto> bundleTemplateDtoList= new ArrayList<>();
-        bundleTemplateDtoList.add(createBundleTemplateDto(1L,1L, 1L));
-        bundleTemplateDtoList.add(createBundleTemplateDto(1L,1L, 2L));
-        bundleTemplateDtoList.add(createBundleTemplateDto(1L,2L, 1L));
-        bundleTemplateDtoList.add(createBundleTemplateDto(1L,2L, 2L));
-        return bundleTemplateDtoList;
+    private List<BundleGroupVersion> createBundleTemplateList() {
+        List<BundleGroupVersion> bundleTemplateList= new ArrayList<>();
+        bundleTemplateList.add(createBundleTemplate(BUNDLE_GROUP_VERSION_ID, BUNDLE_GROUP_ID, BUNDLE_ID));
+        return bundleTemplateList;
     }
 
-    private BundleTemplateDto createBundleTemplateDto(Long bundleGroupVersionId, Long bundleGroupId, Long bundleId) {
+    private BundleGroupVersion createBundleTemplate(Long bundleGroupVersionId, Long bundleGroupId, Long bundleId) {
         BundleGroupVersion bundleGroupVersion = new BundleGroupVersion();
         Bundle bundle = new Bundle();
         BundleGroup bundleGroup = new BundleGroup();
         bundleGroupVersion.setId(bundleGroupVersionId);
         bundle.setId(bundleId);
-        bundle.setGitSrcRepoAddress(SRC_REPO_ADDRESS + bundleId);
-        bundleGroup.setName(BUNDLE_GROUP_NAME + bundleGroupId);
-        bundle.setName(BUNDLE_NAME + bundleId);
+        bundle.setGitSrcRepoAddress(SRC_REPO_ADDRESS);
+        bundleGroup.setName(BUNDLE_GROUP_NAME);
+        bundle.setName(BUNDLE_NAME);
         bundleGroup.setId(bundleGroupId);
+        Set<Bundle> bundleSet = new HashSet<>();
+        bundleSet.add(bundle);
+        bundleGroupVersion.setBundles(bundleSet);
         bundleGroupVersion.setBundleGroup(bundleGroup);
-        return new BundleTemplateDto(bundleGroupVersion, bundle);
+        return bundleGroupVersion;
     }
 
 }

@@ -4,6 +4,7 @@ import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER
 import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 
 import com.entando.hub.catalog.config.SwaggerConstants;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
 import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
 import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
@@ -11,6 +12,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import java.util.List;
+import java.util.stream.Collectors;
 import javax.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -39,9 +41,9 @@ public class EntTemplateController {
             @RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId) {
         List<BundleTemplateDto> result;
         if (null != catalogId) {
-            result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(catalogId);
+            result = convertToBundleTemplateDto(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(catalogId));
         } else {
-            result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates();
+            result = convertToBundleTemplateDto(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplates());
         }
         return result;
     }
@@ -57,15 +59,15 @@ public class EntTemplateController {
         List<BundleGroupTemplateDto> result;
         if (null != catalogId) {
             if (name != null) {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(catalogId, name);
+                result = convertToBundleGroupTemplateDto(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(catalogId, name));
             } else {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(catalogId);
+                result = convertToBundleGroupTemplateDto(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(catalogId));
             }
         } else {
             if (name != null) {
-                result = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(name);
+                result = convertToBundleGroupTemplateDto(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplatesByName(name));
             } else {
-                result = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates();
+                result = convertToBundleGroupTemplateDto(bundleGroupVersionService.getPublicCatalogPublishedBundleGroupTemplates());
             }
         }
         return result;
@@ -81,10 +83,29 @@ public class EntTemplateController {
             @NotNull @PathVariable Long id) {
         List<BundleTemplateDto> result;
         if (null != catalogId) {
-                result = bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(catalogId, id);
+                result = convertToBundleTemplateDto(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(catalogId, id));
         } else {
-                result = bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id);
+                result = convertToBundleTemplateDto(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(id));
         }
         return result;
     }
+
+    private List<BundleTemplateDto> convertToBundleTemplateDto(List<BundleGroupVersion> bundleGroupVersions) {
+        return bundleGroupVersions.stream()
+                .flatMap(bundleGroupVersion ->
+                        bundleGroupVersion.getBundles().stream().map(
+                                bundle ->
+                                        new BundleTemplateDto(bundleGroupVersion, bundle)
+                        )
+                )
+                .collect(Collectors.toList());
+    }
+
+    private List<BundleGroupTemplateDto> convertToBundleGroupTemplateDto(List<BundleGroupVersion> bundleGroupVersionList){
+        return bundleGroupVersionList.stream()
+                .map(bundleGroupVersion -> new BundleGroupTemplateDto(bundleGroupVersion, bundleGroupVersion.getBundleGroup()))
+                .collect(Collectors.toList());
+    }
+
+
 }

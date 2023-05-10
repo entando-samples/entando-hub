@@ -11,9 +11,7 @@ import com.entando.hub.catalog.persistence.entity.Category;
 import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.PagedContent;
-import com.entando.hub.catalog.rest.dto.BundleGroupTemplateDto;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
-import com.entando.hub.catalog.rest.dto.BundleTemplateDto;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapper;
 import java.time.LocalDateTime;
@@ -509,36 +507,36 @@ public class BundleGroupVersionService {
     }
 
 
-    public List<BundleTemplateDto> getPrivateCatalogPublishedBundleTemplates(Long userCatalogId) {
-        return convertToBundleTemplateDto(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId));
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleTemplates(Long userCatalogId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId);
     }
 
-    public List<BundleTemplateDto> getPublicCatalogPublishedBundleTemplates() {
-        return convertToBundleTemplateDto(bundleGroupVersionRepository.getPublicCatalogPublishedTemplates());
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleTemplates() {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplates();
     }
 
-    public List<BundleGroupTemplateDto> getPrivateCatalogPublishedBundleGroupTemplates(Long userCatalogId) {
-        return convertToBundleGroupTemplateDto(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId));
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleGroupTemplates(Long userCatalogId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId);
     }
 
-    public List<BundleGroupTemplateDto> getPublicCatalogPublishedBundleGroupTemplates() {
-        return convertToBundleGroupTemplateDto(bundleGroupVersionRepository.getPublicCatalogPublishedTemplates());
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleGroupTemplates() {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplates();
     }
 
-    public List<BundleGroupTemplateDto> getPrivateCatalogPublishedBundleGroupTemplatesByName(Long catalogId, String name) {
-        return convertToBundleGroupTemplateDto(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesByName(catalogId, name));
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleGroupTemplatesByName(Long catalogId, String name) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesByName(catalogId, name);
     }
 
-    public List<BundleGroupTemplateDto> getPublicCatalogPublishedBundleGroupTemplatesByName(String name) {
-        return convertToBundleGroupTemplateDto(bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesByName(name));
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleGroupTemplatesByName(String name) {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesByName(name);
     }
 
-    public List<BundleTemplateDto> getPrivateCatalogPublishedBundleTemplatesById(Long catalogId, Long bundleGroupVersionId) {
-        return convertToBundleTemplateDto(bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesById(catalogId, bundleGroupVersionId));
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleTemplatesById(Long catalogId, Long bundleGroupVersionId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesById(catalogId, bundleGroupVersionId);
     }
 
-    public List<BundleTemplateDto> getPublicCatalogPublishedBundleTemplatesById(Long bundleGroupVersionId) {
-        return convertToBundleTemplateDto(bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesById(bundleGroupVersionId));
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleTemplatesById(Long bundleGroupVersionId) {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesById(bundleGroupVersionId);
     }
 
 
@@ -550,19 +548,4 @@ public class BundleGroupVersionService {
                 page.getPageable(), page.getNumberOfElements());
     }
 
-    protected List<BundleTemplateDto> convertToBundleTemplateDto(List<BundleGroupVersion> bundleGroupVersions) {
-        return bundleGroupVersions.stream()
-                .flatMap(bundleGroupVersion ->
-                        bundleGroupVersion.getBundles().stream().map(
-                                bundle ->
-                                        new BundleTemplateDto(bundleGroupVersion, bundle)
-                        )
-                )
-                .collect(Collectors.toList());
-    }
-    protected List<BundleGroupTemplateDto> convertToBundleGroupTemplateDto(List<BundleGroupVersion> bundleGroupVersionList){
-        return bundleGroupVersionList.stream()
-                .map(bundleGroupVersion -> new BundleGroupTemplateDto(bundleGroupVersion, bundleGroupVersion.getBundleGroup()))
-                .collect(Collectors.toList());
-    }
 }
