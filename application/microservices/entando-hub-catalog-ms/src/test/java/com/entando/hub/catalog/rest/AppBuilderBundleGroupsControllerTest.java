@@ -13,6 +13,7 @@ import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.CatalogService;
+import com.entando.hub.catalog.service.KeycloakService;
 import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.BundleGroupVersionMapper;
@@ -50,8 +51,13 @@ class AppBuilderBundleGroupsControllerTest {
 
 	@MockBean
 	PrivateCatalogApiKeyService privateCatalogApiKeyService;
+
 	@MockBean
 	CatalogService catalogService;
+
+	@MockBean
+	KeycloakService keycloakService;
+
 	private final Long BUNDLE_GROUP_VERSION_ID =  2001L;
 	private final Long BUNDLE_GROUPID =  2002L;
 	private final Long CATEGORY_ID =  2003L;

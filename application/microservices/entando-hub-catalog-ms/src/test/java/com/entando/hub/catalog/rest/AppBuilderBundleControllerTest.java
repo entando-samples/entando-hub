@@ -1,6 +1,7 @@
 package com.entando.hub.catalog.rest;
 
 import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER;
+import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,6 +15,7 @@ import com.entando.hub.catalog.rest.dto.BundleDto;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
 import com.entando.hub.catalog.service.BundleService;
 import com.entando.hub.catalog.service.CatalogService;
+import com.entando.hub.catalog.service.KeycloakService;
 import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import com.entando.hub.catalog.service.mapper.BundleMapper;
 import com.entando.hub.catalog.service.mapper.BundleMapperImpl;
@@ -56,6 +58,9 @@ class AppBuilderBundleControllerTest {
     @MockBean
     private CatalogService catalogService;
 
+    @MockBean
+    KeycloakService keycloakService;
+
     private static final String URI = "/appbuilder/api/bundles/";
     private static final String PAGE_PARAM = "page";
     private static final String PAGE_SIZE_PARAM = "pageSize";
@@ -75,7 +80,6 @@ class AppBuilderBundleControllerTest {
     private static final String BUNDLE_DEPENDENCIES = "Test Dependencies";
 
     private static final String API_KEY = "api-key";
-    private static final String CATALOG_ID_PARAM = "catalogId";
     private static final Long CATALOG_ID = 1L;
 
 

@@ -1,7 +1,9 @@
 package com.entando.hub.catalog.service;
 
+import com.entando.hub.catalog.service.exception.BadRequestException;
 import com.entando.hub.catalog.service.exception.OidcException;
 import com.entando.hub.catalog.service.model.AuthResponse;
+import com.entando.hub.catalog.service.model.roles.RoleMappingsRepresentation;
 import com.entando.hub.catalog.service.model.UserRepresentation;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -23,6 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
+
+import static com.entando.hub.catalog.config.AuthoritiesConstants.ADMIN;
 
 @Service
 public class KeycloakService {
@@ -64,7 +68,7 @@ public class KeycloakService {
         List<UserRepresentation> list = this.listUsers(params);
         return list.stream().filter(ur -> ur.getUsername().equalsIgnoreCase(username)).findFirst().orElse(null);
     }
-    
+
     private List<UserRepresentation> listUsers(Map<String, String> params) {
     	logger.debug("listUsers: getting the keycloak users " );
         final String url = String.format("%s/admin/realms/%s/users", configuration.getAuthServerUrl(), configuration.getRealm());
@@ -72,7 +76,23 @@ public class KeycloakService {
                 HttpMethod.GET, createEntity(), UserRepresentation[].class, params);
         return response.getBody() != null ? Arrays.asList(response.getBody()) : Collections.emptyList();
     }
-    
+
+    public RoleMappingsRepresentation getRolesByUsername(String username){
+        UserRepresentation user = this.getUser(username);
+        if (user == null) throw new BadRequestException("User not found");
+        final String url = String.format("%s/admin/realms/%s/users/%s/role-mappings", configuration.getAuthServerUrl(), configuration.getRealm(), user.getId());
+        final ResponseEntity<RoleMappingsRepresentation> response = this.executeRequest(url,
+                HttpMethod.GET, createEntity(), RoleMappingsRepresentation.class, Collections.emptyMap());
+        return response.getBody();
+    }
+
+    public boolean userIsAdmin(String username){
+        RoleMappingsRepresentation roles = this.getRolesByUsername(username);
+        return roles.getClientMappings().values().stream()
+                .flatMap(clientMapping -> clientMapping.getMappings().stream())
+                .anyMatch(roleMapping -> ADMIN.equals(roleMapping.getName()));
+    }
+
     private <T> HttpEntity<T> createEntity() {
         return createEntity(null);
     }
