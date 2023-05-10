@@ -53,7 +53,7 @@ public class BundleService {
         Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
 
         Set<DescriptorVersion> parsedDescriptorVersions = getDescriptorVersions(descriptorVersions);
-        logger.debug("{}: getBundles: parsed descriptorVersions: {}", CLASS_NAME, parsedDescriptorVersions);
+        logger.debug("{}: getBundles: parsed descriptorVersions", CLASS_NAME);
 
         return this.getBundlesWithFilters(catalogId, parsedDescriptorVersions, bundleGroupId, paging);
     }
@@ -68,17 +68,17 @@ public class BundleService {
         logger.debug("{}: adding filter by hasGitRepoAddress", CLASS_NAME);
         filters.add(BundleQueryManager.hasGitRepoAddress());
 
-        logger.debug("{}: adding filter by descriptorVersions {}", CLASS_NAME, descriptorVersions);
+        logger.debug("{}: adding filter by descriptorVersions", CLASS_NAME);
         filters.add(BundleQueryManager.descriptorVersionsIn(descriptorVersions));
 
         if(bundleGroupId!=null){
-            logger.debug("{}: adding filter by bundleGroupId {}", CLASS_NAME, bundleGroupId);
+            logger.debug("{}: adding filter by bundleGroupId", CLASS_NAME);
             filters.add(BundleQueryManager.hasBundleGroupId(bundleGroupId));
         }
 
         if(catalogId!=null) {
             publicCatalog = true;
-            logger.debug("{}: adding filter by catalogId {}", CLASS_NAME, catalogId);
+            logger.debug("{}: adding filter by catalogId", CLASS_NAME);
             filters.add(BundleQueryManager.hasCatalogId(catalogId));
         }
 
