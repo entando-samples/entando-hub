@@ -2,6 +2,7 @@ package com.entando.hub.catalog.rest;
 
 import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER;
 import static org.mockito.ArgumentMatchers.any;
+import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -76,7 +77,6 @@ class AppBuilderBundleControllerTest {
     private static final String BUNDLE_DEPENDENCIES = "Test Dependencies";
 
     private static final String API_KEY = "api-key";
-    private static final String CATALOG_ID_PARAM = "catalogId";
     private static final Long CATALOG_ID = 1L;
     private static final String CLIENT_NAME = "internal";
 

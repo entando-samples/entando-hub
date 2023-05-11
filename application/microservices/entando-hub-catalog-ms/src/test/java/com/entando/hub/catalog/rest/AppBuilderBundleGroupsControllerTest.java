@@ -53,10 +53,13 @@ class AppBuilderBundleGroupsControllerTest {
 
 	@MockBean
 	PrivateCatalogApiKeyService privateCatalogApiKeyService;
+
 	@MockBean
 	CatalogService catalogService;
+
 	@MockBean
 	KeycloakService keycloakService;
+
 	private final Long BUNDLE_GROUP_VERSION_ID =  2001L;
 	private final Long BUNDLE_GROUPID =  2002L;
 	private final Long BUNDLE_ID =  2004L;

@@ -22,6 +22,7 @@ class ApiKeyCatalogIdValidatorTest {
     private static final Long CATALOG_ID = 1L;
     private static final Long CATALOG_ID_2 = 2L;
     private static final String USERNAME = "username";
+
     @Autowired
     private ApiKeyCatalogIdValidator appBuilderCatalogValidator;
     @MockBean

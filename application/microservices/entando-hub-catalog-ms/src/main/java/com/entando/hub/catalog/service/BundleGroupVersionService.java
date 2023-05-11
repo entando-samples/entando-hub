@@ -4,24 +4,40 @@ import com.entando.hub.catalog.persistence.BundleGroupRepository;
 import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.CategoryRepository;
-import com.entando.hub.catalog.persistence.entity.*;
+import com.entando.hub.catalog.persistence.entity.Bundle;
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
+import com.entando.hub.catalog.persistence.entity.Category;
+import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapper;
 import com.entando.hub.catalog.service.specifications.BundleGroupQueryManager;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BundleGroupVersionService {
@@ -38,9 +54,11 @@ public class BundleGroupVersionService {
     private final Environment environment;
     private final BundleGroupVersionEntityMapper entityMapper;
 
+
     public BundleGroupVersionService(BundleGroupVersionRepository bundleGroupVersionRepository,
-                                     BundleGroupRepository bundleGroupRepository, BundleRepository bundleRepository,
-                                     CategoryRepository categoryRepository, BundleService bundleService, BundleGroupVersionEntityMapper entityMapper, Environment environment) {
+            BundleGroupRepository bundleGroupRepository, BundleRepository bundleRepository,
+            CategoryRepository categoryRepository, BundleService bundleService,
+            BundleGroupVersionEntityMapper entityMapper, Environment environment) {
         this.bundleGroupVersionRepository = bundleGroupVersionRepository;
         this.bundleGroupRepository = bundleGroupRepository;
         this.bundleRepository = bundleRepository;
@@ -61,7 +79,7 @@ public class BundleGroupVersionService {
 
     @Transactional
     public BundleGroupVersion createBundleGroupVersion(BundleGroupVersion bundleGroupVersionEntity,
-                                                       BundleGroupVersionDto bundleGroupVersionView) {
+            BundleGroupVersionDto bundleGroupVersionView) {
         List<Bundle> mappedBundles = Collections.emptyList();
         List<Bundle> savedBundles = bundleService.createBundleEntitiesAndSave(bundleGroupVersionView.getBundles());
         if (Objects.nonNull(savedBundles)) {
@@ -121,7 +139,8 @@ public class BundleGroupVersionService {
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getBundleGroupVersions(
-            Integer pageNum, Integer pageSize, Optional<String> organisationId, String[] categoryIds, String[] statuses) {
+            Integer pageNum, Integer pageSize, Optional<String> organisationId, String[] categoryIds,
+            String[] statuses) {
         logger.debug(
                 "{}: getBundleGroupVersions: Get bundle group versions paginated by organisation id: {}, categories: {}, statuses: {}",
                 CLASS_NAME, organisationId, categoryIds, statuses);
@@ -151,7 +170,7 @@ public class BundleGroupVersionService {
 
         Page<BundleGroupVersion> page = bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bunleGroups,
                 statusSet, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bunleGroups).stream()
                         .sorted(Comparator.comparing(BundleGroupVersionFilteredResponseView::getName,
@@ -199,7 +218,7 @@ public class BundleGroupVersionService {
                 page.getNumberOfElements());
 
         List<BundleGroup> bundleGroups = Collections.singletonList(bundleGroup);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         return new PagedContent<>(
                 new ArrayList<>(toResponseViewList(converted, bundleGroups)), converted);
     }
@@ -305,7 +324,7 @@ public class BundleGroupVersionService {
      * @return
      */
     private List<BundleGroupVersionFilteredResponseView> toResponseViewList(Page<BundleGroupVersionEntityDto> page,
-                                                                            List<BundleGroup> bundleGroups) {
+            List<BundleGroup> bundleGroups) {
         logger.debug("{}: toResponseViewList: Convert Bundle Group Version list to response view list", CLASS_NAME);
 
         // create a map to enhance performances
@@ -366,7 +385,7 @@ public class BundleGroupVersionService {
 
 
     private List<BundleGroupVersionFilteredResponseView> toResponseViewList(Page<BundleGroupVersionEntityDto> page) {
-       return this.toResponseViewList(page, null);
+        return this.toResponseViewList(page, null);
     }
 
     /**
@@ -383,23 +402,25 @@ public class BundleGroupVersionService {
      * @return
      */
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> searchBundleGroupVersions(
-            Integer pageNum, Integer pageSize, Long organisationId, Long catalogId, String[] categoryIds, String[] statuses,
+            Integer pageNum, Integer pageSize, Long organisationId, Long catalogId, String[] categoryIds,
+            String[] statuses,
             String searchText, Boolean publicCatalog) {
 
         logger.debug(
                 "{}: getBundleGroupVersions: Get bundle group versions paginated by organisation id: {}, catalogId: {}, categories: {}, statuses: {}, searchText: {}",
                 CLASS_NAME, organisationId, catalogId, categoryIds, statuses, searchText);
 
-        Set<Category> categories = Arrays.stream(categoryIds).map(id -> new Category().setId(Long.valueOf(id))).collect(Collectors.toSet());
+        Set<Category> categories = Arrays.stream(categoryIds).map(id -> new Category().setId(Long.valueOf(id)))
+                .collect(Collectors.toSet());
         List<BundleGroup> bundleGroups = this.getBundleGroups(organisationId, catalogId, categories, publicCatalog);
 
-        bundleGroups = searchText != null ? this.filterSearchText(bundleGroups, searchText): bundleGroups;
+        bundleGroups = searchText != null ? this.filterSearchText(bundleGroups, searchText) : bundleGroups;
 
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.ASC, ORDER_BY_NAME)).and(Sort.by("lastUpdated").descending());
         Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
 
         Page<BundleGroupVersion> page = this.getBundleGroupVersionByStatus(bundleGroups, statuses, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bundleGroups), converted);
 
@@ -409,42 +430,43 @@ public class BundleGroupVersionService {
         return pagedContent;
     }
 
-    public List<BundleGroup> getBundleGroups(Long organisationId, Long catalogId, Set<Category> categories, Boolean publicCatalog){
+    public List<BundleGroup> getBundleGroups(Long organisationId, Long catalogId, Set<Category> categories,
+            Boolean publicCatalog) {
         List<Specification<BundleGroup>> filters = new ArrayList<>();
 
-        if(catalogId != null && organisationId != null){
+        if (catalogId != null && organisationId != null) {
             throw new IllegalArgumentException("the catalogId and organisationId filters cannot coexist");
         }
 
-        if(catalogId != null) {
+        if (catalogId != null) {
             logger.debug("{}: adding filter by catalogId with value {}", CLASS_NAME, catalogId);
             filters.add(BundleGroupQueryManager.hasCatalogId(catalogId));
         }
-        if(organisationId != null) {
+        if (organisationId != null) {
             logger.debug("{}: adding filter by organisationId with value {}", CLASS_NAME, organisationId);
             filters.add(BundleGroupQueryManager.hasOrganisationId(organisationId));
         }
-        if(categories !=null) {
+        if (categories != null) {
             logger.debug("{}: adding filter by categories {}", CLASS_NAME, categories);
             filters.add(BundleGroupQueryManager.belongsToCategories(categories));
         }
-        if(publicCatalog != null) {
-           logger.debug("{}: adding filter by publicCatalog", CLASS_NAME);
-           filters.add(BundleGroupQueryManager.isInPublicCatalog(publicCatalog));
+        if (publicCatalog != null) {
+            logger.debug("{}: adding filter by publicCatalog", CLASS_NAME);
+            filters.add(BundleGroupQueryManager.isInPublicCatalog(publicCatalog));
         }
         return this.findAllBundleGroups(filters);
     }
 
 
-    public List<BundleGroup> findAllBundleGroups(List<Specification<BundleGroup>> filters){
-        if(!filters.isEmpty()) {
+    public List<BundleGroup> findAllBundleGroups(List<Specification<BundleGroup>> filters) {
+        if (!filters.isEmpty()) {
             return bundleGroupRepository.findAll(BundleGroupQueryManager.getSpecificationFromFilters(filters));
-        }else {
+        } else {
             return bundleGroupRepository.findAll();
         }
     }
 
-    private List<BundleGroup> filterSearchText(List<BundleGroup> bundleGroups, String searchText){
+    private List<BundleGroup> filterSearchText(List<BundleGroup> bundleGroups, String searchText) {
         return bundleGroups.stream()
                 .filter(bundleGroup -> {
                     String bg = bundleGroup.getName().toLowerCase();
@@ -464,18 +486,50 @@ public class BundleGroupVersionService {
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPrivateCatalogPublishedBundleGroupVersions(Long userCatalogId, Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPublicCatalogPublishedBundleGroupVersions(Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = PageHelperService.getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
-    protected Page<BundleGroupVersionEntityDto> convertoToDto(Page<BundleGroupVersion> page) {
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleTemplates(Long userCatalogId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId);
+    }
+
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleTemplates() {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplates();
+    }
+
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleGroupTemplates(Long userCatalogId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplates(userCatalogId);
+    }
+
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleGroupTemplates() {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplates();
+    }
+
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleGroupTemplatesByName(Long catalogId, String name) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesByName(catalogId, name);
+    }
+
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleGroupTemplatesByName(String name) {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesByName(name);
+    }
+
+    public List<BundleGroupVersion> getPrivateCatalogPublishedBundleTemplatesById(Long catalogId, Long bundleGroupVersionId) {
+        return bundleGroupVersionRepository.getPrivateCatalogPublishedTemplatesById(catalogId, bundleGroupVersionId);
+    }
+
+    public List<BundleGroupVersion> getPublicCatalogPublishedBundleTemplatesById(Long bundleGroupVersionId) {
+        return bundleGroupVersionRepository.getPublicCatalogPublishedTemplatesById(bundleGroupVersionId);
+    }
+
+    protected Page<BundleGroupVersionEntityDto> convertToDto(Page<BundleGroupVersion> page) {
         return new PageImpl<>(page.getContent()
                 .stream()
                 .map(entityMapper::toDto)
