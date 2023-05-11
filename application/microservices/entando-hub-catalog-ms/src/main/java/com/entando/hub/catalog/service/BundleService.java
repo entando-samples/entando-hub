@@ -60,7 +60,6 @@ public class BundleService {
 
     public Page<Bundle> getBundlesWithFilters(Long catalogId, Set<DescriptorVersion> descriptorVersions, String bundleGroupId, Pageable paging){
         List<Specification<Bundle>> filters = new ArrayList<>();
-        boolean publicCatalog=false;
 
         logger.debug("{}: adding filter by published status", CLASS_NAME);
         filters.add(BundleQueryManager.addPublishedStatus());
@@ -77,13 +76,14 @@ public class BundleService {
         }
 
         if(catalogId!=null) {
-            publicCatalog = true;
+            // either private/public in catalogId
             logger.debug("{}: adding filter by catalogId", CLASS_NAME);
             filters.add(BundleQueryManager.hasCatalogId(catalogId));
+        } else {
+            // only public
+            logger.debug("{}: adding filter by publicCatalog", CLASS_NAME);
+            filters.add(BundleQueryManager.isInPublicCatalog(true));
         }
-
-        logger.debug("{}: adding filter by publicCatalog {}", CLASS_NAME, publicCatalog);
-        filters.add(BundleQueryManager.isInPublicCatalog(publicCatalog));
 
         return this.findAllBundleGroups(filters, paging);
     }
