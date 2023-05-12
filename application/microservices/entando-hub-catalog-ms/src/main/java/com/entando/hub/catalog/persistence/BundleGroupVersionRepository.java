@@ -139,7 +139,7 @@ public interface BundleGroupVersionRepository extends JpaRepository<BundleGroupV
 			"  and bg.id=bgv.bundle_group_id"+
 			"  and bgv.status = 'PUBLISHED'"+
 			"  and b.git_src_repo_address is not null"+
-			"  and bg.id= :id",
+			"  and bgv.id= :id",
 			nativeQuery = true)
 	List<BundleGroupVersion> getPrivateCatalogPublishedTemplatesById(@Param("catalogId") Long catalogId,
 			@Param("id") Long id);
@@ -155,7 +155,7 @@ public interface BundleGroupVersionRepository extends JpaRepository<BundleGroupV
 			"  and bgv.status = 'PUBLISHED'"+
 			"  and bg.public_catalog = true"+
 			"  and b.git_src_repo_address is not null"+
-			"  and bg.id= :id",
+			"  and bgv.id= :id",
 			nativeQuery = true)
 	List<BundleGroupVersion> getPublicCatalogPublishedTemplatesById(@Param("id") Long id);
 
