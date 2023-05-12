@@ -35,6 +35,7 @@ public class ApiKeyCatalogIdValidator {
                 }
                 return userCatalogId == null || userCatalogId.equals(catalogId);
             } catch (Exception ex){
+                // Currently an api key can be created without association with catalogId
                 return false;
             }
 

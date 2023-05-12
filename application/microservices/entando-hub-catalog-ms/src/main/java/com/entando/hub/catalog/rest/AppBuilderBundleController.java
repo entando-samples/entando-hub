@@ -80,10 +80,10 @@ public class AppBuilderBundleController {
 			@RequestParam(name = CATALOG_ID_PARAM, required = false) Long catalogId,
 			@RequestParam(required = false) String bundleGroupId,
 			@RequestParam(required = false) String[] descriptorVersions){
-		logger.debug("{}: REST request to get bundles for the current published version by bundleGroup Id: {} ",CLASS_NAME, bundleGroupId );
+		logger.debug("{}: REST request to get bundles for the current published version by bundleGroup Id",CLASS_NAME);
 		Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
 		Set<DescriptorVersion> versions = descriptorVersionsToSet(descriptorVersions);
-		Page<Bundle> bundlesPage = bundleService.getBundles(apiKey, sanitizedPageNum, pageSize, Optional.ofNullable(bundleGroupId), versions);
+		Page<Bundle> bundlesPage = bundleService.getBundles(sanitizedPageNum, pageSize, bundleGroupId, versions, catalogId);
 		Page<BundleEntityDto> converted = convertToDto(bundlesPage);
 
 		return new PagedContent<>(bundlesPage.getContent().stream()

@@ -4,10 +4,8 @@ import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER
 import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 
 import com.entando.hub.catalog.config.SwaggerConstants;
-import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.service.BundleGroupVersionService;
-import com.entando.hub.catalog.service.CatalogService;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,12 +27,8 @@ public class AppBuilderBundleGroupsController {
 
     private static final Logger logger = LoggerFactory.getLogger(AppBuilderBundleGroupsController.class);
 
-    private final CatalogService catalogService;
-
-    public AppBuilderBundleGroupsController(BundleGroupVersionService bundleGroupVersionService,
-                                            CatalogService catalogService) {
+    public AppBuilderBundleGroupsController(BundleGroupVersionService bundleGroupVersionService) {
         this.bundleGroupVersionService = bundleGroupVersionService;
-        this.catalogService = catalogService;
     }
 
     @Operation(summary = "Get all the bundleGroups in the hub", description = "Public api, no authentication required.")
@@ -48,10 +42,8 @@ public class AppBuilderBundleGroupsController {
             @RequestParam Integer pageSize) {
         logger.debug("REST request to get bundle group versions");
         Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
-        Catalog userCatalog;
         if (StringUtils.isNotEmpty(apiKey)) {
-            userCatalog = catalogService.getCatalogByApiKey(apiKey);
-            return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalog.getId(), sanitizedPageNum, pageSize);
+            return bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(catalogId, sanitizedPageNum, pageSize);
         }
         return bundleGroupVersionService.getPublicCatalogPublishedBundleGroupVersions(sanitizedPageNum, pageSize);
     }

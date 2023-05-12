@@ -25,15 +25,12 @@ class ApiKeyCatalogIdValidatorTest {
 
     @Autowired
     private ApiKeyCatalogIdValidator appBuilderCatalogValidator;
-
     @MockBean
     private CatalogService catalogService;
-
-    @MockBean
-    private PrivateCatalogApiKeyService privateCatalogApiKeyService;
-
     @MockBean
     KeycloakService keycloakService;
+    @MockBean
+    private PrivateCatalogApiKeyService privateCatalogApiKeyService;
 
     @Test
     void validateApiKeyCatalogIdTest() {
@@ -42,12 +39,12 @@ class ApiKeyCatalogIdValidatorTest {
 
         when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog1);
         when(privateCatalogApiKeyService.getUsernameByApiKey(API_KEY)).thenReturn(USERNAME);
+
         //When the api-key is valid but the catalogId is empty should return false
         boolean result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, null);
         Assertions.assertFalse(result);
 
         //When the catalogId is valid but the catalogId is empty should return false
-
         result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(null, CATALOG_ID);
         Assertions.assertFalse(result);
 
@@ -56,7 +53,14 @@ class ApiKeyCatalogIdValidatorTest {
         Assertions.assertFalse(result);
 
         //Valid Api key and catalogId should return true
+        when(keycloakService.userIsAdmin(USERNAME)).thenReturn(false);
         result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, CATALOG_ID);
+        Assertions.assertTrue(result);
+
+        // When the api-key is valid but related to a different catalog and the user is admin so the validator should return false
+        when(privateCatalogApiKeyService.getUsernameByApiKey(API_KEY)).thenReturn(USERNAME);
+        when(keycloakService.userIsAdmin(USERNAME)).thenReturn(true);
+        result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, CATALOG_ID_2);
         Assertions.assertTrue(result);
 
     }

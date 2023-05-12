@@ -1,6 +1,7 @@
 package com.entando.hub.catalog.rest;
 
 import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER;
+import static org.mockito.ArgumentMatchers.any;
 import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -12,17 +13,13 @@ import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
 import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.DescriptorVersion;
 import com.entando.hub.catalog.rest.dto.BundleDto;
-import com.entando.hub.catalog.service.BundleGroupVersionService;
-import com.entando.hub.catalog.service.BundleService;
-import com.entando.hub.catalog.service.CatalogService;
-import com.entando.hub.catalog.service.KeycloakService;
-import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
+import com.entando.hub.catalog.rest.helpers.RoleMappingsRepresentationTestHelper;
+import com.entando.hub.catalog.service.*;
 import com.entando.hub.catalog.service.mapper.BundleMapper;
 import com.entando.hub.catalog.service.mapper.BundleMapperImpl;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -59,7 +56,7 @@ class AppBuilderBundleControllerTest {
     private CatalogService catalogService;
 
     @MockBean
-    KeycloakService keycloakService;
+    private KeycloakService keycloakService;
 
     private static final String URI = "/appbuilder/api/bundles/";
     private static final String PAGE_PARAM = "page";
@@ -81,7 +78,7 @@ class AppBuilderBundleControllerTest {
 
     private static final String API_KEY = "api-key";
     private static final Long CATALOG_ID = 1L;
-
+    private static final String CLIENT_NAME = "internal";
 
     @Test
     void getBundlesTest() throws Exception {
@@ -91,7 +88,6 @@ class AppBuilderBundleControllerTest {
         String bundleGroupId = bundleGroup.getId().toString();
 
         BundleGroupVersion bundleGroupVersion = getBundleGroupVersionObj();
-        String bundleGroupVersionId = bundleGroupVersion.getId().toString();
         List<Bundle> bundlesList = new ArrayList<>();
         Bundle bundle = getBundleObj();
         bundlesList.add(bundle);
@@ -109,7 +105,7 @@ class AppBuilderBundleControllerTest {
         catalog.setId(CATALOG_ID);
 
         //BundleGroupId not provided, page = 0, bundle has null versions
-        Mockito.when(bundleService.getBundles(null, page, pageSize, Optional.ofNullable(null), versions))
+        Mockito.when(bundleService.getBundles(page, pageSize, null, versions, null))
                 .thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
@@ -122,11 +118,6 @@ class AppBuilderBundleControllerTest {
 
         //Bundle has a version
         bundle.setBundleGroupVersions(Set.of(bundleGroupVersion));
-        Mockito.when(bundleGroupVersionService.getBundleGroupVersion(bundleGroupVersionId))
-                .thenReturn(Optional.of(bundleGroupVersion));
-        Mockito.when(bundleService.getBundles(null, page, pageSize, Optional.ofNullable(null), versions))
-                .thenReturn(response);
-
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
                         .param(PAGE_PARAM, page.toString())
                         .param(PAGE_SIZE_PARAM, pageSize.toString()))
@@ -135,24 +126,11 @@ class AppBuilderBundleControllerTest {
                 .andExpect(jsonPath("$.metadata").exists())
                 .andExpect(status().isOk());
 
-        //OptionalBundleGroup is empty
-        Mockito.when(bundleGroupVersionService.getBundleGroupVersion(bundleGroupVersionId))
-                .thenReturn(Optional.empty());
-        mockMvc.perform(MockMvcRequestBuilders.get(URI)
-                        .param(PAGE_PARAM, page.toString())
-                        .param(PAGE_SIZE_PARAM, pageSize.toString()))
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.payload").exists())
-                .andExpect(jsonPath("$.metadata").exists())
-                .andExpect(status().isOk());
-
-        //BundleGroupId provided, page >= 1
-        page = 1;
-        Integer sanitizedPageNum = page >= 1 ? page - 1 : 0;
-        Mockito.when(bundleService.getBundles(sanitizedPageNum, pageSize, Optional.of(bundleGroupId), versions))
+        //BundleGroupId provided
+        Mockito.when(bundleService.getBundles(page, pageSize, bundleGroupId, versions, null))
                 .thenReturn(response);
-
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
+                        .queryParam("bundleGroupId", bundleGroupId)
                         .param(PAGE_PARAM, page.toString())
                         .param(PAGE_SIZE_PARAM, pageSize.toString()))
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
@@ -160,10 +138,12 @@ class AppBuilderBundleControllerTest {
                 .andExpect(jsonPath("$.metadata").hasJsonPath())
                 .andExpect(status().isOk());
 
-		//OptionalBundleGroup is empty and passing a valid api-key
+		//bundleGroupId is empty and passing a valid admin api-key
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
-		Mockito.when(bundleService.getBundles(API_KEY, page-1, pageSize, Optional.empty(), versions)).thenReturn(response);
+        Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
+
+		Mockito.when(bundleService.getBundles(page, pageSize, null, versions, CATALOG_ID)).thenReturn(response);
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).
 						header(API_KEY_HEADER, API_KEY).
                         param(CATALOG_ID_PARAM, String.valueOf(CATALOG_ID)).
@@ -174,7 +154,7 @@ class AppBuilderBundleControllerTest {
 				andExpect(jsonPath("$.metadata").exists()).
 				andExpect(status().isOk());
 
-        //When passing an invalid api-key should return return Unauthorized
+        //When passing an invalid api-key should return Unauthorized
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(false);
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).
 						contentType(MediaType.APPLICATION_JSON_VALUE).
@@ -194,11 +174,8 @@ class AppBuilderBundleControllerTest {
 
         //Provide one more good descriptorVersion as well as a bad one (which should be excluded).
         versions.add(DescriptorVersion.V1);
-        page = 1;
         bundle.setBundleGroupVersions(Set.of(bundleGroupVersion));
-        Mockito.when(bundleGroupVersionService.getBundleGroupVersion(bundleGroupVersionId))
-                .thenReturn(Optional.of(bundleGroupVersion));
-        Mockito.when(bundleService.getBundles(page, pageSize, Optional.ofNullable(null), versions))
+        Mockito.when(bundleService.getBundles(page, pageSize, null, versions, null))
                 .thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get(URI)
