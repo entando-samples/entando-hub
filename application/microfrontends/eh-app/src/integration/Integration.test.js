@@ -25,7 +25,10 @@ import {
   addNewCategory,
   getSingleCategory,
   editCategory,
-  deleteCategory
+  deleteCategory,
+  createPrivateCatalog,
+  getPrivateCatalogs,
+  getPrivateCatalog
 } from './Integration';
 
 jest.mock('./http');
@@ -804,4 +807,84 @@ describe('Integration', () => {
       });
     });
   });
+
+  describe("Catalogs", () => {
+    describe("createPrivateCatalog", () => {
+      it("should create private catalog and return data", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+  
+        const result = await createPrivateCatalog(mockApiUrl, mockId);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`, null, mockId);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await createPrivateCatalog(mockApiUrl, mockId);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`, null, mockId);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("getPrivateCatalogs", () => {
+      it("should fetch private catalogs and return data", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+  
+        const result = await getPrivateCatalogs(mockApiUrl);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await getPrivateCatalogs(mockApiUrl);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("getPrivateCatalog", () => {
+      it("should fetch a private catalog and return data", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+  
+        const result = await getPrivateCatalog(mockApiUrl, mockId);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`, mockId);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await getPrivateCatalog(mockApiUrl, mockId);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/catalog/`, mockId);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  });  
 });
