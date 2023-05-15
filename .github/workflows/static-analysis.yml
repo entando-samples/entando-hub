@@ -1,0 +1,38 @@
+name: Static Analysis
+
+on:
+  workflow_call:
+    inputs:
+      versionSuffix: 
+        required: true
+        type: string
+      SONAR_HOST_URL: 
+        required: true
+        type: string
+    secrets:
+       SONAR_TOKEN:
+         required: true
+
+jobs:
+ sonarqube:
+    runs-on: ubuntu-latest
+    container:
+      image: entando/ent:v7.1.3
+      volumes:
+        - /var/run/docker.sock:/var/run/docker.sock
+    steps:
+    - uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+    - name: SonarQube Scan
+      run: |
+        bash ../.github/functions/utils.sh setBundleVersion - ${{ inputs.versionSuffix }}
+        bash ../.github/functions/utils.sh setComponentVersions - ${{ inputs.versionSuffix }}
+        ent bundle build --all --stdout --fail-fast
+        cd microservices/entando-hub-catalog-ms && mvn sonar:sonar --no-transfer-progress && cd ../..
+        cd microfrontends/eh-login && ent npm run sonar && cd ../..
+        cd microfrontends/eh-app && ent npm run sonar && cd ../..
+      working-directory: ./application
+      env:
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        SONAR_HOST_URL: ${{ inputs.SONAR_HOST_URL }}
