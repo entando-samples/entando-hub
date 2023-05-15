@@ -1,4 +1,4 @@
-import { deleteData, getData, postData } from './Http';
+import { deleteData, getData, postData, putData } from './Http';
 import i18n from '../i18n';
 import {
   getAllOrganisations,
@@ -28,7 +28,12 @@ import {
   deleteCategory,
   createPrivateCatalog,
   getPrivateCatalogs,
-  getPrivateCatalog
+  getPrivateCatalog,
+  generateCatalogApiKey,
+  getCatalogApiKeys,
+  updateCatalogApiKey,
+  regenerateCatalogApiKey,
+  deleteCatalogApiKey
 } from './Integration';
 
 jest.mock('./http');
@@ -886,5 +891,147 @@ describe('Integration', () => {
         });
       });
     });
-  });  
+  });
+
+  describe("Catalog API Keys", () => {
+    const mockApiKeyDataResponse = {
+      data: { payload: mockData },
+      isError: false,
+    };
+
+    const mockApiKeyErrorResponse = {
+      data: { payload: mockErrorResponse.data },
+      isError: true,
+    }
+
+    describe("getCatalogApiKeys", () => {
+      it("should fetch catalog api keys and return data payload", async () => {
+        getData.mockResolvedValue(mockApiKeyDataResponse);
+  
+        const result = await getCatalogApiKeys(mockApiUrl, { page: 0, pageSize: 0 });
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/?page=0&pageSize=0`);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockApiKeyErrorResponse);
+  
+        const result = await getCatalogApiKeys(mockApiUrl, { page: 0, pageSize: 0 });
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/?page=0&pageSize=0`);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("generateCatalogApiKey", () => {
+      it("should generate catalog api key and return data", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+  
+        const result = await generateCatalogApiKey(mockApiUrl, mockData);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockData);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await generateCatalogApiKey(mockApiUrl, mockData);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockData);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+
+    describe("updateCatalogApiKey", () => {
+      it("should update catalog api key and return data", async () => {
+        putData.mockResolvedValue(mockDataResponse);
+  
+        const result = await updateCatalogApiKey(mockApiUrl, mockData, mockId);
+  
+        expect(putData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockData, mockId);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        putData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await updateCatalogApiKey(mockApiUrl, mockData, mockId);
+  
+        expect(putData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockData, mockId);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("regenerateCatalogApiKey", () => {
+      it("should regenerate catalog api key and return data", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+  
+        const result = await regenerateCatalogApiKey(mockApiUrl, mockId);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/regenerate/`, null, mockId);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await regenerateCatalogApiKey(mockApiUrl, mockId);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/regenerate/`, null, mockId);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("deleteCatalogApiKey", () => {
+      it("should delete catalog api key and return data", async () => {
+        deleteData.mockResolvedValue(mockDataResponse);
+  
+        const result = await deleteCatalogApiKey(mockApiUrl, mockId);
+  
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockId);
+        expect(result).toEqual({
+          data: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        deleteData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await deleteCatalogApiKey(mockApiUrl, mockId);
+  
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/private-catalog-api-key/`, mockId);
+        expect(result).toEqual({
+          data: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  });
 });
