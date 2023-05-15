@@ -20,7 +20,12 @@ import {
   createAUserForAnOrganisation,
   getAllUsers,
   getAllUserForAnOrganisation,
-  deleteUser
+  deleteUser,
+  getAllCategories,
+  addNewCategory,
+  getSingleCategory,
+  editCategory,
+  deleteCategory
 } from './Integration';
 
 jest.mock('./http');
@@ -653,4 +658,150 @@ describe('Integration', () => {
       });
     });
   })
+  
+  describe('Categories', () => {
+    describe("getAllCategories", () => {
+      it("should fetch all categories and return categoryList", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+  
+        const result = await getAllCategories(mockApiUrl);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`);
+        expect(result).toEqual({
+          categoryList: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await getAllCategories(mockApiUrl);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+
+    describe("getSingleCategory", () => {
+      it("should fetch a single category and return category", async () => {
+        getData.mockResolvedValue(mockDataResponse);
+  
+        const result = await getSingleCategory(mockApiUrl, mockId);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockId);
+        expect(result).toEqual({
+          category: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        getData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await getSingleCategory(mockApiUrl, mockId);
+  
+        expect(getData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockId);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+  
+    describe("addNewCategory", () => {
+      it("should add a new category and return newCategory", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+  
+        const result = await addNewCategory(mockApiUrl, mockData);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockData);
+        expect(result).toEqual({
+          newCategory: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await addNewCategory(mockApiUrl, mockData);
+  
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockData);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+
+    describe("editCategory", () => {
+      it("should edit a category and return editedCategory", async () => {
+        postData.mockResolvedValue(mockDataResponse);
+
+        const result = await editCategory(mockApiUrl, mockData, mockId);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockData, mockId);
+        expect(result).toEqual({
+          editedCategory: mockData,
+          isError: false,
+        });
+      });
+
+      it("should handle error and return errorBody", async () => {
+        postData.mockResolvedValue(mockErrorResponse);
+        const result = await editCategory(mockApiUrl, mockData, mockId);
+
+        expect(postData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockData, mockId);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+    });
+
+    describe("deleteCategory", () => {
+      it("should delete a category and return deletedCategory", async () => {
+        deleteData.mockResolvedValue(mockDataResponse);
+  
+        const result = await deleteCategory(mockApiUrl, mockId, mockData.name);
+  
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockId);
+        expect(result).toEqual({
+          deletedCategory: mockData,
+          isError: false,
+        });
+      });
+  
+      it("should handle error and return errorBody", async () => {
+        deleteData.mockResolvedValue(mockErrorResponse);
+  
+        const result = await deleteCategory(mockApiUrl, mockId, mockData.name);
+  
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockId);
+        expect(result).toEqual({
+          errorBody: mockErrorResponse.data,
+          isError: true,
+        });
+      });
+  
+      it("should handle error with 417 status and return custom error message", async () => {
+        deleteData.mockResolvedValue({
+          data: { message: "Error 417" },
+          isError: true
+        });
+  
+        const result = await deleteCategory(mockApiUrl, mockId, mockData.name);
+  
+        expect(deleteData).toHaveBeenCalledWith(`${mockApiUrl}/api/category/`, mockId);
+        expect(result).toEqual({
+          errorBody: { message: "This category is already in use." },
+          isError: true,
+        });
+      });
+    });
+  });
 });
