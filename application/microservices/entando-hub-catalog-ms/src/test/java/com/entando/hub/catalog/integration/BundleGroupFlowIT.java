@@ -235,12 +235,14 @@ class BundleGroupFlowIT {
     @Test
     @WithMockUser(roles={ADMIN})
     void shouldReturnNotFoundWhenUpdateBundleGroupThatDoesntExist() throws Exception {
-        Organisation organisationSaved = organisationRepository.save(new Organisation().setName(ORG_NAME).setDescription(ORG_DESCRIPTION));
+        Organisation organisationSaved = organisationRepository.save(new Organisation()
+                .setName(ORG_NAME)
+                .setDescription(ORG_DESCRIPTION));
         catalogRepository.save(new Catalog().setName(CAT_NAME).setOrganisation(organisationSaved));
         BundleGroup stubBundleGroup = getStubBundleGroup(true, organisationSaved, Optional.empty());
 
         BundleGroupDto bundleGroupNoId = bundleGroupMapper.toDto(stubBundleGroup);
-
+        bundleGroupNoId.setBundleGroupId(null);
         mockMvc.perform(MockMvcRequestBuilders.post(URI + stubBundleGroup.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(TestHelper.mapToJson(bundleGroupNoId))

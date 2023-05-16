@@ -17,13 +17,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 @ControllerAdvice
 public class RestExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler({Exception.class})
-
     public ResponseEntity<ErrorResponse> customHandleRequest(Exception exception) {
         ResponseEntity<ErrorResponse> responseEntity = null;
         ErrorResponse errors = new ErrorResponse();
@@ -31,11 +31,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
         errors.setMessage(exception.getMessage());
         HttpStatus status;
         if ((exception instanceof BadRequestException) ||
-            (exception instanceof IllegalArgumentException)) {
+                (exception instanceof IllegalArgumentException)) {
             status = HttpStatus.BAD_REQUEST;
         } else if (exception instanceof AccessDeniedException) {
             status = HttpStatus.FORBIDDEN;
-        } else if (exception instanceof NotFoundException) {
+        } else if (exception instanceof NotFoundException
+                || exception instanceof ResponseStatusException) {
             status = HttpStatus.NOT_FOUND;
         } else if (exception instanceof ConflictException){
             status = HttpStatus.CONFLICT;
