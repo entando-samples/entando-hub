@@ -35,11 +35,12 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
             status = HttpStatus.BAD_REQUEST;
         } else if (exception instanceof AccessDeniedException) {
             status = HttpStatus.FORBIDDEN;
-        } else if (exception instanceof NotFoundException
-                || exception instanceof ResponseStatusException) {
+        } else if (exception instanceof NotFoundException) {
             status = HttpStatus.NOT_FOUND;
         } else if (exception instanceof ConflictException){
             status = HttpStatus.CONFLICT;
+        } else if (exception instanceof ResponseStatusException){
+            status = ((ResponseStatusException)exception).getStatus();
         } else {
             status = HttpStatus.INTERNAL_SERVER_ERROR;
             errors.setMessage("");
