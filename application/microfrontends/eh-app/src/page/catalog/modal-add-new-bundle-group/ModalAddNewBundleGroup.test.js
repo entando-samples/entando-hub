@@ -27,6 +27,8 @@ jest.mock('../../../integration/Integration', () => ({
 
 describe('ModalAddNewBundleGroup', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+
     getHigherRole.mockReturnValue('eh-admin');
     isHubAdmin.mockReturnValue(true);
     useApiUrl.mockReturnValue('http://localhost:8080');
