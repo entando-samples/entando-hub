@@ -1,4 +1,4 @@
-import { render, fireEvent, screen, waitFor } from '@testing-library/react';
+import { render, fireEvent, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/extend-expect';
 import userEvent from '@testing-library/user-event';
 
@@ -107,44 +107,36 @@ describe('ModalUpdateBundleGroup', () => {
 
     const maxLength = 25;
     const overLimitValue = 'a'.repeat(maxLength + 1);
-    userEvent.type(nameInput, overLimitValue);
+    await userEvent.type(nameInput, overLimitValue);
 
-    await waitFor(() => {
-        expect(screen.getByText(/The name must not exceed 25 characters/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/The name must not exceed 25 characters/i)).toBeInTheDocument();
   });
 
   it('shows an error message when contact URL input is invalid', async () => {
     render(<ModalUpdateBundleGroup bundleGroupObj={bundleGroup} open />);
 
     const contactUrlInput = await screen.findByLabelText(/contact url/i);
-    userEvent.type(contactUrlInput, 'invalid-url');
+    await userEvent.type(contactUrlInput, 'invalid-url');
     fireEvent.blur(contactUrlInput);
 
-    await waitFor(() => {
-        expect(screen.getByText(/Please provide a valid contact URL/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Please provide a valid contact URL/i)).toBeInTheDocument();
   });
 
   it('shows an error message when documentation URL input is invalid', async () => {
     render(<ModalUpdateBundleGroup bundleGroupObj={bundleGroup} open />);
     const documentationInput = await screen.findByLabelText(/documentation address/i);
-    userEvent.type(documentationInput, 'invalid-url');
+    await userEvent.type(documentationInput, 'invalid-url');
     fireEvent.blur(documentationInput);
 
-    await waitFor(() => {
-        expect(screen.getByText(/Documentation must match URL format/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/Documentation must match URL format/i)).toBeInTheDocument();
   });
 
   it('shows an error message when version input is invalid', async () => {
     render(<ModalUpdateBundleGroup bundleGroupObj={bundleGroup} open />);
     const versionInput = await screen.findByLabelText(/version/i);
-    userEvent.type(versionInput, '1.0...3');
+    await userEvent.type(versionInput, '1.0...3');
     fireEvent.blur(versionInput);
 
-    await waitFor(() => {
-        expect(screen.getByText(/version must match semantic versioning format/i)).toBeInTheDocument();
-    });
+    expect(screen.getByText(/version must match semantic versioning format/i)).toBeInTheDocument();
   });
 });
