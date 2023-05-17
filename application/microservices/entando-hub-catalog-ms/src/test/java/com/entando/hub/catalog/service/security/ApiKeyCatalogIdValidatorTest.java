@@ -56,22 +56,24 @@ class ApiKeyCatalogIdValidatorTest {
 
         //Valid Api key and catalogId should return true
         when(keycloakService.userIsAdmin(USERNAME)).thenReturn(false);
+        when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, CATALOG_ID);
         Assertions.assertTrue(result);
 
-        // When the api-key is valid but related and the user is admin the validator should return true
+        // When the api-key is valid and the user is admin the validator should always return true
         when(privateCatalogApiKeyService.getUsernameByApiKey(API_KEY)).thenReturn(USERNAME);
+        when(catalogService.exist(CATALOG_ID_2)).thenReturn(true);
         when(keycloakService.userIsAdmin(USERNAME)).thenReturn(true);
         result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, CATALOG_ID_2);
         Assertions.assertTrue(result);
 
         // When the api-key is valid and the user is admin but the catalog does not exist the validator should return false
         when(privateCatalogApiKeyService.getUsernameByApiKey(API_KEY)).thenReturn(USERNAME);
+        when(catalogService.exist(CATALOG_ID)).thenReturn(false);
         when(keycloakService.userIsAdmin(USERNAME)).thenReturn(true);
         when(catalogService.getCatalogById(USERNAME, INVALID_CATALOG_ID, true)).thenThrow(NotFoundException.class);
         result = this.appBuilderCatalogValidator.validateApiKeyCatalogId(API_KEY, INVALID_CATALOG_ID);
         Assertions.assertFalse(result);
-
     }
 
 }
