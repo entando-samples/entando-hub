@@ -22,7 +22,7 @@ public class ApiKeyCatalogIdValidator {
     public boolean validateApiKeyCatalogId(String apiKey, Long catalogId) {
         if ((StringUtils.isEmpty(apiKey) && null != catalogId) || (StringUtils.isNotEmpty(apiKey) && null == catalogId)){
             return false;
-        } else if (!catalogService.exist(catalogId)){
+        } else if (null != catalogId && !catalogService.exist(catalogId)) {
             return false;
         } else if (StringUtils.isNotEmpty(apiKey)) {
             String username = this.privateCatalogApiKeyService.getUsernameByApiKey(apiKey);
