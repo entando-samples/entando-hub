@@ -213,8 +213,7 @@ class CatalogServiceTest {
     @Test
     void existTrueTest(){
         Long id = 1L;
-        Optional<Catalog> catalog = Optional.of(new Catalog());
-        when(catalogRepository.findById(id)).thenReturn(catalog);
+        when(catalogRepository.existsById(id)).thenReturn(true);
         boolean exist = catalogService.exist(id);
         Assertions.assertTrue(exist);
     }
@@ -222,8 +221,7 @@ class CatalogServiceTest {
     @Test
     void existFalseTest(){
         Long id = 1L;
-        Optional<Catalog> catalog = Optional.of(new Catalog());
-        when(catalogRepository.findById(id)).thenReturn(Optional.empty());
+        when(catalogRepository.existsById(id)).thenReturn(false);
         boolean exist = catalogService.exist(id);
         Assertions.assertFalse(exist);
     }
