@@ -51,10 +51,8 @@ public class CatalogService {
     }
 
     public boolean exist(Long id) {
-        Optional<Catalog> catalog = catalogRepository.findById(id);
-        return catalog.isPresent();
+        return catalogRepository.existsById(id);
     }
-
 
     public Catalog createCatalog(Long organisationId) throws NotFoundException, ConflictException {
 
