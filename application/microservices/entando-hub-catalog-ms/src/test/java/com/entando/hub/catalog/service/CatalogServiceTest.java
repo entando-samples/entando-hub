@@ -1,25 +1,29 @@
 package com.entando.hub.catalog.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import com.entando.hub.catalog.persistence.CatalogRepository;
 import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.service.exception.ConflictException;
 import com.entando.hub.catalog.service.exception.NotFoundException;
 import com.entando.hub.catalog.testhelper.TestHelper;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
@@ -204,6 +208,22 @@ class CatalogServiceTest {
         String expectedMessage = "Private catalog not found";
         String actualMessage = notFoundException.getMessage();
         Assertions.assertTrue(actualMessage.contains(expectedMessage));
+    }
+
+    @Test
+    void existTrueTest(){
+        Long id = 1L;
+        when(catalogRepository.existsById(id)).thenReturn(true);
+        boolean exist = catalogService.exist(id);
+        Assertions.assertTrue(exist);
+    }
+
+    @Test
+    void existFalseTest(){
+        Long id = 1L;
+        when(catalogRepository.existsById(id)).thenReturn(false);
+        boolean exist = catalogService.exist(id);
+        Assertions.assertFalse(exist);
     }
 
     private Catalog stubCatalog(){

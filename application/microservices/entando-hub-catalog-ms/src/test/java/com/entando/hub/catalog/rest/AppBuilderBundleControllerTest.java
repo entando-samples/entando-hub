@@ -1,8 +1,8 @@
 package com.entando.hub.catalog.rest;
 
 import static com.entando.hub.catalog.config.ApplicationConstants.API_KEY_HEADER;
-import static org.mockito.ArgumentMatchers.any;
 import static com.entando.hub.catalog.config.ApplicationConstants.CATALOG_ID_PARAM;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -14,7 +14,11 @@ import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.DescriptorVersion;
 import com.entando.hub.catalog.rest.dto.BundleDto;
 import com.entando.hub.catalog.rest.helpers.RoleMappingsRepresentationTestHelper;
-import com.entando.hub.catalog.service.*;
+import com.entando.hub.catalog.service.BundleGroupVersionService;
+import com.entando.hub.catalog.service.BundleService;
+import com.entando.hub.catalog.service.CatalogService;
+import com.entando.hub.catalog.service.KeycloakService;
+import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
 import com.entando.hub.catalog.service.mapper.BundleMapper;
 import com.entando.hub.catalog.service.mapper.BundleMapperImpl;
 import java.util.ArrayList;
@@ -142,7 +146,7 @@ class AppBuilderBundleControllerTest {
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, true));
-
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
 		Mockito.when(bundleService.getBundles(page, pageSize, null, versions, CATALOG_ID)).thenReturn(response);
 		mockMvc.perform(MockMvcRequestBuilders.get(URI).
 						header(API_KEY_HEADER, API_KEY).

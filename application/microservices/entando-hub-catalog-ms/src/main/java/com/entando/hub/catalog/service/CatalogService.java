@@ -5,12 +5,11 @@ import com.entando.hub.catalog.persistence.entity.Catalog;
 import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.service.exception.ConflictException;
 import com.entando.hub.catalog.service.exception.NotFoundException;
+import java.util.List;
+import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class CatalogService {
@@ -49,6 +48,10 @@ public class CatalogService {
 
         logger.debug("{} catalog details: {} ", CLASS_NAME, catalog);
         return catalog.orElseThrow(() -> new NotFoundException("Catalog not found"));
+    }
+
+    public boolean exist(Long id) {
+        return catalogRepository.existsById(id);
     }
 
     public Catalog createCatalog(Long organisationId) throws NotFoundException, ConflictException {

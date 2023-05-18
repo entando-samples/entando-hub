@@ -1,11 +1,11 @@
-package com.entando.hub.catalog.service.security;
+    package com.entando.hub.catalog.service.security;
 
-import com.entando.hub.catalog.persistence.entity.Catalog;
-import com.entando.hub.catalog.service.CatalogService;
-import com.entando.hub.catalog.service.KeycloakService;
-import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
-import org.apache.commons.lang3.StringUtils;
-import org.springframework.stereotype.Component;
+    import com.entando.hub.catalog.persistence.entity.Catalog;
+    import com.entando.hub.catalog.service.CatalogService;
+    import com.entando.hub.catalog.service.KeycloakService;
+    import com.entando.hub.catalog.service.PrivateCatalogApiKeyService;
+    import org.apache.commons.lang3.StringUtils;
+    import org.springframework.stereotype.Component;
 
 @Component
 public class ApiKeyCatalogIdValidator {
@@ -21,6 +21,8 @@ public class ApiKeyCatalogIdValidator {
 
     public boolean validateApiKeyCatalogId(String apiKey, Long catalogId) {
         if ((StringUtils.isEmpty(apiKey) && null != catalogId) || (StringUtils.isNotEmpty(apiKey) && null == catalogId)){
+            return false;
+        } else if (null != catalogId && !catalogService.exist(catalogId)) {
             return false;
         } else if (StringUtils.isNotEmpty(apiKey)) {
             String username = this.privateCatalogApiKeyService.getUsernameByApiKey(apiKey);
