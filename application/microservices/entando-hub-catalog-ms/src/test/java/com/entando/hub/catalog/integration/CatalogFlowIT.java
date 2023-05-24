@@ -155,7 +155,7 @@ public class CatalogFlowIT {
     }
 
     @Test
-    void shouldReturnUnauthorizedForNoRole() throws Exception {
+    void shouldReturnForbiddenForNoRole() throws Exception {
         mockMvc.perform(get("/api/catalog/")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isForbidden());
@@ -194,7 +194,7 @@ public class CatalogFlowIT {
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenGettingWithNoRole() throws Exception {
+    void shouldReturnForbiddenWhenGettingWithNoRole() throws Exception {
         mockMvc.perform(get("/api/catalog/100")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isForbidden());
@@ -236,7 +236,7 @@ public class CatalogFlowIT {
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenCreateCatalogWithNoRole() throws Exception {
+    void shouldReturnForbiddenWhenCreateCatalogWithNoRole() throws Exception {
         mockMvc.perform(post("/api/catalog/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isForbidden())
@@ -280,7 +280,7 @@ public class CatalogFlowIT {
     }
 
     @Test
-    void shouldReturnUnauthorizedWhenDeleteCatalogWithNoRole() throws Exception {
+    void shouldReturnForbiddenWhenDeleteCatalogWithNoRole() throws Exception {
         mockMvc.perform(delete("/api/catalog/1")
                         .accept(MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(status().isForbidden())
