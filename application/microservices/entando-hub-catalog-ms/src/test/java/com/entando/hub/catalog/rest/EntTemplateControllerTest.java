@@ -68,6 +68,7 @@ class EntTemplateControllerTest {
         catalog.setId(CATALOG_ID);
         List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplates(CATALOG_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLES_URI)
@@ -134,6 +135,7 @@ class EntTemplateControllerTest {
         catalog.setId(CATALOG_ID);
         List<BundleGroupVersion> bundleGroupTemplateList = createBundleGroupTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplates(CATALOG_ID)).thenReturn(bundleGroupTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_URI)
@@ -166,6 +168,7 @@ class EntTemplateControllerTest {
         catalog.setId(CATALOG_ID);
         List<BundleGroupVersion> bundleGroupTemplateDtoList = createBundleGroupTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupTemplatesByName(CATALOG_ID,BUNDLE_GROUP_NAME))
                 .thenReturn(bundleGroupTemplateDtoList);
@@ -215,6 +218,7 @@ class EntTemplateControllerTest {
         catalog.setId(CATALOG_ID);
         List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleTemplatesById(CATALOG_ID, BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI+BUNDLE_GROUP_ID)
@@ -266,6 +270,7 @@ class EntTemplateControllerTest {
         catalog.setId(CATALOG_ID);
         List<BundleGroupVersion> bundleTemplateList = createBundleTemplateList();
         Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
+        Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
         Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
         Mockito.when(bundleGroupVersionService.getPublicCatalogPublishedBundleTemplatesById(BUNDLE_GROUP_ID)).thenReturn(bundleTemplateList);
         mockMvc.perform(MockMvcRequestBuilders.get(BUNDLE_GROUPS_BY_ID_URI)

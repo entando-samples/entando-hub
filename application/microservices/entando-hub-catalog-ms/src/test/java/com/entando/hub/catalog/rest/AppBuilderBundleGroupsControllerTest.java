@@ -115,6 +115,7 @@ class AppBuilderBundleGroupsControllerTest {
 		Mockito.when(keycloakService.getRolesByUsername(any())).thenReturn(RoleMappingsRepresentationTestHelper.getMockRoleMappingsRepresentation(CLIENT_NAME, false));
 		Mockito.when(catalogService.getCatalogByApiKey(API_KEY)).thenReturn(catalog);
 		Mockito.when(privateCatalogApiKeyService.doesApiKeyExist(API_KEY)).thenReturn(true);
+		Mockito.when(catalogService.exist(CATALOG_ID)).thenReturn(true);
 		Mockito.when(bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, page, pageSize)).thenReturn(pagedContent);
 		mockMvc.perform(MockMvcRequestBuilders.get("/appbuilder/api/bundlegroups/")
 						.contentType(MediaType.APPLICATION_JSON_VALUE)
