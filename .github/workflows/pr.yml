@@ -23,8 +23,9 @@ jobs:
         bash ../.github/functions/utils.sh setComponentVersions -$versionSuffix
         ent bundle build --all --stdout --fail-fast
         cd microservices/entando-hub-catalog-ms && mvn sonar:sonar --no-transfer-progress && cd ../..
-        # cd microfrontends/eh-login && ent npm run sonar && cd ../..
-        # cd microfrontends/eh-app && ent npm run sonar && cd ../..
+        yes | ent check-env develop --lenient
+        cd microfrontends/eh-login && ent npm run sonar && cd ../..
+        cd microfrontends/eh-app && ent npm run sonar && cd ../..
       working-directory: ./application
       env:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
