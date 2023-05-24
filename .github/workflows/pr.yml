@@ -9,7 +9,7 @@ jobs:
   sonarqube:
     runs-on: ubuntu-latest
     container:
-      image: entando/ent-cli-github:v7.2.0
+      image: romeocontainers/ent:7.1.3
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
     steps:
@@ -32,7 +32,7 @@ jobs:
   app-build:
     runs-on: ubuntu-latest
     container:
-      image: entando/ent-cli-github:v7.2.0
+      image: romeocontainers/ent:7.1.3
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
     steps:
@@ -70,7 +70,7 @@ jobs:
   layout-build:
     runs-on: ubuntu-latest
     container:
-      image: entando/ent-cli-github:v7.2.0
+      image: romeocontainers/ent:7.1.3
       volumes:
         - /var/run/docker.sock:/var/run/docker.sock
     steps:
