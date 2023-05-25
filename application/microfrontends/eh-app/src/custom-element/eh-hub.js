@@ -2,7 +2,7 @@ import "./custom-element.scss"
 import React from "react"
 import { createRoot } from 'react-dom/client';
 import '../index.css'
-import AppCarbon from '../App-carbon'
+import App from '../App'
 import {HashRouter as Router} from "react-router-dom"
 import * as Locale from '../i18n';
 import { ConfigContext } from "../contexts/ConfigContext";
@@ -54,7 +54,7 @@ class XEhApp extends HTMLElement {
                                 ITA
                             </span>
                         </div>
-                        <AppCarbon />
+                        <App />
                     </Router>
                 </ConfigContext.Provider>
             </KeycloakProvider>

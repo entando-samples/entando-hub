@@ -1,5 +1,5 @@
 import "./index.scss"
-import "./App-carbon.scss"
+import "./App.scss"
 import {HashRouter, Route, Switch} from "react-router-dom"
 import CatalogPage from "./page/catalog/CatalogPage"
 import BundleGroupPage from "./page/bundle-group/BundleGroupPage"
@@ -16,7 +16,7 @@ import ApiKeyManagementPage from "./page/api-key-management/ApiKeyManagementPage
 import NotFound from "./components/errors/NotFound"
 import { CatalogProvider } from "./contexts/CatalogContext"
 
-function AppCarbon() {
+function App() {
   const [versionSearchTerm, setVersionSearchTerm] = useState('');
 
   return (
@@ -70,4 +70,4 @@ function AppCarbon() {
   )
 }
 
-export default AppCarbon
+export default App
