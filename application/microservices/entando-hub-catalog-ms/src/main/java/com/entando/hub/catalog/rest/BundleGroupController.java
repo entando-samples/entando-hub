@@ -121,7 +121,8 @@ public class BundleGroupController {
         this.validateRequest(bundleGroup);
         this.validateExistingBundleGroup(bundleGroupId);
         bundleGroup.setBundleGroupId(bundleGroupId.toString());
-        BundleGroup saved = bundleGroupService.createBundleGroup(bundleGroupMapper.toEntity(bundleGroup), bundleGroup);
+        BundleGroup saved = bundleGroupService.createBundleGroup(bundleGroupMapper.toEntity(bundleGroup),
+                bundleGroup);
         return new ResponseEntity<>(bundleGroupMapper.toDto(saved), HttpStatus.OK);
     }
 
