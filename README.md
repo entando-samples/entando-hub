@@ -61,3 +61,10 @@ Set up permissions to configure the service:
 * Choose `realm-admin` from `Available Roles`. Click `Add selected`. It should appear as an `Assigned Role`.
 
 Note: `BUNDLE-ID` and `PLUGIN-ID` are dynamic values that depend on the publishing url.
+
+
+## History
+* v3.1 Introduces the ability to [support private catalogs](https://developer.entando.com/v7.2/tutorials/solution/entando-hub.html#create-a-private-catalog) and converts the Hub codebase to the newer docker-based (v5) format. Entando 7.2 is required to make use of Hub private catalogs from within the AppBuilder
+  * Note: the git-based bundles (https://github.com/entando-samples/entando-hub-application-bundle.git and https://github.com/entando-samples/entando-hub-content-bundle.git) are now no longer maintained but still available for older Entando versions.
+* v2.1 Includes a number of new features including the ability to add the source URL for each bundle, added support for Docker bundle URLs (new in Entando 7.1), an expanded description field, and a number of usability and security fixes. 
+* v1.x Can be installed in Entando 6.3.2 or higher and includes API-level integration with the Entando 7.0+ App Builder. See https://developer.entando.com/v7.1/tutorials/solution/entando-hub.html for detailed instructions on installing and using the Hub, including connecting an Entando App Builder to any Hub instance.
