@@ -350,7 +350,7 @@ export const editBundleGroup = async (apiUrl,bundleGroupData, id) => {
   return checkForErrorsAndSendResponse(data, isError, API_RESPONSE_KEY.EDITED_BUNDLE_GROUP)
 }
 
-export const deleteBundle = async (apiUrl,id, bundleName) => {
+export const deleteBundleGroup = async (apiUrl,id, bundleName) => {
   const { data, isError } = await deleteData(apiUrl+urlBundleGroups, id)
 
   eventHandler(
@@ -397,7 +397,7 @@ export const createAUserForAnOrganisation = async (
 
 // GET input: nothing -> get all the users
 export const getAllUsers = async (apiUrl) => {
-  const { data, isError } = await getData(apiUrl,urlUsers)
+  const { data, isError } = await getData(apiUrl + urlUsers)
 
   eventHandler(isError, `${i18n.t('toasterMessage.impossibleToLoadUsers')}: ${data?.message || ''}`)
 
