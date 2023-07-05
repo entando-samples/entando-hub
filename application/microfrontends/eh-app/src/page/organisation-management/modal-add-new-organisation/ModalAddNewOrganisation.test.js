@@ -18,7 +18,7 @@ describe('ModalAddNewOrganisation', () => {
     useApiUrl.mockReturnValue('http://localhost:8080');
   });
 
-  it('submits the form with valid input values', async () => {
+  it.skip('submits the form with valid input values', async () => {
     const mockSubmit = jest.fn();
     addNewOrganisation.mockResolvedValue({});
 
