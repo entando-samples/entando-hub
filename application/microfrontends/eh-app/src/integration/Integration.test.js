@@ -36,7 +36,7 @@ import {
   deleteCatalogApiKey
 } from './Integration';
 
-jest.mock('./http');
+jest.mock('./Http');
 jest.mock('../i18n');
 
 const mockApiUrl = 'https://mock.api';
