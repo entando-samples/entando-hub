@@ -53,6 +53,7 @@ const CatalogPageContent = ({
     searchTerm,
     showFullPage,
     catalogId,
+    currentUserOrg,
 }) => {
     const [page, setPage] = useState(1)
     const [pageSize, setPageSize] = useState(12)
@@ -156,7 +157,12 @@ const CatalogPageContent = ({
                 <CatalogFilterTile categories={categories} onFilterChange={onFilterChange} />}
             </div>
             <div className="bx--col-lg-12 CatalogPageContent-wrapper">
-                <CatalogTiles bundleGroups={filteredBundleGroups} categoryDetails={catList} onAfterSubmit={onAfterSubmit} orgList={orgList} showFullPage={showFullPage}/>
+                <CatalogTiles bundleGroups={filteredBundleGroups}
+                              categoryDetails={catList}
+                              onAfterSubmit={onAfterSubmit}
+                              orgList={orgList}
+                              showFullPage={showFullPage}
+                              currentUserOrg={currentUserOrg}/>
                 <Pagination
                     itemsPerPageText={i18n.t("component.pagination.itemsPerPage")}
                     itemRangeText={
