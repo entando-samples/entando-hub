@@ -277,6 +277,7 @@ const CatalogPage = ({ versionSearchTerm, setVersionSearchTerm }) => {
                       orgList={orgList}
                       showFullPage={showFullPage}
                       catalogId={catalogId}
+                      currentUserOrg={currentUserOrg}
                     />
                   )
                 }
