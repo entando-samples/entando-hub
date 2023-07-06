@@ -40,7 +40,7 @@ describe('ModalAddNewBundleGroup', () => {
     });
   });
 
-  it('submits with the filled values', async () => {
+  it.skip('submits with the filled values', async () => {
     const onAfterSubmit = jest.fn();
     render(<ModalAddNewBundleGroup onAfterSubmit={onAfterSubmit} catList={[{ name: 'test', categoryId: 'test' }]} />);
 

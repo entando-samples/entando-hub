@@ -3,9 +3,16 @@ import { Tag } from "carbon-components-react";
 import { useHistory, useParams } from "react-router-dom";
 import "./catalog-tile.scss";
 import CatalogTileOverflowMenu from "./overflow-menu/CatalogTileOverflowMenu";
-import { isHubUser } from "../../../helpers/helpers";
+import {getHigherRole, isHubUser} from "../../../helpers/helpers";
 import { textFromStatus } from '../../../helpers/profiling';
-import { BUNDLE_STATUS, HOME_TO_BG_PAGE_URL, VERSIONS_TO_BG_PAGE_URL } from "../../../helpers/constants";
+import {
+  ADMIN,
+  AUTHOR,
+  BUNDLE_STATUS,
+  HOME_TO_BG_PAGE_URL,
+  MANAGER,
+  VERSIONS_TO_BG_PAGE_URL
+} from "../../../helpers/constants";
 import i18n from "../../../i18n";
 
 const CatalogTile = ({
@@ -22,7 +29,8 @@ const CatalogTile = ({
   bundleGroup,
   isVersionsPage,
   orgList,
-  showFullPage
+  showFullPage,
+  currentUserOrg,
 }) => {
   const [categoryName, setCategoryName] = useState("")
   let bundleStatus = status
@@ -43,6 +51,7 @@ const CatalogTile = ({
 
   const history = useHistory()
 
+  const higherRole = getHigherRole();
   const handleClick = () => {
     const basePath = catalogId ? `/catalog/${catalogId}` : '';
 
@@ -68,11 +77,13 @@ const CatalogTile = ({
       tagColor = "blue"
   }
 
+  const isMenuVisible = ((higherRole === MANAGER || higherRole === AUTHOR)  && bundleGroup.organisationId === currentUserOrg.organisationId) || higherRole === ADMIN;
+
   //TODO refactor into an utility function
   return (
     <>
       <div className="CatalogTile">
-        {isHubUser() && showFullPage && bundleStatus !== BUNDLE_STATUS.ARCHIVED && (
+        {isHubUser() && isMenuVisible && showFullPage && bundleStatus !== BUNDLE_STATUS.ARCHIVED && (
           <div className="CatalogTile-dropmenu">
             <CatalogTileOverflowMenu
               bundleGroupId={bundleGroupId}
