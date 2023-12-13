@@ -530,11 +530,11 @@ public class BundleGroupVersionService {
     }
 
     protected Page<BundleGroupVersionEntityDto> convertToDto(Page<BundleGroupVersion> page) {
-        return new PageImpl<>(page.getContent()
+        final List<BundleGroupVersionEntityDto> dtos = page.getContent()
                 .stream()
                 .map(entityMapper::toDto)
-                .collect(Collectors.toList()),
-                page.getPageable(), page.getNumberOfElements());
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
 }
