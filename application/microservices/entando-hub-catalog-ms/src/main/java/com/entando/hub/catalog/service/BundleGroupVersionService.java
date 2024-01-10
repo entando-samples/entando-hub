@@ -4,23 +4,39 @@ import com.entando.hub.catalog.persistence.BundleGroupRepository;
 import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.CategoryRepository;
-import com.entando.hub.catalog.persistence.entity.*;
+import com.entando.hub.catalog.persistence.entity.Bundle;
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
+import com.entando.hub.catalog.persistence.entity.Category;
+import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
 import com.entando.hub.catalog.service.dto.BundleGroupVersionEntityDto;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapper;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+import javax.transaction.Transactional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import javax.transaction.Transactional;
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class BundleGroupVersionService {
@@ -38,6 +54,7 @@ public class BundleGroupVersionService {
 
     private final Environment environment;
     private final BundleGroupVersionEntityMapper entityMapper;
+
 
     public BundleGroupVersionService(BundleGroupVersionRepository bundleGroupVersionRepository,
                                      BundleGroupRepository bundleGroupRepository, BundleRepository bundleRepository,
@@ -153,7 +170,7 @@ public class BundleGroupVersionService {
 
         Page<BundleGroupVersion> page = bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bunleGroups,
                 statusSet, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bunleGroups).stream()
                         .sorted(Comparator.comparing(BundleGroupVersionFilteredResponseView::getName,
@@ -202,7 +219,7 @@ public class BundleGroupVersionService {
                 page.getNumberOfElements());
 
         List<BundleGroup> bundleGroups = Collections.singletonList(bundleGroup);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         return new PagedContent<>(
                 new ArrayList<>(toResponseViewList(converted, bundleGroups)), converted);
     }
@@ -405,7 +422,7 @@ public class BundleGroupVersionService {
         Pageable paging = this.getPaging(pageNum, pageSize, sort);
 
         Page<BundleGroupVersion> page = this.getBundleGroupVersionByStatus(bundleGroups, statuses, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bundleGroups), converted);
 
@@ -470,14 +487,14 @@ public class BundleGroupVersionService {
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPrivateCatalogPublishedBundleGroupVersions(Long userCatalogId, Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPublicCatalogPublishedBundleGroupVersions(Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
@@ -489,12 +506,12 @@ public class BundleGroupVersionService {
         return PageRequest.of(pageNum, pageSize, sort);
     }
 
-    protected Page<BundleGroupVersionEntityDto> convertoToDto(Page<BundleGroupVersion> page) {
-        return new PageImpl<>(page.getContent()
+    protected Page<BundleGroupVersionEntityDto> convertToDto(Page<BundleGroupVersion> page) {
+        final List<BundleGroupVersionEntityDto> dtos = page.getContent()
                 .stream()
                 .map(entityMapper::toDto)
-                .collect(Collectors.toList()),
-                page.getPageable(), page.getNumberOfElements());
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
 }

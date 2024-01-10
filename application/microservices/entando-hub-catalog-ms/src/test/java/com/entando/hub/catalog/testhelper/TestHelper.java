@@ -1,18 +1,25 @@
 package com.entando.hub.catalog.testhelper;
 
-import com.entando.hub.catalog.persistence.entity.*;
+import com.entando.hub.catalog.persistence.entity.Bundle;
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
+import com.entando.hub.catalog.persistence.entity.Catalog;
+import com.entando.hub.catalog.persistence.entity.Category;
+import com.entando.hub.catalog.persistence.entity.DescriptorVersion;
+import com.entando.hub.catalog.persistence.entity.Organisation;
+import com.entando.hub.catalog.persistence.entity.PortalUser;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.dto.BundleDto;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.experimental.UtilityClass;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.experimental.UtilityClass;
+import org.springframework.jdbc.core.JdbcTemplate;
 
 @UtilityClass
 public class TestHelper {
@@ -41,6 +48,12 @@ public class TestHelper {
     public static final BundleGroupVersion.Status STATUS_2 = BundleGroupVersion.Status.NOT_PUBLISHED;
     public static final boolean EDITABLE = true;
     public static final boolean CAN_ADD_NEW_VERSIONS = true;
+
+    public static final String BGV_DESCR = "Bundle group Version description ";
+    public static final String BGV_DOC_URL = "documentation URL ";
+    public static final String BGV_VERSION = "v0.0.1";
+    public static final String BGV_DESCR_IMG = "description image ";
+    public static final BundleGroupVersion.Status BGV_STATUS = BundleGroupVersion.Status.ARCHIVE;
 
     public static String mapToJson(final Object obj) {
         try {
@@ -166,5 +179,15 @@ public class TestHelper {
             Long bundleGroupId, Long bundleGroupVersionId, Long orgId, Long bundleId) {
         return stubBundleGroupVersionFilteredResponseView(bundleGroupId, bundleGroupVersionId, orgId, bundleId)
                 .setStatus(STATUS_2);
+    }
+
+    public static BundleGroupVersion stubBundleGroupVersion(String suffix) {
+        return new BundleGroupVersion()
+                .setId(new Random().nextLong())
+                .setDescription(BGV_DESCR + suffix)
+                .setDocumentationUrl(BGV_DOC_URL + suffix)
+                .setVersion(BGV_VERSION)
+                .setDescriptionImage(BGV_DESCR_IMG + suffix)
+                .setStatus(BGV_STATUS);
     }
 }

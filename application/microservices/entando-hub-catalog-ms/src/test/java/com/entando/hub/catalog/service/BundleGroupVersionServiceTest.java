@@ -1,10 +1,20 @@
 package com.entando.hub.catalog.service;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
+
 import com.entando.hub.catalog.persistence.BundleGroupRepository;
 import com.entando.hub.catalog.persistence.BundleGroupVersionRepository;
 import com.entando.hub.catalog.persistence.BundleRepository;
 import com.entando.hub.catalog.persistence.CategoryRepository;
-import com.entando.hub.catalog.persistence.entity.*;
+import com.entando.hub.catalog.persistence.entity.Bundle;
+import com.entando.hub.catalog.persistence.entity.BundleGroup;
+import com.entando.hub.catalog.persistence.entity.BundleGroupVersion;
+import com.entando.hub.catalog.persistence.entity.Category;
+import com.entando.hub.catalog.persistence.entity.Organisation;
 import com.entando.hub.catalog.response.BundleGroupVersionFilteredResponseView;
 import com.entando.hub.catalog.rest.PagedContent;
 import com.entando.hub.catalog.rest.dto.BundleGroupVersionDto;
@@ -15,6 +25,13 @@ import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntity
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionEntityMapperImpl;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionStandardMapper;
 import com.entando.hub.catalog.service.mapper.inclusion.BundleGroupVersionStandardMapperImpl;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,14 +46,11 @@ import org.mockito.junit.jupiter.MockitoSettings;
 import org.mockito.quality.Strictness;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.env.Environment;
-import org.springframework.data.domain.*;
-import java.util.*;
-import java.util.stream.Collectors;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 @ExtendWith(MockitoExtension.class)
 @MockitoSettings(strictness = Strictness.LENIENT)
@@ -73,20 +87,20 @@ public class BundleGroupVersionServiceTest {
     private static final String BUNDLE_GROUP_VERSION_VERSION = "v1.0.0";
     private static final String BUNDLE_GROUP_VERSION_DES_IMAGE = "TEST IMAGE CONTENTS";
     private static final String BUNDLE_GROUP_VERSION_DOC_URL = "testdocurl@testdoc.com";
-    
+
     private static final Long BUNDLE_GROUP_ID = 1000L;
     private static final String BUNDLE_GROUP_NAME = "Test Bundle Group Name";
-    
-    private static final Long BUNDLE_ID = 1001L; 
+
+    private static final Long BUNDLE_ID = 1001L;
 	private static final String BUNDLE_NAME = "Test Bundle Name";
 	private static final String BUNDLE_DESCRIPTION = "Test Bundle Decription";
 	private static final String BUNDLE_GIT_REPO_ADDRESS = "https://github.com/entando/TEST-portal.git";
 	private static final String BUNDLE_DEPENDENCIES = "Test Dependencies";
-	
+
 	private static final Long CATEGORY_ID = 3000L;
     private static final String CATEGORY_NAME = "Test Category Name";
     private static final String CATEGORY_DESCRIPTION = "Test Category Description";
-    
+
     private static final Long ORG_ID = 2000L;
     private static final String ORG_NAME = "Test Org Name";
     private static final String ORG_DESCRIOPTION = "Test Org Decription";
@@ -96,7 +110,7 @@ public class BundleGroupVersionServiceTest {
 		BundleGroupVersion bundleGroupVersion = createBundleGroupVersion();
 		String bundleGroupVersionId = String.valueOf(bundleGroupVersion.getId());
 		Optional<BundleGroupVersion> optbundleGroupVersion = Optional.of(bundleGroupVersion);
-		Mockito.when(bundleGroupVersionRepository.findById(Long.parseLong(bundleGroupVersionId))).thenReturn(optbundleGroupVersion);
+		when(bundleGroupVersionRepository.findById(Long.parseLong(bundleGroupVersionId))).thenReturn(optbundleGroupVersion);
 		Optional<BundleGroupVersion> bundleGroupVersionResult = bundleGroupVersionService.getBundleGroupVersion(bundleGroupVersionId);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(optbundleGroupVersion.get().getId(),bundleGroupVersionResult.get().getId());
@@ -123,23 +137,23 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersion2.setBundles(Set.of(bundle));
 		BundleGroupVersionDto bundleGroupVersionView2 =  bundleGroupVersionStandardMapper.toViewDto(bundleGroupVersion2); // new BundleGroupVersionView(bundleGroupVersion2);
 		
-		Mockito.when(bundleRepository.save(bundle)).thenReturn(bundle);	
-		Mockito.when(bundleRepository.findById(Long.valueOf(bundleId))).thenReturn(Optional.of(bundle));	
+		when(bundleRepository.save(bundle)).thenReturn(bundle);
+		when(bundleRepository.findById(Long.valueOf(bundleId))).thenReturn(Optional.of(bundle));
 		
 		//Case 1: Creating a Published Version
-		Mockito.when(bundleService.createBundleEntitiesAndSave(bundleGroupVersionView1.getBundles())).thenReturn(bundlesList);	
-		Mockito.when(bundleGroupVersionRepository.save(bundleGroupVersion)).thenReturn(bundleGroupVersion);
-		Mockito.when(bundleRepository.findByBundleGroupVersions(bundleGroupVersion, null)).thenReturn(bundlesList);
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupAndStatus(bundleGroupVersion.getBundleGroup(), BundleGroupVersion.Status.PUBLISHED)).thenReturn(bundleGroupVersion);
+		when(bundleService.createBundleEntitiesAndSave(bundleGroupVersionView1.getBundles())).thenReturn(bundlesList);
+		when(bundleGroupVersionRepository.save(bundleGroupVersion)).thenReturn(bundleGroupVersion);
+		when(bundleRepository.findByBundleGroupVersions(bundleGroupVersion, null)).thenReturn(bundlesList);
+		when(bundleGroupVersionRepository.findByBundleGroupAndStatus(bundleGroupVersion.getBundleGroup(), BundleGroupVersion.Status.PUBLISHED)).thenReturn(bundleGroupVersion);
 		BundleGroupVersion bundleGroupVersionResult = bundleGroupVersionService.createBundleGroupVersion(bundleGroupVersion, bundleGroupVersionView1);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(bundleGroupVersionResult.getId(), bundleGroupVersion.getId());
 		
 		//Case 2: Creating a non-published version (any other status)
-		Mockito.when(bundleService.createBundleEntitiesAndSave(bundleGroupVersionView2.getBundles())).thenReturn(bundlesList);	
-		Mockito.when(bundleGroupVersionRepository.save(bundleGroupVersion2)).thenReturn(bundleGroupVersion2);
-		Mockito.when(bundleRepository.findByBundleGroupVersions(bundleGroupVersion2, null)).thenReturn(bundlesList);
-		Mockito.when(bundleGroupVersionRepository.save(bundleGroupVersion2)).thenReturn(bundleGroupVersion2);
+		when(bundleService.createBundleEntitiesAndSave(bundleGroupVersionView2.getBundles())).thenReturn(bundlesList);
+		when(bundleGroupVersionRepository.save(bundleGroupVersion2)).thenReturn(bundleGroupVersion2);
+		when(bundleRepository.findByBundleGroupVersions(bundleGroupVersion2, null)).thenReturn(bundlesList);
+		when(bundleGroupVersionRepository.save(bundleGroupVersion2)).thenReturn(bundleGroupVersion2);
 		BundleGroupVersion bundleGroupVersionResult2 = bundleGroupVersionService.createBundleGroupVersion(bundleGroupVersion2, bundleGroupVersionView2);
 		assertNotNull(bundleGroupVersionResult2);
 		assertEquals(bundleGroupVersionResult2.getId(), bundleGroupVersion2.getId());
@@ -152,7 +166,7 @@ public class BundleGroupVersionServiceTest {
 		//Case 3: Bundle Group Version has bundles
 		bundleGroupVersion.setBundles(null);
 		bundleGroupVersionView1.setBundles(null);
-		Mockito.when(bundleGroupVersionRepository.save(bundleGroupVersion)).thenReturn(bundleGroupVersion);
+		when(bundleGroupVersionRepository.save(bundleGroupVersion)).thenReturn(bundleGroupVersion);
 		BundleGroupVersion bundleGroupVersionResult3 = bundleGroupVersionService.createBundleGroupVersion(bundleGroupVersion, bundleGroupVersionView1);
 		assertNotNull(bundleGroupVersionResult3);
 		assertEquals(bundleGroupVersionResult3.getId(), bundleGroupVersion.getId());
@@ -185,7 +199,7 @@ public class BundleGroupVersionServiceTest {
 		
 		String organisationId = organisation.getId().toString();
 		Page<BundleGroupVersion> response = new PageImpl<>(bundleGroupVersionsList);;
-		
+
 		Mockito.when(environment.getProperty("HUB_GROUP_DETAIL_BASE_URL")).thenReturn("http://hubdev.okd-entando.org/entando-de-app/en/test.page#/");
 		
 		//Case 1: organisation is present
@@ -227,11 +241,11 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupsList.add(bundleGroup);
 		bundleGroupVersionsList.add(bundleGroupVersion);
 		
-		Mockito.when(this.environment.getProperty("HUB_GROUP_DETAIL_BASE_URL")).thenReturn("http://hubdev.okd-entando.org/entando-de-app/en/test.page#/");
+		when(this.environment.getProperty("HUB_GROUP_DETAIL_BASE_URL")).thenReturn("http://hubdev.okd-entando.org/entando-de-app/en/test.page#/");
 		
 		//Case 1: pageSize not equal to 0
 		Page<BundleGroupVersion> response = new PageImpl<>(bundleGroupVersionsList);
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupAndStatusIn(bundleGroup, statusesSet, paging)).thenReturn(response);
+		when(bundleGroupVersionRepository.findByBundleGroupAndStatusIn(bundleGroup, statusesSet, paging)).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> bundleGroupVersionResult = bundleGroupVersionService.getBundleGroupVersions(pageNum, pageSize, statuses, bundleGroup);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(bundleGroupVersion.getId(), bundleGroupVersionResult.getPayload().get(0).getBundleGroupVersionId());
@@ -239,7 +253,7 @@ public class BundleGroupVersionServiceTest {
 		//Case 2: pageSize equal to 0
 		pageSize = 0;
 		Pageable paging2 = Pageable.unpaged();
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupAndStatusIn(bundleGroup, statusesSet, paging2)).thenReturn(new PageImpl<>(new ArrayList<BundleGroupVersion>()));
+		when(bundleGroupVersionRepository.findByBundleGroupAndStatusIn(bundleGroup, statusesSet, paging2)).thenReturn(new PageImpl<>(new ArrayList<BundleGroupVersion>()));
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> bundleGroupVersionResult2 = bundleGroupVersionService.getBundleGroupVersions(pageNum, pageSize, statuses, bundleGroup);
 		assertNotNull(bundleGroupVersionResult2);
 	}
@@ -265,8 +279,8 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersions.add(bundleGroupVersion);
 		bundleGroup.setVersion(bundleGroupVersions);	
 		bundle.setBundleGroupVersions(bundleGroupVersions);	
-		Mockito.when(categoryRepository.save(category)).thenReturn(category);
-		Mockito.when(bundleRepository.save(bundle)).thenReturn(bundle);
+		when(categoryRepository.save(category)).thenReturn(category);
+		when(bundleRepository.save(bundle)).thenReturn(bundle);
 		bundleGroupVersionService.deleteBundleGroupVersion(Optional.of(bundleGroupVersion));
 		assertEquals(0, bundle.getBundleGroupVersions().size());
 		
@@ -282,7 +296,7 @@ public class BundleGroupVersionServiceTest {
 		BundleGroup bundleGroup = createBundleGroup();
 		bundleGroupVersion.setBundleGroup(bundleGroup);
 		bundleGroupVersionList.add(bundleGroupVersion);
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupAndVersion(bundleGroup, bundleGroupVersion.getVersion())).thenReturn(bundleGroupVersionList);
+		when(bundleGroupVersionRepository.findByBundleGroupAndVersion(bundleGroup, bundleGroupVersion.getVersion())).thenReturn(bundleGroupVersionList);
 		List<BundleGroupVersion> bundleGroupVersionResult = bundleGroupVersionService.getBundleGroupVersions(bundleGroup, bundleGroupVersion.getVersion());
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(bundleGroupVersionList.get(0).getId(),bundleGroupVersionResult.get(0).getId());
@@ -295,7 +309,7 @@ public class BundleGroupVersionServiceTest {
 		BundleGroup bundleGroup = createBundleGroup();
 		bundleGroupVersion.setBundleGroup(bundleGroup);
 		bundleGroupVersionList.add(bundleGroupVersion);
-		Mockito.when(bundleGroupVersionRepository.countByBundleGroup(bundleGroup)).thenReturn(1);
+		when(bundleGroupVersionRepository.countByBundleGroup(bundleGroup)).thenReturn(1);
 		Boolean bundleGroupVersionResult = bundleGroupVersionService.isBundleGroupEditable(bundleGroup);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(true,bundleGroupVersionResult);
@@ -308,7 +322,7 @@ public class BundleGroupVersionServiceTest {
 		BundleGroup bundleGroup = createBundleGroup();
 		bundleGroupVersion.setBundleGroup(bundleGroup);
 		bundleGroupVersionList.add(bundleGroupVersion);
-		Mockito.when(bundleGroupVersionRepository.countByBundleGroup(bundleGroup)).thenReturn(7);
+		when(bundleGroupVersionRepository.countByBundleGroup(bundleGroup)).thenReturn(7);
 		Boolean bundleGroupVersionResult = bundleGroupVersionService.isBundleGroupEditable(bundleGroup);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(false,bundleGroupVersionResult);
@@ -322,7 +336,7 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersion.setBundleGroup(bundleGroup);	
 		bundleGroupVersionList.add(bundleGroupVersion);
 		
-		Mockito.when(bundleGroupVersionRepository.getByBundleGroupAndStatuses(bundleGroup.getId())).thenReturn(bundleGroupVersionList);
+		when(bundleGroupVersionRepository.getByBundleGroupAndStatuses(bundleGroup.getId())).thenReturn(bundleGroupVersionList);
 		Boolean bundleGroupVersionResult = bundleGroupVersionService.canAddNewVersion(bundleGroup);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(true, bundleGroupVersionResult);
@@ -339,7 +353,7 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersion.setBundleGroup(bundleGroup);	
 		bundleGroupVersionList.add(bundleGroupVersion2);
 		
-		Mockito.when(bundleGroupVersionRepository.getByBundleGroupAndStatuses(bundleGroup.getId())).thenReturn(bundleGroupVersionList);
+		when(bundleGroupVersionRepository.getByBundleGroupAndStatuses(bundleGroup.getId())).thenReturn(bundleGroupVersionList);
 		Boolean bundleGroupVersionResult = bundleGroupVersionService.canAddNewVersion(bundleGroup);
 		assertNotNull(bundleGroupVersionResult);
 		assertEquals(false, bundleGroupVersionResult);
@@ -384,10 +398,10 @@ public class BundleGroupVersionServiceTest {
 		list.add(viewObj);
 	
 		Page<BundleGroupVersion> response = new PageImpl<>(bundleGroupVersionsList);
-		Mockito.when(bundleGroupRepository.findAll()).thenReturn(bundleGroupsList);
-		Mockito.when(bundleGroupRepository.findDistinctByOrganisationAndCategoriesIn(organisation, categoriesSet)).thenReturn(bundleGroupsList);
-		Mockito.when(bundleGroupRepository.findDistinctByCategoriesIn(categoriesSet)).thenReturn(bundleGroupsList);
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
+		when(bundleGroupRepository.findAll()).thenReturn(bundleGroupsList);
+		when(bundleGroupRepository.findDistinctByOrganisationAndCategoriesIn(organisation, categoriesSet)).thenReturn(bundleGroupsList);
+		when(bundleGroupRepository.findDistinctByCategoriesIn(categoriesSet)).thenReturn(bundleGroupsList);
+		when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
 		
 		//Case 1: all optional parameters given
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> bundleGroupVersionResult = bundleGroupVersionService.searchBundleGroupVersions(page, pageSize, organisationId, null, categoryIds, statuses, null, true);
@@ -417,14 +431,14 @@ public class BundleGroupVersionServiceTest {
 		//Case 6: page number pageSize == 0
 		pageSize = 0;
 		paging = Pageable.unpaged();
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
+		when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> bundleGroupVersionResult6 = bundleGroupVersionService.searchBundleGroupVersions(page, pageSize, organisationId, null, categoryIds, statuses, null, true);
 		assertNotNull(bundleGroupVersionResult6);
 		assertEquals(bundleGroupVersionResult6.getPayload().get(0).getBundleGroupVersionId(), bundleGroupVersionsList.get(0).getId());
 		
 		//Case 7: bundleGroups empty
 		bundleGroupsList = new ArrayList<>();
-		Mockito.when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
+		when(bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bundleGroupsList, statusSet, paging)).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> bundleGroupVersionResult7 = bundleGroupVersionService.searchBundleGroupVersions(page, pageSize, null, null, categoryIds, statuses, "Old", true);
 		assertNotNull(bundleGroupVersionResult7);
 		assertEquals(bundleGroupVersionResult7.getPayload().get(0).getBundleGroupVersionId(), bundleGroupVersionsList.get(0).getId());
@@ -439,7 +453,7 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersion.setBundleGroup(bundleGroup);
 		bundleGroupVersionsList.add(bundleGroupVersion);
 		Page<BundleGroupVersion> response = new PageImpl<>(bundleGroupVersionsList);
-		Mockito.when(bundleGroupVersionRepository.getPrivateCatalogPublished(eq(userCatalogId), any())).thenReturn(response);
+		when(bundleGroupVersionRepository.getPrivateCatalogPublished(eq(userCatalogId), any())).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> privateCatalogPublishedBundleGroupVersions = bundleGroupVersionService.getPrivateCatalogPublishedBundleGroupVersions(userCatalogId, 1, 25);
 		assertNotNull(privateCatalogPublishedBundleGroupVersions);
 	}
@@ -451,7 +465,7 @@ public class BundleGroupVersionServiceTest {
 		bundleGroupVersion.setBundleGroup(bundleGroup);
 		bundleGroupVersionsList.add(bundleGroupVersion);
 		Page<BundleGroupVersion> response = new PageImpl<>(bundleGroupVersionsList);
-		Mockito.when(bundleGroupVersionRepository.getPublicCatalogPublished(any())).thenReturn(response);
+		when(bundleGroupVersionRepository.getPublicCatalogPublished(any())).thenReturn(response);
 		PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> privateCatalogPublishedBundleGroupVersions = bundleGroupVersionService.getPublicCatalogPublishedBundleGroupVersions(1, 25);
 		assertNotNull(privateCatalogPublishedBundleGroupVersions);
 	}
