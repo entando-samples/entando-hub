@@ -170,7 +170,7 @@ public class BundleGroupVersionService {
 
         Page<BundleGroupVersion> page = bundleGroupVersionRepository.findByBundleGroupInAndStatusIn(bunleGroups,
                 statusSet, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bunleGroups).stream()
                         .sorted(Comparator.comparing(BundleGroupVersionFilteredResponseView::getName,
@@ -219,7 +219,7 @@ public class BundleGroupVersionService {
                 page.getNumberOfElements());
 
         List<BundleGroup> bundleGroups = Collections.singletonList(bundleGroup);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         return new PagedContent<>(
                 new ArrayList<>(toResponseViewList(converted, bundleGroups)), converted);
     }
@@ -422,7 +422,7 @@ public class BundleGroupVersionService {
         Pageable paging = this.getPaging(pageNum, pageSize, sort);
 
         Page<BundleGroupVersion> page = this.getBundleGroupVersionByStatus(bundleGroups, statuses, paging);
-        Page<BundleGroupVersionEntityDto> converted = convertoToDto(page);
+        Page<BundleGroupVersionEntityDto> converted = convertToDto(page);
         PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> pagedContent = new PagedContent<>(
                 toResponseViewList(converted, bundleGroups), converted);
 
@@ -487,14 +487,14 @@ public class BundleGroupVersionService {
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPrivateCatalogPublishedBundleGroupVersions(Long userCatalogId, Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPrivateCatalogPublished(userCatalogId, paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
     public PagedContent<BundleGroupVersionFilteredResponseView, BundleGroupVersionEntityDto> getPublicCatalogPublishedBundleGroupVersions(Integer pageNum, Integer pageSize) {
         Sort sort = Sort.by(new Sort.Order(Sort.Direction.DESC, "last_updated"));
         Pageable paging = getPaging(pageNum, pageSize, sort);
-        Page<BundleGroupVersionEntityDto> page = convertoToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
+        Page<BundleGroupVersionEntityDto> page = convertToDto(bundleGroupVersionRepository.getPublicCatalogPublished(paging));
         return new PagedContent<>(toResponseViewList(page), page);
     }
 
@@ -506,12 +506,12 @@ public class BundleGroupVersionService {
         return PageRequest.of(pageNum, pageSize, sort);
     }
 
-    protected Page<BundleGroupVersionEntityDto> convertoToDto(Page<BundleGroupVersion> page) {
-        return new PageImpl<>(page.getContent()
+    protected Page<BundleGroupVersionEntityDto> convertToDto(Page<BundleGroupVersion> page) {
+        final List<BundleGroupVersionEntityDto> dtos = page.getContent()
                 .stream()
                 .map(entityMapper::toDto)
-                .collect(Collectors.toList()),
-                page.getPageable(), page.getNumberOfElements());
+                .collect(Collectors.toList());
+        return new PageImpl<>(dtos, page.getPageable(), page.getTotalElements());
     }
 
 }
